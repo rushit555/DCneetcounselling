@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2 class="counter-val" data-target="5000">5000</h2>
+    <script>
+        function animateValue(el, start, end, duration) {
+            if (el._animating === end) return;
+            el._animating = end;
+
+            var startTime = null;
+            el.textContent = start.toLocaleString('en-IN'); 
+
+            function easeOutExpo(t) {
+                return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+            }
+
+            function step(ts) {
+                if (!startTime) startTime = ts;
+                var elapsed = ts - startTime;
+                var prog    = Math.min(elapsed / duration, 1);
+                var eased   = easeOutExpo(prog);
+                var current = Math.floor(eased * (end - start) + start);
+
+                el.textContent = current.toLocaleString('en-IN');
+
+                if (prog < 1) {
+                    requestAnimationFrame(step);
+                } else {
+                    el.textContent = end.toLocaleString('en-IN');
+                    el._animating = false; 
+                }
+            }
+            requestAnimationFrame(step);
+        }
+        setTimeout(() => {
+            animateValue(document.querySelector('.counter-val'), 0, 5000, 2000);
+        }, 500);
+    </script>
+</body>
+</html>
