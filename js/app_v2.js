@@ -43,59 +43,58 @@ function bootApp() {
     console.log("bootApp() EXECUTION STARTED");
     document.body.classList.add('js-enabled');
 
-    // Init Supabase safely with retries if CDN is slow
-    function initSupa() {
-        if (window.supabase) {
+    // ══════════════════════════════════════════════════════════════════════
+    // BULLETPROOF SUPABASE INIT + SESSION PERSISTENCE
+    // ══════════════════════════════════════════════════════════════════════
+    (function initSupabaseAndAuth() {
+        // Step 1: Poll until the Supabase UMD SDK is loaded
+        if (!window.supabase || !window.supabase.createClient) {
+            console.log('⏳ Waiting for Supabase SDK...');
+            setTimeout(initSupabaseAndAuth, 100);
+            return;
+        }
+
+        // Step 2: Create the client ONCE (skip if already created)
+        if (!window.supabaseClient) {
             try {
-                // Standard Native Initialization
-                var client = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+                window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
                     auth: {
                         persistSession: true,
                         autoRefreshToken: true,
                         detectSessionInUrl: true
                     }
                 });
-                window.supabaseClient = client;
-                if (!supabase) supabase = client;
-
+                supabase = window.supabaseClient;
+                console.log('✅ Supabase client created');
             } catch (e) {
-                console.warn('Supabase init failed:', e.message);
+                console.error('❌ Supabase client creation failed:', e);
+                return;
             }
-        } else {
-            setTimeout(initSupa, 50); // Poll until script loads
-        }
-    }
-    initSupa();
-
-    // User's Explicit Session Restoration Block (Recursive Polling IIFE)
-    (function waitForSupabase() {
-
-        if (!window.supabaseClient) {
-            console.log('⏳ Waiting for Supabase...');
-            setTimeout(waitForSupabase, 200);
-            return;
         }
 
-        console.log('✅ Supabase ready');
+        var client = window.supabaseClient;
 
-        // 🔥 RESTORE SESSION
-        window.supabaseClient.auth.getSession().then(({ data }) => {
-            console.log('SESSION:', data.session);
+        // Step 3: Start auto-refresh (critical for page reloads!)
+        // This ensures the SDK picks up the stored refresh token and
+        // starts the background refresh timer.
+        if (client.auth.startAutoRefresh) {
+            client.auth.startAutoRefresh();
+            console.log('🔄 Auto-refresh started');
+        }
 
-            if (window.updateNavForAuth) {
-                window.updateNavForAuth(data.session);
-            }
-        });
-
-        // 🔥 LISTEN FOR AUTH CHANGES
-        window.supabaseClient.auth.onAuthStateChange((event, session) => {
-            console.log('Auth event:', event);
+        // Step 4: Use onAuthStateChange as SINGLE SOURCE OF TRUTH
+        // The INITIAL_SESSION event fires on first load with the
+        // restored session (or null if none). This replaces the
+        // separate getSession() call that caused race conditions.
+        client.auth.onAuthStateChange(function(event, session) {
+            console.log('🔔 Auth event:', event, session ? '(session exists)' : '(no session)');
 
             if (window.updateNavForAuth) {
                 window.updateNavForAuth(session);
             }
         });
 
+        console.log('✅ Auth listener registered, waiting for INITIAL_SESSION...');
     })();
 
     // Wire up ALL [data-route] elements (links and buttons)
