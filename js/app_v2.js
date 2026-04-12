@@ -47,25 +47,17 @@ function bootApp() {
     function initSupa() {
         if (window.supabase) {
             try {
+                // Standard Native Initialization
                 var client = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
                     auth: {
-                        storage: window.localStorage,
-                        autoRefreshToken: true,
                         persistSession: true,
+                        autoRefreshToken: true,
                         detectSessionInUrl: true
                     }
                 });
                 window.supabaseClient = client;
-                if (!supabase) supabase = client; // Set global shadow
-                client.auth.onAuthStateChange(function(event, session) {
-                    if (window.updateNavForAuth) window.updateNavForAuth(session);
-                    if (event === 'SIGNED_IN' && session && window.location.hash.includes('login')) {
-                        window.navigate('home');
-                    }
-                });
-                client.auth.getSession().then(function(res) {
-                    if(res.data.session && window.updateNavForAuth) window.updateNavForAuth(res.data.session);
-                });
+                if (!supabase) supabase = client;
+
             } catch (e) {
                 console.warn('Supabase init failed:', e.message);
             }
@@ -74,6 +66,37 @@ function bootApp() {
         }
     }
     initSupa();
+
+    // User's Explicit Session Restoration Block (Recursive Polling IIFE)
+    (function waitForSupabase() {
+
+        if (!window.supabaseClient) {
+            console.log('⏳ Waiting for Supabase...');
+            setTimeout(waitForSupabase, 200);
+            return;
+        }
+
+        console.log('✅ Supabase ready');
+
+        // 🔥 RESTORE SESSION
+        window.supabaseClient.auth.getSession().then(({ data }) => {
+            console.log('SESSION:', data.session);
+
+            if (window.updateNavForAuth) {
+                window.updateNavForAuth(data.session);
+            }
+        });
+
+        // 🔥 LISTEN FOR AUTH CHANGES
+        window.supabaseClient.auth.onAuthStateChange((event, session) => {
+            console.log('Auth event:', event);
+
+            if (window.updateNavForAuth) {
+                window.updateNavForAuth(session);
+            }
+        });
+
+    })();
 
     // Wire up ALL [data-route] elements (links and buttons)
     document.querySelectorAll('[data-route]').forEach(function(el) {
@@ -454,6 +477,7 @@ window.handleEmailLogin = async function(e) {
                 showErr('⚠️ An account with this email already exists. Please switch to Sign In instead.');
             } else { 
                 if (res.data && res.data.session) {
+                    window.localStorage.setItem('sb-session', JSON.stringify(res.data.session));
                     showOk('✅ Account created successfully! Returning to home...');
                     updateNavForAuth(res.data.session);
                     setTimeout(function() { window.navigate('home'); }, 1000);
@@ -467,6 +491,9 @@ window.handleEmailLogin = async function(e) {
             console.log('Sign in result:', res2);
             if (res2.error) { showErr(res2.error.message); }
             else {
+                if (res2.data && res2.data.session) {
+                    window.localStorage.setItem('sb-session', JSON.stringify(res2.data.session));
+                }
                 updateNavForAuth(res2.data.session);
                 window.navigate('home');
             }

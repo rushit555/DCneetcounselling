@@ -234,60 +234,166 @@
                     header, .navbar, .nav-actions, .topbar { overflow: visible !important; }
                     #authContainer { position: relative; overflow: visible !important; }
 
-                    .pd-link:hover { background: #F3F4F6 !important; color: var(--color-text) !important; }
-                    
-                    /* FIXED DROPDOWN LAYER AND MOBILE SAFETY */
+                    /* PREMIUM PROFILE DROPDOWN (Desktop Only) */
                     #profileDropdown {
+                        position: absolute;
+                        top: calc(100% + 15px);
+                        right: 0;
+                        width: 300px;
+                        background: #ffffff;
+                        border-radius: 20px;
+                        padding: 16px;
+                        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
                         z-index: 9999 !important;
-                        max-height: 80vh;
-                        overflow-y: auto;
-                        opacity: 0;
-                        transform: translateY(-10px);
-                        transition: all 0.25s ease;
                         display: none;
+                        flex-direction: column;
+                        opacity: 0;
+                        transform-origin: top right;
+                        transform: scale(0.95) translateY(-5px);
+                        transition: all 0.2s ease;
+                        pointer-events: none;
                     }
                     
                     #profileDropdown.active { 
                         display: flex !important; 
                         opacity: 1;
-                        transform: translateY(0);
+                        transform: scale(1) translateY(0);
+                        pointer-events: auto;
+                    }
+
+                    .pd-header {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        padding-bottom: 12px;
+                        border-bottom: 1px solid #eee;
+                        margin-bottom: 8px;
+                    }
+
+                    .pd-avatar {
+                        width: 44px;
+                        height: 44px;
+                        background: #FFD700;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 600;
+                        font-size: 18px;
+                        color: #000;
+                        flex-shrink: 0;
+                    }
+
+                    .pd-info {
+                        display: flex;
+                        flex-direction: column;
+                        overflow: hidden;
+                    }
+
+                    .pd-name {
+                        font-weight: 600;
+                        color: #111;
+                        font-size: 15px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        line-height: 1.2;
+                    }
+
+                    .pd-email {
+                        color: #777;
+                        font-size: 12px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        line-height: 1.4;
+                    }
+
+                    .pd-link {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        color: #333;
+                        text-decoration: none;
+                        padding: 12px;
+                        border-radius: 12px;
+                        transition: all 0.2s ease;
+                        font-size: 15px;
+                        font-weight: 500;
+                        cursor: pointer;
+                    }
+
+                    .pd-link:hover {
+                        background: rgba(255, 215, 0, 0.2);
+                        color: #111;
+                        transform: translateX(5px);
+                    }
+
+                    .pd-icon {
+                        font-size: 18px;
+                        width: 22px;
+                        text-align: center;
+                        color: #555;
+                        opacity: 0.9;
+                    }
+
+                    .pd-footer {
+                        padding-top: 8px;
+                        border-top: 1px solid #eee;
+                        margin-top: 8px;
+                    }
+
+                    .pd-logout-btn {
+                        width: 100%;
+                        border: none;
+                        padding: 12px;
+                        background: transparent;
+                        color: #e53935;
+                        border-radius: 12px;
+                        cursor: pointer;
+                        font-family: inherit;
+                        font-weight: 600;
+                        font-size: 15px;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        transition: all 0.2s ease;
+                    }
+
+                    .pd-logout-btn:hover {
+                        background: rgba(229, 57, 53, 0.1);
+                        transform: translateX(5px);
                     }
                 </style>
                 <div id="authContainer" style="display:flex; align-items:center; gap:12px;">
                     <button onclick="window.navigate('counselling')" style="background:#fed700; color:#111; padding:10px 22px; border-radius:999px; font-weight:700; font-size:14px; border:none; cursor:pointer; font-family:'Poppins',var(--font-main); transition:all 0.25s ease; white-space:nowrap;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(250,204,21,0.35)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Book Counselling</button>
                     <button class="btn btn-ghost" id="loginBtn" data-route="login" onclick="event.preventDefault(); window.navigate('login');" style="position:relative; z-index:2000; pointer-events:auto !important; display:flex; align-items:center; gap:8px;">Login</button>
                     
-                    <!-- Profile Dropdown (Modern Premium) -->
-                    <div id="profileDropdown" style="display:none; position:absolute; top:calc(100% + 15px); right:0; background:#FFFFFF; border-radius:16px; width:260px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1); z-index:2001; flex-direction:column; gap:12px;">
-                        <div style="padding-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.05);">
-                            <div id="pdName" style="font-weight:600; color:#111827; font-size:16px;">Vibecoding</div>
-                            <div id="pdEmail" style="color:#6B7280; font-size:13px;">vibecoding0001@gmail.com</div>
+                    <!-- Profile Dropdown (Modern Premium Desktop) -->
+                    <div id="profileDropdown" class="premium-profile-dropdown">
+                        <div class="pd-header">
+                            <div id="pdAvatar" class="pd-avatar">V</div>
+                            <div class="pd-info">
+                                <div id="pdName" class="pd-name">Vibecoding</div>
+                                <div id="pdEmail" class="pd-email">vibecoding0001@gmail.com</div>
+                            </div>
                         </div>
                         
-                        <a href="#" class="pd-link" onclick="window.navigate('cart'); document.getElementById('profileDropdown').classList.remove('active');" style="display:flex; align-items:center; gap:12px; color:var(--color-text); text-decoration:none; padding:10px 12px; border-radius:8px; transition:all 0.2s;">
-                            <span style="font-size:1.1rem; opacity:0.7;">🛒</span> <span style="font-weight:500; font-size:14px; flex:1;">Cart</span>
-                        </a>
-                        
-                        <a href="#" class="pd-link" onclick="window.navigate('profile'); document.getElementById('profileDropdown').classList.remove('active');" style="display:flex; align-items:center; gap:12px; color:var(--color-text); text-decoration:none; padding:10px 12px; border-radius:8px; transition:all 0.2s;">
-                            <span style="font-size:1.1rem; opacity:0.7;">📱</span> 
-                            <div style="flex:1;">
-                                <div style="font-weight:500; font-size:14px;">Phone</div>
-                                <div style="font-size:11px; color:#6B7280;">Not added</div>
-                            </div>
-                            <span style="font-size:0.9rem; opacity:0.5;">➕</span>
+                        <a href="#" class="pd-link" onclick="window.navigate('cart'); document.getElementById('profileDropdown').classList.remove('active');">
+                            <span class="pd-icon">🛒</span> <span>Cart</span>
                         </a>
 
-                        <a href="#" class="pd-link" onclick="window.navigate('wishlist'); document.getElementById('profileDropdown').classList.remove('active');" style="display:flex; align-items:center; gap:12px; color:var(--color-text); text-decoration:none; padding:10px 12px; border-radius:8px; transition:all 0.2s;">
-                            <span style="font-size:1.1rem; opacity:0.7;">✨</span> <span style="font-weight:500; font-size:14px; flex:1;">Wish List</span>
+                        <a href="#" class="pd-link" onclick="window.navigate('wishlist'); document.getElementById('profileDropdown').classList.remove('active');">
+                            <span class="pd-icon">✨</span> <span>Wish List</span>
                         </a>
 
-                        <a href="#" class="pd-link" onclick="window.navigate('orders'); document.getElementById('profileDropdown').classList.remove('active');" style="display:flex; align-items:center; gap:12px; color:var(--color-text); text-decoration:none; padding:10px 12px; border-radius:8px; transition:all 0.2s;">
-                            <span style="font-size:1.1rem; opacity:0.7;">📦</span> <span style="font-weight:500; font-size:14px; flex:1;">Orders</span>
+                        <a href="#" class="pd-link" onclick="window.navigate('orders'); document.getElementById('profileDropdown').classList.remove('active');">
+                            <span class="pd-icon">📦</span> <span>Orders</span>
                         </a>
                         
-                        <div style="padding-top: 4px; border-top: 1px solid rgba(0,0,0,0.05);">
-                            <button onclick="window.doLogout()" onmouseover="this.style.background='#FEF2F2'" onmouseout="this.style.background='transparent'" style="width:100%; border:none; padding:10px 12px; background:transparent; color:#EF4444; border-radius:8px; cursor:pointer; font-family:var(--font-main); font-weight:500; font-size:14px; display:flex; align-items:center; gap:12px; transition:0.2s;">
-                                <span style="font-size:1.1rem;">🚪</span> Sign out
+                        <div class="pd-footer">
+                            <button class="pd-logout-btn" onclick="window.doLogout()">
+                                <span class="pd-icon">🚪</span> Sign out
                             </button>
                         </div>
                     </div>
@@ -342,6 +448,8 @@
                         
                         if (pdName) pdName.innerText = name;
                         if (pdEmail) pdEmail.innerText = session.user.email;
+                        var pdAvatar = document.getElementById('pdAvatar');
+                        if (pdAvatar) pdAvatar.innerText = initial;
                         
                         loginBtn.onclick = function(e) {
                             e.preventDefault();
@@ -900,7 +1008,7 @@
                     <div class="cta-box glass-panel">
                         <h2>Start Your NEET Journey Today</h2>
                         <div class="cta-actions">
-                            <button class="btn btn-primary glow-hover scale-up" data-route="counselling">Book Counselling</button>
+                            <button class="btn btn-primary glow-hover scale-up" data-route="counselling" onclick="window.navigate('counselling')">Book Counselling</button>
                             <button class="btn btn-ghost scale-up">WhatsApp Us</button>
                         </div>
                     </div>
@@ -1705,7 +1813,7 @@
 
     <!-- Scripts -->
     <script src="js/supabase.js"></script>
-    <script src="js/app_v2.js?v=counter_fix"></script>
+    <script src="js/app_v2.js?v=auth_fix_17"></script>
 </body>
 </html>
 
