@@ -1,0 +1,101 @@
+<!-- Bulletproof Static Header Component -->
+<div id="header-container">
+    <nav class="navbar">
+        <!-- Logo -->
+        <a href="#" class="logo-btn" data-route="home" onclick="event.preventDefault(); window.navigate('home');">
+            <img src="assets/logo.jpg" alt="DC NEET Counselling" class="nav-logo-img">
+        </a>
+
+        <!-- Center Pill Navigation -->
+        <div class="nav-pill-horizontal">
+            <ul class="nav-pill-container" id="navLinks">
+                <li><a href="#" data-route="home" class="nav-pill-link active" onclick="event.preventDefault(); window.navigate('home');">Home</a></li>
+                <li><a href="#" data-route="ebooks" class="nav-pill-link" onclick="event.preventDefault(); window.navigate('ebooks');">eBooks</a></li>
+                <li><a href="#" data-route="about" class="nav-pill-link" onclick="event.preventDefault(); window.navigate('about');">About Us</a></li>
+                <li><a href="#" data-route="contact" class="nav-pill-link" onclick="event.preventDefault(); window.navigate('contact');">Contact Us</a></li>
+                <li><a href="#" data-route="privacy-policy" class="nav-pill-link" onclick="event.preventDefault(); window.navigate('privacy-policy');">Privacy Policy</a></li>
+            </ul>
+        </div>
+
+        <!-- Action Buttons / Auth -->
+        <div class="nav-actions" id="authContainer">
+            <a href="#" class="btn-book-counselling" onclick="event.preventDefault(); window.navigate('counselling');">Book Counselling</a>
+            
+            <div id="authWrapper" style="display: flex; align-items: center; gap: 12px; position: relative;">
+                <a href="#" id="loginBtn" class="btn-ghost" onclick="event.preventDefault(); window.navigate('login');" style="text-decoration: none; font-weight: 600; color: #4b5563;">Login</a>
+                
+                <!-- Profile Button (Shown when logged in) -->
+                <button id="profileDropdownBtn" class="profile-btn" style="display: none;" onclick="document.getElementById('profileDropdown').classList.toggle('active')">
+                    <span id="pdAvatarInitial">S</span>
+                </button>
+                
+                <!-- Profile Dropdown (Modern) -->
+                <div id="profileDropdown">
+                    <div class="pd-header">
+                        <div class="pd-avatar" id="pdHeaderAvatar">S</div>
+                        <div class="pd-info">
+                            <div class="pd-name" id="pdName">Student Name</div>
+                            <div class="pd-email" id="pdEmail">student@email.com</div>
+                        </div>
+                    </div>
+                    <div class="pd-menu">
+                        <div class="pd-link" onclick="window.navigate('dashboard')">👤 My Profile</div>
+                        <div class="pd-link" onclick="window.navigate('orders')">📦 Orders</div>
+                        <div class="pd-link" onclick="window.navigate('wishlist')">❤️ Wishlist</div>
+                    </div>
+                    <div class="pd-divider"></div>
+                    <button class="pd-logout" onclick="window.doLogout()">🚪 Sign Out</button>
+                </div>
+            </div>
+            
+            <!-- Mobile Hamburger Button -->
+            <button id="mobileMenuBtn" class="mobile-menu-btn" onclick="document.getElementById('mobileDrawer').classList.add('active'); document.getElementById('mobileDrawerOverlay').classList.add('active');">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Overlay -->
+    <div id="mobileDrawerOverlay" class="mobile-drawer-overlay" onclick="document.getElementById('mobileDrawer').classList.remove('active'); this.classList.remove('active');"></div>
+
+    <!-- Mobile Drawer (Center Card) -->
+    <div id="mobileDrawer" class="mobile-drawer">
+        <button class="mobile-close-btn" onclick="document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+
+        <div class="md-content">
+            <!-- Menu Items -->
+            <a href="#" class="md-link highlight" onclick="event.preventDefault(); window.navigate('home'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">Home</a>
+            <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('ebooks'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">eBooks</a>
+            <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('about'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">About Us</a>
+            <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('contact'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">Contact Us</a>
+            <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('privacy-policy'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">Privacy Policy</a>
+            
+            <div class="md-divider"></div>
+
+            <!-- CTA Buttons Output: Dynamic Auth Managed by index.html -->
+            <div class="md-cta-container">
+                <a href="#" class="md-cta-btn" onclick="event.preventDefault(); window.navigate('counselling'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">Book Counselling</a>
+                
+                <!-- Logged Out State Button -->
+                <div id="mdLoggedOutContent" style="display: flex; width: 100%;">
+                    <a href="#" class="md-login-btn" onclick="event.preventDefault(); window.navigate('login'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">Login</a>
+                </div>
+                
+                <!-- Logged In State Menu -->
+                <div id="mdLoggedInContent" style="display: none; width: 100%; flex-direction: column; gap: 12px;">
+                    <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('dashboard'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">👤 My Profile</a>
+                    <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('orders'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">📦 Orders</a>
+                    <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('wishlist'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">❤️ Wishlist</a>
+                    <button class="md-cta-btn logout" onclick="window.doLogout(); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">Sign Out</button>
+                    <!-- Hidden elements so we don't break existing index.html auth logic target elements -->
+                    <span id="mdAvatar" style="display:none;"></span>
+                    <span id="mdUsername" style="display:none;"></span>
+                    <span id="mdUserLinks" style="display:none;"></span>
+                    <span id="mdUserDivider" style="display:none;"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

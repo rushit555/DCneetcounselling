@@ -4,7 +4,7 @@ console.log("APP.JS LOADED - STARTING EXECUTION");
 const SUPABASE_URL  = 'https://qlaewtlbielpzlxyfrhg.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsYWV3dGxiaWVscHpseHlmcmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMjEwMjEsImV4cCI6MjA5MDU5NzAyMX0.YNobjm1U1bkflgQ5hRUbxXMo6LC9GPOFeuFXpN9vWKM';
 
-let supabase = null;
+
 const REDIRECT_URL = window.location.href.split('#')[0].split('?')[0];
 
 // ─── Core Router (Upgraded) ──────────────────────────────────────────────────
@@ -46,47 +46,17 @@ function bootApp() {
     // ══════════════════════════════════════════════════════════════════════
     // BULLETPROOF SUPABASE INIT + SESSION PERSISTENCE
     // ══════════════════════════════════════════════════════════════════════
-    (function initSupabaseAndAuth() {
-        // Step 1: Poll until the Supabase UMD SDK is loaded
-        if (!window.supabase || !window.supabase.createClient) {
-            console.log('⏳ Waiting for Supabase SDK...');
-            setTimeout(initSupabaseAndAuth, 100);
+    // ══════════════════════════════════════════════════════════════════════
+    // SUPABASE AUTH INITIALIZATION (Single Source of Truth)
+    // ══════════════════════════════════════════════════════════════════════
+    (function syncAuthState() {
+        if (!window.supabaseClient) {
+            setTimeout(syncAuthState, 100);
             return;
         }
 
-        // Step 2: Create the client ONCE (skip if already created)
-        if (!window.supabaseClient) {
-            try {
-                window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
-                    auth: {
-                        persistSession: true,
-                        autoRefreshToken: true,
-                        detectSessionInUrl: true
-                    }
-                });
-                supabase = window.supabaseClient;
-                console.log('✅ Supabase client created');
-            } catch (e) {
-                console.error('❌ Supabase client creation failed:', e);
-                return;
-            }
-        }
-
-        var client = window.supabaseClient;
-
-        // Step 3: Start auto-refresh (critical for page reloads!)
-        // This ensures the SDK picks up the stored refresh token and
-        // starts the background refresh timer.
-        if (client.auth.startAutoRefresh) {
-            client.auth.startAutoRefresh();
-            console.log('🔄 Auto-refresh started');
-        }
-
-        // Step 4: Use onAuthStateChange as SINGLE SOURCE OF TRUTH
-        // The INITIAL_SESSION event fires on first load with the
-        // restored session (or null if none). This replaces the
-        // separate getSession() call that caused race conditions.
-        client.auth.onAuthStateChange(function(event, session) {
+        // Use onAuthStateChange as SINGLE SOURCE OF TRUTH
+        window.supabaseClient.auth.onAuthStateChange(function(event, session) {
             console.log('🔔 Auth event:', event, session ? '(session exists)' : '(no session)');
 
             if (window.updateNavForAuth) {
@@ -94,8 +64,9 @@ function bootApp() {
             }
         });
 
-        console.log('✅ Auth listener registered, waiting for INITIAL_SESSION...');
+        console.log('✅ Auth sync active');
     })();
+
 
     // Wire up ALL [data-route] elements (links and buttons)
     document.querySelectorAll('[data-route]').forEach(function(el) {
@@ -170,7 +141,7 @@ function initAnimations() {
     // Small delay to ensure browser has completed initial layout
     setTimeout(function() {
         initCounters();
-        initTiltEffects();
+        // initTiltEffects(); // Disabled as per user request to keep cards static
         initCarousel();
     }, 150);
 }
@@ -476,9 +447,8 @@ window.handleEmailLogin = async function(e) {
                 showErr('⚠️ An account with this email already exists. Please switch to Sign In instead.');
             } else { 
                 if (res.data && res.data.session) {
-                    window.localStorage.setItem('sb-session', JSON.stringify(res.data.session));
                     showOk('✅ Account created successfully! Returning to home...');
-                    updateNavForAuth(res.data.session);
+                    if (window.updateNavForAuth) window.updateNavForAuth(res.data.session);
                     setTimeout(function() { window.navigate('home'); }, 1000);
                 } else {
                     showOk('✅ Account created! Please check your email for a confirmation link to sign in.');
@@ -490,10 +460,7 @@ window.handleEmailLogin = async function(e) {
             console.log('Sign in result:', res2);
             if (res2.error) { showErr(res2.error.message); }
             else {
-                if (res2.data && res2.data.session) {
-                    window.localStorage.setItem('sb-session', JSON.stringify(res2.data.session));
-                }
-                updateNavForAuth(res2.data.session);
+                if (window.updateNavForAuth) window.updateNavForAuth(res2.data.session);
                 window.navigate('home');
             }
         }
@@ -511,10 +478,11 @@ window.handleEmailLogin = async function(e) {
 
 // ─── Global Google Sign-In ────────────────────────────────────────────────────
 async function signInWithGoogle() {
-    if (!supabase) { alert('Auth service unavailable.'); return; }
-    var result = await supabase.auth.signInWithOAuth({ 
+    if (!window.supabaseClient) { alert('Auth service unavailable.'); return; }
+    var result = await window.supabaseClient.auth.signInWithOAuth({ 
         provider: 'google', 
         options: { 
+            redirectTo: window.location.href.split('#')[0].split('?')[0],
             queryParams: {
                 access_type: 'offline',
                 prompt: 'consent'

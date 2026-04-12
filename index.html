@@ -13,8 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/main.css?v=2">
+    <link rel="stylesheet" href="css/main.css?v=22">
     <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/header.css?v=4">
 
     <!-- Bulletproof Navigation Stub -->
     <script>
@@ -161,9 +162,94 @@
                 }
             }
         };
+
+        // ─── Header Auth Controller ──────────────────────────────────────────
+        window.updateNavForAuth = function(session) {
+            var user = session ? session.user : (window._authUser ? window._authUser : (window.supabaseClient ? null : undefined));
+            if (user === undefined) return; // Wait for client
+
+            window._authUser = user;
+            var lBtn = document.getElementById('loginBtn');
+            var pBtn = document.getElementById('profileDropdownBtn');
+            var pAv  = document.getElementById('pdAvatarInitial');
+            
+            // Mobile Drawer Elements
+            var mdLoggedOutContent = document.getElementById('mdLoggedOutContent');
+            var mdLoggedInContent = document.getElementById('mdLoggedInContent');
+            var mdAvatar = document.getElementById('mdAvatar');
+            var mdUsername = document.getElementById('mdUsername');
+            var mdUserLinks = document.getElementById('mdUserLinks');
+            var mdUserDivider = document.getElementById('mdUserDivider');
+
+            if (user) {
+                if (lBtn) lBtn.style.display = 'none';
+                if (pBtn) pBtn.style.display = 'flex';
+                
+                var name = (user.user_metadata && user.user_metadata.full_name) || user.email || 'S';
+                var initial = name.charAt(0).toUpperCase();
+                
+                if (pAv) pAv.innerText = initial;
+                
+                var pdHeaderAvatar = document.getElementById('pdHeaderAvatar');
+                if (pdHeaderAvatar) pdHeaderAvatar.innerText = initial;
+                
+                var pdName = document.getElementById('pdName');
+                if (pdName) pdName.innerText = (user.user_metadata && user.user_metadata.full_name) || 'Student';
+                
+                var pdEmail = document.getElementById('pdEmail');
+                if (pdEmail) pdEmail.innerText = user.email || '';
+                
+                // Mobile state updates
+                if (mdLoggedOutContent) mdLoggedOutContent.style.display = 'none';
+                if (mdLoggedInContent) mdLoggedInContent.style.display = 'flex';
+                if (mdUserLinks) mdUserLinks.style.display = 'flex';
+                if (mdUserDivider) mdUserDivider.style.display = 'block';
+                if (mdAvatar) mdAvatar.innerText = initial;
+                if (mdUsername) mdUsername.innerText = (user.user_metadata && user.user_metadata.full_name) || 'Student';
+                
+            } else {
+                if (lBtn) lBtn.style.display = 'block';
+                if (pBtn) pBtn.style.display = 'none';
+                
+                // Mobile state updates
+                if (mdLoggedOutContent) mdLoggedOutContent.style.display = 'flex';
+                if (mdLoggedInContent) mdLoggedInContent.style.display = 'none';
+                if (mdUserLinks) mdUserLinks.style.display = 'none';
+                if (mdUserDivider) mdUserDivider.style.display = 'none';
+            }
+        };
+
+        window.doLogout = function() {
+            if (window.supabaseClient) {
+                window.supabaseClient.auth.signOut().then(function() {
+                    window.location.hash = 'home';
+                    window.location.reload();
+                });
+            }
+        };
     </script>
 </head>
 <body>
+    <!-- Fresh Sticky Header Injection -->
+    <div id="header-root"></div>
+    <script>
+        // Use an IIFE to keep the scope clean and local
+        (function() {
+            function loadHeader() {
+                fetch('header.html?v=' + new Date().getTime())
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('header-root').innerHTML = data;
+                        // Trigger any necessary re-initialization (like Auth state)
+                        if (window.updateNavForAuth) window.updateNavForAuth();
+                    })
+                    .catch(err => console.error('Error loading header:', err));
+            }
+            // Load immediately
+            loadHeader();
+        })();
+    </script>
+
     <!-- Background Effects -->
     <div class="blobs-bg">
         <div class="blob"></div>
@@ -171,320 +257,6 @@
         <div class="blob blob-3"></div>
     </div>
     <div id="cursor-glow"></div>
-
-    <!-- Glassmorphism Navbar -->
-    <nav class="navbar glass-panel">
-        <div class="container nav-content">
-            <a href="#" class="logo" data-route="home">
-                <img src="assets/logo.jpg" alt="DC NEET Counselling Logo" class="nav-logo-img">
-            </a>
-
-            <!-- Mobile Toggle -->
-            <button class="mobile-toggle" id="mobileMenuBtn" aria-label="Toggle Menu">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
-
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#" data-route="home" onclick="event.preventDefault(); window.navigate('home');" class="active">Home</a></li>
-                <li><a href="#" data-route="ebooks" onclick="event.preventDefault(); window.navigate('ebooks');">eBooks</a></li>
-                <li><a href="#" data-route="about" onclick="event.preventDefault(); window.navigate('about');">About Us</a></li>
-                <li><a href="#" data-route="contact" onclick="event.preventDefault(); window.navigate('contact');">Contact Us</a></li>
-                <li><a href="#" data-route="privacy-policy" onclick="event.preventDefault(); window.navigate('privacy-policy');">Privacy Policy</a></li>
-                <li class="nav-divider"></li>
-                <li class="mobile-login-item" style="margin-bottom: 10px;">
-                    <button class="mobile-menu-btn" onclick="window.navigate('counselling'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('navLinks').classList.remove('active');" style="width: 100%; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #fed700, #fed700); color: #000; font-weight: 700; box-shadow: 0 6px 15px rgba(255,179,0,0.4); border: none; cursor: pointer; font-size: 16px; transition: transform 0.2s ease;">Book Counselling</button>
-                </li>
-                <li class="mobile-login-item">
-                    <button id="mobileLoginBtn" class="mobile-menu-btn" onclick="window.navigate('login'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('navLinks').classList.remove('active');" style="width: 100%; padding: 14px; border-radius: 14px; background: #fed700; color: #111; font-weight: 700; border: none; cursor: pointer; font-size: 16px; transition: transform 0.2s ease;">Login</button>
-                </li>
-            </ul>
-
-            <!-- Mobile Auth Profile Menu -->
-            <div id="mobileAuthMenu" class="mobile-auth-menu" style="display: none;">
-                <!-- Profile Header -->
-                <div class="mobile-profile-header">
-                    <div id="mobileAvatar" class="mobile-avatar">V</div>
-                    <div class="mobile-profile-info">
-                        <div id="mobileProfileName" class="mobile-profile-name">Student Name</div>
-                        <div id="mobileProfileEmail" class="mobile-profile-email">student@example.com</div>
-                    </div>
-                </div>
-                
-                <ul class="mobile-auth-links">
-                    <li><a href="#" data-route="home" onclick="event.preventDefault(); window.navigate('home'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('mobileAuthMenu').classList.remove('active');">Home</a></li>
-                    <li><a href="#" data-route="ebooks" onclick="event.preventDefault(); window.navigate('ebooks'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('mobileAuthMenu').classList.remove('active');">eBooks</a></li>
-                    <li><a href="#" data-route="counselling" onclick="event.preventDefault(); window.navigate('counselling'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('mobileAuthMenu').classList.remove('active');">Counselling</a></li>
-                    <li><a href="#" data-route="connector" onclick="event.preventDefault(); window.navigate('connector'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('mobileAuthMenu').classList.remove('active');">Connector</a></li>
-                    <li><a href="#" data-route="about" onclick="event.preventDefault(); window.navigate('about'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('mobileAuthMenu').classList.remove('active');">About</a></li>
-                </ul>
-
-                <div class="nav-divider"></div>
-                
-                <div class="mobile-auth-actions" style="margin-bottom: 5px;">
-                    <button class="mobile-menu-btn" onclick="window.navigate('wishlist'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('mobileAuthMenu').classList.remove('active');" style="width: 100%; padding: 14px; border-radius: 14px; background: #FFF8E1; color: #111; font-weight: 700; border: none; cursor: pointer; font-size: 16px; margin-bottom: 10px; transition: transform 0.2s ease;">✨ Wish List</button>
-                    <button class="mobile-menu-btn" onclick="window.navigate('cart'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('mobileAuthMenu').classList.remove('active');" style="width: 100%; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, #fed700, #fed700); color: #000; font-weight: 700; box-shadow: 0 6px 15px rgba(255,179,0,0.4); border: none; cursor: pointer; font-size: 16px; transition: transform 0.2s ease;">📦 Orders</button>
-                    <button class="mobile-menu-btn mobile-logout-btn" onclick="event.preventDefault(); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('mobileAuthMenu').classList.remove('active'); window.doLogout();" style="width: 100%; padding: 14px; border-radius: 14px; background: #FEE2E2; color: #DC2626; font-weight: 700; border: none; cursor: pointer; font-size: 16px; margin-top: 10px;">Sign Out</button>
-                </div>
-            </div>
-            <div class="nav-actions">
-                <style>
-                    /* 1. FIX PARENT OVERFLOW (CRITICAL) */
-                    header, .navbar, .nav-actions, .topbar { overflow: visible !important; }
-                    #authContainer { position: relative; overflow: visible !important; }
-
-                    /* PREMIUM PROFILE DROPDOWN (Desktop Only) */
-                    #profileDropdown {
-                        position: absolute;
-                        top: calc(100% + 15px);
-                        right: 0;
-                        width: 300px;
-                        background: #ffffff;
-                        border-radius: 20px;
-                        padding: 16px;
-                        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-                        z-index: 9999 !important;
-                        display: none;
-                        flex-direction: column;
-                        opacity: 0;
-                        transform-origin: top right;
-                        transform: scale(0.95) translateY(-5px);
-                        transition: all 0.2s ease;
-                        pointer-events: none;
-                    }
-                    
-                    #profileDropdown.active { 
-                        display: flex !important; 
-                        opacity: 1;
-                        transform: scale(1) translateY(0);
-                        pointer-events: auto;
-                    }
-
-                    .pd-header {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        padding-bottom: 12px;
-                        border-bottom: 1px solid #eee;
-                        margin-bottom: 8px;
-                    }
-
-                    .pd-avatar {
-                        width: 44px;
-                        height: 44px;
-                        background: #FFD700;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-weight: 600;
-                        font-size: 18px;
-                        color: #000;
-                        flex-shrink: 0;
-                    }
-
-                    .pd-info {
-                        display: flex;
-                        flex-direction: column;
-                        overflow: hidden;
-                    }
-
-                    .pd-name {
-                        font-weight: 600;
-                        color: #111;
-                        font-size: 15px;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        line-height: 1.2;
-                    }
-
-                    .pd-email {
-                        color: #777;
-                        font-size: 12px;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        line-height: 1.4;
-                    }
-
-                    .pd-link {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        color: #333;
-                        text-decoration: none;
-                        padding: 12px;
-                        border-radius: 12px;
-                        transition: all 0.2s ease;
-                        font-size: 15px;
-                        font-weight: 500;
-                        cursor: pointer;
-                    }
-
-                    .pd-link:hover {
-                        background: rgba(255, 215, 0, 0.2);
-                        color: #111;
-                        transform: translateX(5px);
-                    }
-
-                    .pd-icon {
-                        font-size: 18px;
-                        width: 22px;
-                        text-align: center;
-                        color: #555;
-                        opacity: 0.9;
-                    }
-
-                    .pd-footer {
-                        padding-top: 8px;
-                        border-top: 1px solid #eee;
-                        margin-top: 8px;
-                    }
-
-                    .pd-logout-btn {
-                        width: 100%;
-                        border: none;
-                        padding: 12px;
-                        background: transparent;
-                        color: #e53935;
-                        border-radius: 12px;
-                        cursor: pointer;
-                        font-family: inherit;
-                        font-weight: 600;
-                        font-size: 15px;
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        transition: all 0.2s ease;
-                    }
-
-                    .pd-logout-btn:hover {
-                        background: rgba(229, 57, 53, 0.1);
-                        transform: translateX(5px);
-                    }
-                </style>
-                <div id="authContainer" style="display:flex; align-items:center; gap:12px;">
-                    <button onclick="window.navigate('counselling')" style="background:#fed700; color:#111; padding:10px 22px; border-radius:999px; font-weight:700; font-size:14px; border:none; cursor:pointer; font-family:'Poppins',var(--font-main); transition:all 0.25s ease; white-space:nowrap;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 20px rgba(250,204,21,0.35)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">Book Counselling</button>
-                    <button class="btn btn-ghost" id="loginBtn" data-route="login" onclick="event.preventDefault(); window.navigate('login');" style="position:relative; z-index:2000; pointer-events:auto !important; display:flex; align-items:center; gap:8px;">Login</button>
-                    
-                    <!-- Profile Dropdown (Modern Premium Desktop) -->
-                    <div id="profileDropdown" class="premium-profile-dropdown">
-                        <div class="pd-header">
-                            <div id="pdAvatar" class="pd-avatar">V</div>
-                            <div class="pd-info">
-                                <div id="pdName" class="pd-name">Vibecoding</div>
-                                <div id="pdEmail" class="pd-email">vibecoding0001@gmail.com</div>
-                            </div>
-                        </div>
-                        
-                        <a href="#" class="pd-link" onclick="window.navigate('cart'); document.getElementById('profileDropdown').classList.remove('active');">
-                            <span class="pd-icon">🛒</span> <span>Cart</span>
-                        </a>
-
-                        <a href="#" class="pd-link" onclick="window.navigate('wishlist'); document.getElementById('profileDropdown').classList.remove('active');">
-                            <span class="pd-icon">✨</span> <span>Wish List</span>
-                        </a>
-
-                        <a href="#" class="pd-link" onclick="window.navigate('orders'); document.getElementById('profileDropdown').classList.remove('active');">
-                            <span class="pd-icon">📦</span> <span>Orders</span>
-                        </a>
-                        
-                        <div class="pd-footer">
-                            <button class="pd-logout-btn" onclick="window.doLogout()">
-                                <span class="pd-icon">🚪</span> Sign out
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <script>
-                // Define robustly inline to absolutely bypass caching
-                window.doLogout = function() {
-                    if (window.supabaseClient) {
-                        window.supabaseClient.auth.signOut().then(function() { 
-                            window.location.hash = 'home';
-                            window.location.reload(); 
-                        });
-                    }
-                };
-                window.updateNavForAuth = function(session) {
-                    var loginBtn = document.getElementById('loginBtn');
-                    var dropdown = document.getElementById('profileDropdown');
-                    var pdName = document.getElementById('pdName');
-                    var pdEmail = document.getElementById('pdEmail');
-                    var mobileLoginBtn = document.getElementById('mobileLoginBtn');
-                    
-                    if (!loginBtn) return;
-                    
-                    if (session && session.user) {
-                        window._authUser = session.user;
-                        var rawName = (session.user.user_metadata && session.user.user_metadata.full_name) || session.user.email.split('@')[0];
-                        // Capitalize logic
-                        var name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-                        var initial = rawName.charAt(0).toUpperCase();
-                        
-                        if (mobileLoginBtn) {
-                            mobileLoginBtn.innerText = 'Sign Out';
-                            mobileLoginBtn.onclick = function(e) { e.preventDefault(); window.doLogout(); };
-                        }
-                        
-                        // Mobile Profile Menu Population
-                        var mobileAvatar = document.getElementById('mobileAvatar');
-                        var mobileProfileName = document.getElementById('mobileProfileName');
-                        var mobileProfileEmail = document.getElementById('mobileProfileEmail');
-                        if (mobileAvatar) mobileAvatar.innerText = initial;
-                        if (mobileProfileName) mobileProfileName.innerText = name;
-                        if (mobileProfileEmail) mobileProfileEmail.innerText = session.user.email;
-                        
-                        // New Avatar Trigger
-                        loginBtn.innerHTML = `
-                            <span style="font-weight:600; font-size:16px;">${initial}</span>
-                            <span style="font-size:0.7rem; opacity:0.8;">▼</span>
-                        `;
-                        loginBtn.style.cssText = 'position:relative; z-index:2000; pointer-events:auto !important; display:flex; align-items:center; gap:8px; background:#fed700; color: #111; border-radius:999px; padding:8px 12px; border:none; cursor:pointer;';
-                        loginBtn.className = '';
-                        loginBtn.removeAttribute('data-route');
-                        
-                        if (pdName) pdName.innerText = name;
-                        if (pdEmail) pdEmail.innerText = session.user.email;
-                        var pdAvatar = document.getElementById('pdAvatar');
-                        if (pdAvatar) pdAvatar.innerText = initial;
-                        
-                        loginBtn.onclick = function(e) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            if (dropdown) {
-                                dropdown.classList.toggle('active');
-                            }
-                        };
-                        
-                        document.addEventListener('click', function(e) {
-                            if (dropdown && dropdown.classList.contains('active') && !loginBtn.contains(e.target) && !dropdown.contains(e.target)) {
-                                dropdown.classList.remove('active');
-                            }
-                        });
-                    } else {
-                        window._authUser = null;
-                        
-                        if (mobileLoginBtn) {
-                            mobileLoginBtn.innerText = 'Login';
-                            mobileLoginBtn.onclick = function(e) { e.preventDefault(); window.navigate('login'); document.getElementById('mobileMenuBtn').classList.remove('active'); document.getElementById('navLinks').classList.remove('active'); };
-                        }
-                        
-                        loginBtn.innerHTML = 'Login';
-                        loginBtn.className = 'btn btn-ghost';
-                        loginBtn.style = 'position:relative; z-index:2000; pointer-events:auto !important; display:flex; align-items:center; gap:8px;';
-                        loginBtn.setAttribute('data-route', 'login');
-                        if (dropdown) dropdown.style.display = 'none';
-                        loginBtn.onclick = function(e) { e.preventDefault(); window.navigate('login'); };
-                    }
-                };
-                </script>
-            </div>
-        </div>
-    </nav>
-    <div class="navbar-accent-bar"></div>
 
     <!-- Main Content Area for Routing -->
     <main id="app-root" class="page-transition">
@@ -1058,14 +830,14 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto;">
                         
                         <!-- Medical Counselling -->
-                        <div class="counselling-card fade-up" style="background: linear-gradient(135deg, #fed700, #fed700); padding: 24px; border-radius: 16px; color: #000; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease; cursor: pointer;" onclick="window.navigate('medical-counselling');">
+                        <div class="counselling-card fade-up" style="background: linear-gradient(135deg, #fed700, #fed700); padding: 24px; border-radius: 16px; color: #000; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease; cursor: pointer;" onclick="window.navigate('medical-pricing');">
                             <div style="font-size: 32px; margin-bottom: 12px;">🩺</div>
                             <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Medical Counselling</h3>
                             <p style="font-size: 14px; opacity: 0.8; margin: 0;">MBBS, BDS & top medical colleges guidance</p>
                         </div>
 
                         <!-- AYUSH Counselling -->
-                        <div class="counselling-card fade-up stagger-1" style="background: linear-gradient(135deg, #A5D6A7, #66BB6A); padding: 24px; border-radius: 16px; color: #000; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease; cursor: pointer;" onclick="window.navigate('ayush-counselling');">
+                        <div class="counselling-card fade-up stagger-1" style="background: linear-gradient(135deg, #A5D6A7, #66BB6A); padding: 24px; border-radius: 16px; color: #000; box-shadow: 0 8px 25px rgba(0,0,0,0.15); transition: transform 0.3s ease; cursor: pointer;" onclick="window.navigate('ayush-pricing');">
                             <div style="font-size: 32px; margin-bottom: 12px;">🌿</div>
                             <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">AYUSH Counselling</h3>
                             <p style="font-size: 14px; opacity: 0.8; margin: 0;">BAMS, BHMS, BUMS & AYUSH courses</p>
@@ -1097,64 +869,13 @@
             </section>
         </div>
 
-        <!-- Medical Counselling Options Section -->
-        <div id="section-medical-counselling" class="page-section" style="background: #FFF8E1; min-height: 100vh;">
-            <section style="padding: 120px 16px 80px;">
-                <div class="container fade-up">
-                    <button class="btn btn-ghost" onclick="window.navigate('counselling')" style="margin-bottom: 20px; color: #4B5563; font-weight: 600;">← Back to Options</button>
-                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; color: #222; text-align: center;">Medical Counselling Options</h2>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto;">
-                        
-                        <!-- MBBS -->
-                        <div class="med-option-card fade-up" style="padding: 16px; border-radius: 14px; background: #ffffff; border: 1px solid #FFE082; box-shadow: 0 4px 12px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease;" onclick="window.navigate('medical-pricing');">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="font-size: 24px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background: #FFF8E1; border-radius: 50%;">🩺</div>
-                                <div>
-                                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #111;">MBBS Counselling</h3>
-                                    <p style="font-size: 13px; opacity: 0.7; margin: 0; color: #444;">Top government & private MBBS colleges</p>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- BDS -->
-                        <div class="med-option-card fade-up stagger-1" style="padding: 16px; border-radius: 14px; background: #ffffff; border: 1px solid #FFE082; box-shadow: 0 4px 12px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease;" onclick="window.navigate('medical-pricing');">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="font-size: 24px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background: #FFF8E1; border-radius: 50%;">🦷</div>
-                                <div>
-                                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #111;">BDS Counselling</h3>
-                                    <p style="font-size: 13px; opacity: 0.7; margin: 0; color: #444;">Dental colleges & seat guidance</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- BSc Nursing -->
-                        <div class="med-option-card fade-up stagger-2" style="padding: 16px; border-radius: 14px; background: #ffffff; border: 1px solid #FFE082; box-shadow: 0 4px 12px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease;" onclick="window.navigate('medical-pricing');">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="font-size: 24px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background: #FFF8E1; border-radius: 50%;">👩‍⚕️</div>
-                                <div>
-                                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #111;">BSc Nursing</h3>
-                                    <p style="font-size: 13px; opacity: 0.7; margin: 0; color: #444;">Best nursing colleges & career path</p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <style>
-                    .med-option-card:hover {
-                        transform: scale(1.04);
-                        box-shadow: 0 8px 20px rgba(255, 193, 7, 0.15) !important;
-                    }
-                </style>
-            </section>
-        </div>
 
         <!-- Medical Pricing Section -->
         <div id="section-medical-pricing" class="page-section" style="background: linear-gradient(135deg, #FFF8E1, #FFE082); min-height: 100vh;">
             <section style="padding: 120px 16px 80px;">
                 <div class="container fade-up">
-                    <button class="btn btn-ghost" onclick="window.navigate('medical-counselling')" style="margin-bottom: 20px; color: #4B5563; font-weight: 600;">← Back to Options</button>
+                    <button class="btn btn-ghost" onclick="window.navigate('counselling')" style="margin-bottom: 20px; color: #4B5563; font-weight: 600;">← Back to Options</button>
                     <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 30px; color: #222; text-align: center;">MBBS / BDS / B.Sc Nursing Counselling</h2>
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto;">
@@ -1236,64 +957,11 @@
             </section>
         </div>
 
-        <!-- AYUSH Counselling Options Section -->
-        <div id="section-ayush-counselling" class="page-section" style="background: #F1F8E9; min-height: 100vh;">
-            <section style="padding: 120px 16px 80px;">
-                <div class="container fade-up">
-                    <button class="btn btn-ghost" onclick="window.navigate('counselling')" style="margin-bottom: 20px; color: #4B5563; font-weight: 600;">← Back to Options</button>
-                    <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; color: #1B5E20; text-align: center;">AYUSH Counselling Options</h2>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 12px; max-width: 600px; margin: 0 auto;">
-                        
-                        <!-- BAMS -->
-                        <div class="ayush-option-card fade-up" style="padding: 16px; border-radius: 14px; background: #ffffff; border: 1px solid #C8E6C9; box-shadow: 0 4px 12px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease;" onclick="window.navigate('ayush-pricing');">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="font-size: 24px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background: #F1F8E9; border-radius: 50%;">🌿</div>
-                                <div>
-                                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #111;">BAMS Counselling</h3>
-                                    <p style="font-size: 13px; opacity: 0.75; margin: 0; color: #444;">Ayurveda colleges & admission guidance</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- BHMS -->
-                        <div class="ayush-option-card fade-up stagger-1" style="padding: 16px; border-radius: 14px; background: #ffffff; border: 1px solid #C8E6C9; box-shadow: 0 4px 12px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease;" onclick="window.navigate('ayush-pricing');">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="font-size: 24px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background: #F1F8E9; border-radius: 50%;">💊</div>
-                                <div>
-                                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #111;">BHMS Counselling</h3>
-                                    <p style="font-size: 13px; opacity: 0.75; margin: 0; color: #444;">Homeopathy colleges & seat selection</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- BUMS -->
-                        <div class="ayush-option-card fade-up stagger-2" style="padding: 16px; border-radius: 14px; background: #ffffff; border: 1px solid #C8E6C9; box-shadow: 0 4px 12px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease;" onclick="window.navigate('ayush-pricing');">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <div style="font-size: 24px; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; background: #F1F8E9; border-radius: 50%;">🧪</div>
-                                <div>
-                                    <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #111;">BUMS Counselling</h3>
-                                    <p style="font-size: 13px; opacity: 0.75; margin: 0; color: #444;">Unani colleges & career guidance</p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                <style>
-                    .ayush-option-card:hover {
-                        transform: scale(1.04);
-                        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.15) !important;
-                    }
-                </style>
-            </section>
-        </div>
-
         <!-- AYUSH Pricing Section -->
         <div id="section-ayush-pricing" class="page-section" style="background: linear-gradient(135deg, #E8F5E9, #A5D6A7); min-height: 100vh;">
             <section style="padding: 120px 16px 80px;">
                 <div class="container fade-up">
-                    <button class="btn btn-ghost" onclick="window.navigate('ayush-counselling')" style="margin-bottom: 20px; color: #4B5563; font-weight: 600;">← Back to Options</button>
+                    <button class="btn btn-ghost" onclick="window.navigate('counselling')" style="margin-bottom: 20px; color: #4B5563; font-weight: 600;">← Back to Options</button>
                     <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 30px; color: #1B5E20; text-align: center;">AYUSH Counselling (BAMS / BHMS / BUMS)</h2>
                     
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto;">
@@ -1815,7 +1483,7 @@
 
     <!-- Scripts -->
     <script src="js/supabase.js"></script>
-    <script src="js/app_v2.js?v=auth_fix_18"></script>
+    <script src="js/supabaseClient.js"></script>
+    <script src="js/app_v2.js?v=auth_fix_20"></script>
 </body>
 </html>
-

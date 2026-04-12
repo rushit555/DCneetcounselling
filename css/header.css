@@ -1,0 +1,443 @@
+/* Header-Specific Styles - Isolated to prevent side effects */
+:root {
+    --header-height: 80px;
+}
+
+#header-container {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999999;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-family: 'Poppins', sans-serif;
+}
+
+.navbar {
+    height: var(--header-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Logo Section */
+.logo-btn {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 12px;
+}
+
+.nav-logo-img {
+    height: 72px;
+    width: 72px;
+    border-radius: 50%;
+    border: 3px solid #fef3c7;
+    object-fit: cover;
+    box-shadow: 0 0 15px rgba(254, 215, 0, 0.2);
+}
+
+/* Centered Navigation Pill */
+.nav-pill-horizontal {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.nav-pill-container {
+    background: #f3f4f6;
+    border-radius: 999px;
+    padding: 6px;
+    display: flex;
+    gap: 4px;
+    list-style: none;
+}
+
+.nav-pill-link {
+    text-decoration: none;
+    color: #4b5563;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 999px;
+    display: block;
+    transition: all 0.25s ease-in-out;
+}
+
+.nav-pill-link:hover {
+    background: #FFD700;
+    color: #000000;
+}
+
+.nav-pill-link.active {
+    background: #FFD700;
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Override overflow to prevent clipping of the dropdown */
+.navbar, .nav-actions, #authContainer, #authWrapper { 
+    overflow: visible !important; 
+}
+
+/* Profile Dropdown Container */
+#profileDropdown { 
+    position: absolute; 
+    top: calc(100% + 12px); 
+    right: 0; 
+    width: 300px; 
+    background: #ffffff; 
+    border-radius: 18px; 
+    padding: 16px; 
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15); 
+    z-index: 9999; 
+    display: none; 
+    flex-direction: column; 
+    gap: 12px; 
+}
+#profileDropdown.active {
+    display: flex !important;
+}
+
+/* Action Section */
+.nav-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.btn-book-counselling {
+    background: #fed700;
+    color: #000000;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.profile-btn {
+    width: 44px;
+    height: 44px;
+    background: #fed700;
+    color: #000000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.profile-btn::after {
+    content: '▼';
+    font-size: 8px;
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+}
+
+/* Profile Header Section */
+.pd-header { 
+    display: flex; 
+    gap: 12px; 
+    align-items: center; 
+    padding-bottom: 12px; 
+    border-bottom: 1px solid #eee; 
+}
+.pd-avatar { 
+    width: 44px; 
+    height: 44px; 
+    background: #fed700; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: 700; 
+    color: #000; 
+    font-size: 18px; 
+    flex-shrink: 0;
+}
+.pd-info {
+    overflow: hidden;
+}
+.pd-name { 
+    font-weight: 600; 
+    font-size: 15px; 
+    color: #111; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.pd-email { 
+    font-size: 12px; 
+    color: #777; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Menu Links */
+.pd-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.pd-link { 
+    padding: 12px; 
+    border-radius: 12px; 
+    font-size: 14px; 
+    font-weight: 500; 
+    cursor: pointer; 
+    transition: background 0.2s ease; 
+    color: #333;
+}
+.pd-link:hover { 
+    background: #f5f5f5; 
+}
+
+/* Divider */
+.pd-divider { 
+    height: 1px; 
+    background: #eee; 
+    margin: 4px 0; 
+}
+
+/* Logout Button */
+.pd-logout { 
+    width: 100%; 
+    padding: 12px; 
+    border-radius: 12px; 
+    background: #ffe5e5; 
+    color: #d32f2f; 
+    font-weight: 600; 
+    border: none; 
+    cursor: pointer; 
+    font-family: inherit;
+    transition: background 0.2s ease;
+}
+.pd-logout:hover {
+    background: #ffd6d6;
+}
+
+/* Auth State Management */
+#authContainerDesktop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#loginBtnDesktop {
+    color: #4b5563;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 12px;
+}
+
+#profileDropdownDesktop {
+    display: none;
+}
+
+/* Deskttop Only Buttons */
+.mobile-menu-btn {
+    display: none;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 1024px) {
+    .nav-pill-container {
+        display: none; /* Hide for mobile */
+    }
+    .btn-book-counselling,
+    #loginBtn,
+    #profileDropdownBtn,
+    #profileDropdown {
+        display: none !important;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+        background: transparent;
+        border: none;
+        color: #111;
+        cursor: pointer;
+        padding: 8px;
+    }
+}
+
+/* -------------------------------------
+   Mobile Full Screen Centered Card
+-------------------------------------- */
+.mobile-drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease-in-out;
+}
+
+.mobile-drawer-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-drawer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 85%;
+    max-width: 320px;
+    background: #ffffff;
+    z-index: 9999999;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s ease-in-out;
+}
+
+.mobile-drawer.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.md-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px; /* Space for close btn */
+}
+
+/* Mobile Links & Groupings */
+.md-link {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 14px;
+    border-radius: 12px;
+    transition: background 0.2s ease;
+    text-align: center;
+    display: block;
+}
+
+.md-link:hover {
+    background: #f5f5f5;
+}
+
+.md-link.highlight {
+    background: #FFD700;
+    color: #000;
+    font-weight: 700;
+}
+.md-link.highlight:hover {
+    background: #e6c200;
+}
+
+.md-divider {
+    height: 1px;
+    background: #eeeeee;
+    margin: 16px 0;
+    width: 100%;
+}
+
+/* Mobile CTA Buttons Container */
+.md-cta-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.md-cta-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    text-decoration: none;
+    background: #FFD700;
+    color: #000;
+    display: block;
+    font-family: inherit;
+    transition: background 0.2s ease;
+}
+
+.md-cta-btn:hover {
+    background: #e6c200;
+}
+
+.md-cta-btn.logout {
+    background: #ffe5e5;
+    color: #d32f2f;
+}
+.md-cta-btn.logout:hover {
+    background: #ffd6d6;
+}
+
+/* Dedicated Mobile Login Button Details */
+.md-login-btn {
+    width: 100%;
+    background: #FFFFFF;
+    color: #000000;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 999px;
+    border: 2px solid #FFD700;
+    box-shadow: 0 0 10px rgba(255,215,0,0.6), 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    margin-top: 10px; /* spacing_from_other_buttons */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.md-login-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 14px rgba(255,215,0,0.9), 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.md-login-btn:active {
+    transform: scale(0.97);
+    box-shadow: 0 0 6px rgba(255,215,0,0.5);
+}
