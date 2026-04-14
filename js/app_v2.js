@@ -14,7 +14,10 @@ window.navigate = function(route) {
     if (route === 'dashboard') {
         var dashEl = document.getElementById('section-dashboard');
         if (dashEl && typeof renderDashboard === 'function') {
-            dashEl.innerHTML = renderDashboard();
+            dashEl.innerHTML = '<div style="padding:120px 20px;text-align:center;">Loading...</div>';
+            renderDashboard().then(html => {
+                if (html) dashEl.innerHTML = html;
+            });
         }
     }
     
@@ -61,6 +64,17 @@ function bootApp() {
 
             if (window.updateNavForAuth) {
                 window.updateNavForAuth(session);
+            }
+            
+            // Ensure dashboard catches the loaded user session if we refreshed while on the dashboard
+            if (window.location.hash === '#dashboard') {
+                var dashEl = document.getElementById('section-dashboard');
+                if (dashEl && typeof renderDashboard === 'function') {
+                    dashEl.style.display = 'block';
+                    renderDashboard().then(function(html) {
+                        if (html) dashEl.innerHTML = html;
+                    });
+                }
             }
         });
 
@@ -289,41 +303,155 @@ function animateValue(el, start, end, duration) {
 }
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
-function renderDashboard() {
+async function renderDashboard() {
     var user = window._authUser || {};
-    var name = (user.user_metadata && user.user_metadata.full_name) || (user.email ? user.email.split('@')[0] : 'Student');
-    return '<section style="padding: 100px 0; min-height: 80vh;">' +
-        '<div class="container">' +
-        '<div style="display:flex;gap:30px;margin-top:20px;flex-wrap:wrap;">' +
-        '<div class="glass-panel" style="width:240px;padding:25px;flex-shrink:0;">' +
-        '<h3 style="margin-bottom:25px;font-weight:800;">My Profile</h3>' +
-        '<ul style="list-style:none;">' +
-        '<li style="margin-bottom:15px;"><a href="#" style="color:var(--color-primary);font-weight:600;text-decoration:none;">👤 ' + name + '</a></li>' +
-        '<li style="margin-bottom:15px; font-size:0.9rem; color:var(--color-text-muted);">' + (user.email || 'No email') + '</li>' +
-        '<hr style="border:0; border-top:1px solid var(--glass-border); margin:20px 0;">' +
-        '<li style="margin-bottom:15px;"><a href="#" style="color:var(--color-text-muted);text-decoration:none;">🎯 Predictor Results</a></li>' +
-        '<li style="margin-bottom:15px;"><a href="#" style="color:var(--color-text-muted);text-decoration:none;">📅 Booked Sessions</a></li>' +
-        '<li style="margin-bottom:15px;"><a href="#" style="color:var(--color-text-muted);text-decoration:none;">💳 My Payments</a></li>' +
-        '</ul></div>' +
-        '<div class="glass-panel" style="flex:1;min-width:280px;padding:40px;">' +
-        '<h2>Welcome back, ' + name + '! 👋</h2>' +
-        '<p style="color:var(--color-text-muted);margin-top:10px;">Here is your counselling overview and active orders.</p>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:30px;">' +
-        '<div class="glass-panel" style="padding:25px;">' +
-        '<h4>📞 Book a Session</h4>' +
-        '<p style="font-size:.9rem;color:var(--color-text-muted);margin:10px 0;">Schedule your 1-on-1 expert counselling.</p>' +
-        '<button class="btn btn-primary" style="padding:8px 20px;font-size:.9rem;" onclick="window.navigate(\'counselling\')">Book Now</button>' +
+    // Robust name detection: check metadata properties commonly used by Supabase/Google Auth
+    var meta = user.user_metadata || {};
+    var name = meta.full_name || meta.name || meta.display_name || (user.email ? user.email.split('@')[0] : 'Student');
+    var email = user.email || 'No email';
+    var mobile = '';
+    
+    // Fetch mobile number from the database 'users' table
+    if (user && user.id && window.supabaseClient) {
+        try {
+            var { data, error } = await window.supabaseClient.from('users').select('mobile_number').eq('id', user.id).single();
+            if (data && data.mobile_number) {
+                mobile = data.mobile_number;
+            }
+        } catch(err) {
+            console.error('Failed to fetch user profile:', err);
+        }
+    }
+    
+    var mobileDisplay = mobile ? mobile : 'No Mobile Number';
+    
+    // Inject local fallback styles to guarantee layout even if external CSS has issues
+    var localStyles = '<style>' +
+        '.dashboard-wrapper { display: flex !important; gap: 24px; padding: 120px 20px 60px; max-width: 1200px; margin: 0 auto; min-height: 80vh; }' +
+        '.dashboard-sidebar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }' +
+        '.dashboard-content { flex: 1; display: flex; flex-direction: column; gap: 32px; }' +
+        '@media (max-width: 900px) { .dashboard-wrapper { flex-direction: column !important; padding-top: 100px; } .dashboard-sidebar { width: 100%; } }' +
+    '</style>';
+
+    return localStyles + 
+    '<div class="dashboard-wrapper">' +
+        '<div class="dashboard-sidebar glass-panel">' +
+            '<h3 class="sidebar-title">My Profile</h3>' +
+            
+            '<div class="sidebar-user-card">' +
+                '<div class="sidebar-avatar">' + name.charAt(0).toUpperCase() + '</div>' +
+                '<div class="sidebar-user-info">' +
+                    '<div class="sidebar-user-name">' + name + '</div>' +
+                    '<div class="sidebar-user-email">' + email + '</div>' +
+                    '<div class="sidebar-user-mobile">' + mobileDisplay + '</div>' +
+                '</div>' +
+            '</div>' +
+            
+            '<nav class="sidebar-menu">' +
+                '<a href="#" class="menu-item" onclick="event.preventDefault(); window.openAddMobileModal();">' +
+                    '<span class="menu-icon">📱</span>' +
+                    '<span class="menu-label">Add Mobile Number</span>' +
+                '</a>' +
+                '<a href="#" class="menu-item" onclick="event.preventDefault(); window.navigate(\'orders\');">' +
+                    '<span class="menu-icon">📦</span>' +
+                    '<span class="menu-label">Order History</span>' +
+                '</a>' +
+                '<div class="menu-divider"></div>' +
+                '<a href="#" class="menu-item text-danger" onclick="event.preventDefault(); window.doLogout();">' +
+                    '<span class="menu-icon">🚪</span>' +
+                    '<span class="menu-label">Logout</span>' +
+                '</a>' +
+            '</nav>' +
         '</div>' +
-        '<div class="glass-panel" style="padding:25px;">' +
-        '<h4>⬆️ Upgrade Plan</h4>' +
-        '<p style="font-size:.9rem;color:var(--color-text-muted);margin:10px 0;">Get premium choice filling support.</p>' +
-        '<button class="btn btn-primary" style="padding:8px 20px;font-size:.9rem;" onclick="simulateRazorpay()">Pay with Razorpay</button>' +
-        '</div></div></div></div></div></section>';
+        
+        '<div class="dashboard-content glass-panel">' +
+            '<div class="content-header">' +
+                '<h2>Welcome back, ' + name + '! 👋</h2>' +
+                '<p style="color:var(--color-text-muted);margin-top:4px;">Manage your counselling journey and active orders here.</p>' +
+            '</div>' +
+            
+            '<div class="content-body">' +
+                '<div class="placeholder-section">' +
+                    '<div class="placeholder-icon">🚀</div>' +
+                    '<h3>Your journey starts here</h3>' +
+                    '<p style="color:var(--color-text-muted);margin:10px 0 20px;">Complete your profile or book a session to get started.</p>' +
+                    '<button class="btn btn-primary" onclick="window.navigate(\'counselling\')">Explore Services</button>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
 }
 
 function simulateRazorpay() {
     alert('Razorpay Checkout Simulated!');
 }
+
+window.openAddMobileModal = function() {
+    var modal = document.getElementById('addMobileModal');
+    var overlay = document.getElementById('modalOverlay');
+    if(modal) modal.style.display = 'block';
+    if(overlay) overlay.style.display = 'block';
+};
+
+window.closeAddMobileModal = function() {
+    var modal = document.getElementById('addMobileModal');
+    var overlay = document.getElementById('modalOverlay');
+    if(modal) modal.style.display = 'none';
+    if(overlay) overlay.style.display = 'none';
+    
+    var form = document.getElementById('addMobileForm');
+    if(form) form.reset();
+    
+    var err = document.getElementById('addMobileError');
+    if(err) err.style.display = 'none';
+};
+
+window.saveMobileNumber = async function() {
+    var numInp = document.getElementById('newMobileNumber');
+    var btn = document.getElementById('addMobileSubmitBtn');
+    var err = document.getElementById('addMobileError');
+    if (!numInp || !numInp.value) return;
+    var num = numInp.value.trim();
+    
+    if (!window.supabaseClient || !window._authUser) {
+        if(err) { err.innerText = "Auth service unavailable."; err.style.display = "block"; }
+        return;
+    }
+    
+    if(btn) { btn.disabled = true; btn.innerText = "Saving..."; }
+    if(err) err.style.display = "none";
+    
+    try {
+        var meta = window._authUser.user_metadata || {};
+        var fallbackEmail = window._authUser.email || '';
+        var fallbackName = meta.full_name || meta.name || meta.display_name || (fallbackEmail ? fallbackEmail.split('@')[0] : 'Student');
+        
+        var res = await window.supabaseClient.from('users').upsert({
+            id: window._authUser.id,
+            mobile_number: num,
+            email: fallbackEmail,
+            name: fallbackName
+        }, { onConflict: 'id' });
+        
+        if (res.error) throw res.error;
+        
+        window.closeAddMobileModal();
+        
+        if (window._authUser) {
+            var dashEl = document.getElementById('section-dashboard');
+            if (dashEl && dashEl.style.display === 'block') {
+                dashEl.innerHTML = '<div style="padding:120px 20px;text-align:center;">Refreshing...</div>';
+                renderDashboard().then(html => {
+                    if (html) dashEl.innerHTML = html;
+                });
+            }
+        }
+    } catch(e) {
+        if(err) { err.innerText = e.message || "Failed to save number."; err.style.display = "block"; }
+    } finally {
+        if(btn) { btn.disabled = false; btn.innerText = "Save Number"; }
+    }
+};
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 // ─── Auth ─────────────────────────────────────────────────────────────────────

@@ -441,3 +441,22 @@
     transform: scale(0.97);
     box-shadow: 0 0 6px rgba(255,215,0,0.5);
 }
+
+/* -------------------------------------
+   Mobile Profile Header Styles
+-------------------------------------- */
+#mdProfileHeader {
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+#mdAvatarVisible {
+    box-shadow: 0 4px 10px rgba(254, 215, 0, 0.3);
+    border: 2px solid #fff;
+}
+
+#mdMobileVisible {
+    font-family: monospace;
+    letter-spacing: -0.5px;
+}
+
