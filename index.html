@@ -774,6 +774,59 @@
                 })();
                 </script>
             </section>
+            <!-- Student Shorts Section -->
+            <style>
+            #shorts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 900px; margin: 0 auto; }
+            @media (max-width: 900px) { #shorts-grid { grid-template-columns: repeat(2, 1fr); } }
+            @media (max-width: 600px) { #shorts-grid { grid-template-columns: 1fr; max-width: 320px; } }
+            .short-card { border-radius: 20px; overflow: hidden; background: #000; box-shadow: 0 12px 30px rgba(0,0,0,0.15); position: relative; cursor: pointer; }
+            .short-card img { width: 100%; aspect-ratio: 9/16; object-fit: cover; display: block; }
+            .short-card .short-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.2s; }
+            .short-card:hover .short-play { background: rgba(255,204,0,0.9); transform: translate(-50%, -50%) scale(1.1); }
+            .short-card .short-play::after { content: ''; width: 0; height: 0; border-top: 12px solid transparent; border-bottom: 12px solid transparent; border-left: 18px solid #fff; margin-left: 4px; }
+            .short-card:hover .short-play::after { border-left-color: #000; }
+            </style>
+
+            <section id="dcneet-student-shorts" style="padding: 90px 20px; background: linear-gradient(135deg, #fff8cc, #ffe082); border-radius: 26px; margin: 60px 0; font-family: 'Poppins', var(--font-main);">
+                <div class="container" style="max-width: 1100px; margin: 0 auto;">
+                    
+                    <div style="text-align: center; margin-bottom: 45px;">
+                        <h2 style="font-size: 34px; font-weight: 800; color: #1f2937; margin-bottom: 10px;">Real Student Stories &#127919;</h2>
+                        <p style="color: #555; margin-top: 10px; font-size: 15px;">Watch real counselling results in action</p>
+                    </div>
+
+                    <div id="shorts-grid">
+                        
+                        <!-- Short 1 -->
+                        <div class="short-card" onclick="openVideoModal('https://www.youtube.com/embed/gg9jktcWyD4?autoplay=1')">
+                            <img src="https://img.youtube.com/vi/gg9jktcWyD4/maxresdefault.jpg" alt="Video Review" onerror="this.src='https://via.placeholder.com/270x480?text=Video+Review'">
+                            <div class="short-play"></div>
+                        </div>
+
+                        <!-- Short 2 -->
+                        <div class="short-card" onclick="openVideoModal('https://www.youtube.com/embed/rtYtKhuwZWs?autoplay=1')">
+                            <img src="https://img.youtube.com/vi/rtYtKhuwZWs/maxresdefault.jpg" alt="Video Review" onerror="this.src='https://via.placeholder.com/270x480?text=Video+Review'">
+                            <div class="short-play"></div>
+                        </div>
+
+                        <!-- Short 3 -->
+                        <div class="short-card" onclick="openVideoModal('https://www.youtube.com/embed/IL0JsOlMDQg?autoplay=1')">
+                            <img src="https://img.youtube.com/vi/IL0JsOlMDQg/maxresdefault.jpg" alt="Video Review" onerror="this.src='https://via.placeholder.com/270x480?text=Video+Review'">
+                            <div class="short-play"></div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- CTA -->
+                    <div style="text-align: center; margin-top: 40px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                        <p style="font-size: 16px; font-weight: 600; color: #1f2937; margin: 0;">Your rank can also get better results</p>
+                        <button onclick="window.navigate('counselling')" style="background: #000; color: #fff; padding: 12px 28px; border-radius: 30px; border: none; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 5px;">
+                            Start Counselling Now
+                        </button>
+                    </div>
+
+                </div>
+            </section>
 
             <section class="cta-section">
                 <div class="container fade-up">
@@ -1485,5 +1538,32 @@
     <script src="js/supabase.js"></script>
     <script src="js/supabaseClient.js"></script>
     <script src="js/app_v2.js?v=auth_fix_20"></script>
+
+    <!-- Video Testimonial Modal -->
+    <div id="videoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:9999; align-items:center; justify-content:center;" onclick="closeVideoModal(event)">
+        <button onclick="closeVideoModal()" style="position:absolute; top:18px; right:18px; background:#fff; color:#000; border:none; border-radius:50%; width:38px; height:38px; font-size:18px; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,0.3); z-index:10000;">&times;</button>
+        <div style="width:95%; max-width:420px; aspect-ratio:9/16; border-radius:18px; overflow:hidden; background:#000; position:relative;">
+            <iframe id="videoModalIframe" src="" style="width:100%; height:100%; border:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+    function openVideoModal(embedUrl) {
+        var modal = document.getElementById('videoModal');
+        var iframe = document.getElementById('videoModalIframe');
+        iframe.src = embedUrl;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeVideoModal(e) {
+        if (e && e.target !== document.getElementById('videoModal') && !e.target.closest('button')) return;
+        var modal = document.getElementById('videoModal');
+        var iframe = document.getElementById('videoModalIframe');
+        iframe.src = '';
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    </script>
+
 </body>
 </html>

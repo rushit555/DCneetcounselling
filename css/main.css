@@ -182,7 +182,6 @@ body {
 .btn-ghost {
     background: transparent;
     color: var(--color-text);
-    border: 1px solid var(--glass-border);
 }
 
 .btn-ghost:hover {
