@@ -132,7 +132,7 @@
             }
 
             try {
-                var redirectUrl = window.location.href.split('#')[0];
+                var redirectUrl = window.location.origin;
                 console.log('Calling signInWithOAuth, redirect:', redirectUrl);
                 var result = await window.supabaseClient.auth.signInWithOAuth({
                     provider: 'google',
@@ -199,6 +199,20 @@
                 
                 var pdEmail = document.getElementById('pdEmail');
                 if (pdEmail) pdEmail.innerText = user.email || '';
+
+                // Populate pdMobile
+                var pdMobile = document.getElementById('pdMobile');
+                if (pdMobile && window.supabaseClient) {
+                    window.supabaseClient.from('users').select('mobile_number').eq('id', user.id).single().then(function(res) {
+                        if (res.data && res.data.mobile_number) {
+                            pdMobile.innerText = res.data.mobile_number;
+                        } else {
+                            pdMobile.innerText = 'No Mobile Number';
+                        }
+                    }).catch(function() {
+                        pdMobile.innerText = 'No Mobile Number';
+                    });
+                }
                 
                 // Mobile state updates
                 if (mdLoggedOutContent) mdLoggedOutContent.style.display = 'none';
@@ -228,6 +242,33 @@
                 });
             }
         };
+    
+        // Global Modal Controls defined early to prevent 'Coming Soon' cache errors
+        window.openAddMobileModal = function() {
+            console.log("Calling openAddMobileModal...");
+            var modal = document.getElementById('addMobileModal');
+            var overlay = document.getElementById('modalOverlay');
+            if(modal) {
+                modal.style.display = 'block';
+                modal.style.zIndex = '10000001';
+            }
+            if(overlay) {
+                overlay.style.display = 'block';
+                overlay.style.zIndex = '10000000';
+            }
+        };
+
+        // Routing Hash Alias for #dash -> #dashboard
+        (function handleRoutingAliases() {
+            function checkHash() {
+                if (window.location.hash === '#dash') {
+                    console.log("Redirecting old hash #dash to #dashboard");
+                    window.location.hash = '#dashboard';
+                }
+            }
+            window.addEventListener('hashchange', checkHash);
+            checkHash();
+        })();
     </script>
 </head>
 <body>
@@ -1549,7 +1590,7 @@
     <!-- Scripts -->
     <script src="js/supabase.js"></script>
     <script src="js/supabaseClient.js"></script>
-    <script src="js/app_v2.js?v=fresh_fix_101"></script>
+    <script src="js/app_v2.js?v=force_refresh_102"></script>
 
     <!-- Video Testimonial Modal -->
     <div id="videoModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:9999; align-items:center; justify-content:center;" onclick="closeVideoModal(event)">

@@ -1,8 +1,8 @@
 // ─── Supabase Configuration ───────────────────────────────────────────────────
 console.log("APP.JS LOADED - STARTING EXECUTION");
 
-const SUPABASE_URL  = 'https://qlaewtlbielpzlxyfrhg.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsYWV3dGxiaWVscHpseHlmcmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMjEwMjEsImV4cCI6MjA5MDU5NzAyMX0.YNobjm1U1bkflgQ5hRUbxXMo6LC9GPOFeuFXpN9vWKM';
+const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
 
 const REDIRECT_URL = window.location.href.split('#')[0].split('?')[0];
@@ -349,17 +349,12 @@ async function renderDashboard() {
             
             '<nav class="sidebar-menu">' +
                 '<a href="#" class="menu-item" onclick="event.preventDefault(); window.openAddMobileModal();">' +
-                    '<span class="menu-icon">📱</span>' +
+                    '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span>' +
                     '<span class="menu-label">Add Mobile Number</span>' +
                 '</a>' +
                 '<a href="#" class="menu-item" onclick="event.preventDefault(); window.navigate(\'orders\');">' +
-                    '<span class="menu-icon">📦</span>' +
+                    '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"></path><path d="M1 3H23V8H1V3Z"></path><path d="M10 12H14"></path></svg></span>' +
                     '<span class="menu-label">Order History</span>' +
-                '</a>' +
-                '<div class="menu-divider"></div>' +
-                '<a href="#" class="menu-item text-danger" onclick="event.preventDefault(); window.doLogout();">' +
-                    '<span class="menu-icon">🚪</span>' +
-                    '<span class="menu-label">Logout</span>' +
                 '</a>' +
             '</nav>' +
         '</div>' +
@@ -383,14 +378,20 @@ async function renderDashboard() {
 }
 
 function simulateRazorpay() {
-    alert('Razorpay Checkout Simulated!');
+    console.log('Razorpay Checkout Simulated (No UI Alert)');
 }
 
 window.openAddMobileModal = function() {
     var modal = document.getElementById('addMobileModal');
     var overlay = document.getElementById('modalOverlay');
-    if(modal) modal.style.display = 'block';
-    if(overlay) overlay.style.display = 'block';
+    if(modal) {
+        modal.style.display = 'block';
+        modal.style.zIndex = '10000001';
+    }
+    if(overlay) {
+        overlay.style.display = 'block';
+        overlay.style.zIndex = '10000000';
+    }
 };
 
 window.closeAddMobileModal = function() {
@@ -435,12 +436,20 @@ window.saveMobileNumber = async function() {
         
         if (res.error) throw res.error;
         
+        // Success Feedback
+        alert("Mobile number saved successfully!");
+        
         window.closeAddMobileModal();
         
+        // Immediate UI Update
         if (window._authUser) {
+            // Update the display field in the dropdown if it exists
+            var pdMobile = document.getElementById('pdMobile');
+            if (pdMobile) pdMobile.innerText = num;
+
             var dashEl = document.getElementById('section-dashboard');
             if (dashEl && dashEl.style.display === 'block') {
-                dashEl.innerHTML = '<div style="padding:120px 20px;text-align:center;">Refreshing...</div>';
+                dashEl.innerHTML = '<div style="padding:120px 20px;text-align:center;"><div class="loading-spinner"></div><br>Updating Profile...</div>';
                 renderDashboard().then(html => {
                     if (html) dashEl.innerHTML = html;
                 });
