@@ -383,3 +383,10 @@ body.js-enabled .fade-up:not(.visible) {
 }
 
 /* ─── Login Page Stabilization ─────────────────────────────────────────── */
+
+/* ─── Footer Mobile Alignment Fix ────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .footer-contact, .footer-social {
+        justify-self: start !important;
+    }
+}
