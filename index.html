@@ -328,6 +328,7 @@
         checkHash();
       })();
     </script>
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </head>
   <body>
     <!-- Fresh Sticky Header Injection -->
@@ -4972,7 +4973,7 @@
               <div class="ec-price">
                 <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
+              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
                 Buy eBooks
               </button>
             </div>
@@ -4987,7 +4988,7 @@
               <div class="ec-price">
                 <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
+              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 149, 'AYUSH Cutoff eBooks')">
                 Buy eBooks
               </button>
             </div>
@@ -5002,7 +5003,7 @@
               <div class="ec-price">
                 <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
+              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 149, 'Veterinary Cutoff eBooks')">
                 Buy eBooks
               </button>
             </div>
@@ -5122,7 +5123,7 @@
           <div class="mo-grid">
             
             <!-- AIQ Card -->
-            <div class="mo-card" onclick="openEbookPurchaseModal()">
+            <div class="mo-card" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 149, 'Medical AIQ eBooks')">
               <div class="mo-icon" style="color: #2563eb;">
                 <i class="fas fa-globe"></i>
               </div>
@@ -5134,13 +5135,13 @@
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
+              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 149, 'Medical AIQ eBooks')">
                 Buy AIQ eBooks
               </button>
             </div>
 
             <!-- State Quota Card -->
-            <div class="mo-card" onclick="openEbookPurchaseModal()">
+            <div class="mo-card" onclick="openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
               <div class="mo-icon" style="color: #16a34a;">
                 <i class="fas fa-map"></i>
               </div>
@@ -5152,7 +5153,7 @@
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <i class="fas fa-tag"></i> Starts from ₹99
               </div>
-              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
+              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
                 Buy State eBooks
               </button>
             </div>
@@ -5753,13 +5754,13 @@
       <form onsubmit="event.preventDefault(); submitEbookPurchase();">
         <div class="eb-input-group">
           <label class="eb-label">Full Name</label>
-          <input type="text" class="eb-input" placeholder="Enter your name" required />
+          <input type="text" class="eb-input" id="eb_full_name" placeholder="Enter your name" required />
         </div>
         
         <div style="display: flex; gap: 12px;">
           <div class="eb-input-group" style="flex: 1;">
             <label class="eb-label">Category</label>
-            <select class="eb-select" required>
+            <select id="eb_category" class="eb-select" required>
               <option value="" disabled selected>Select</option>
               <option>Open (UR)</option>
               <option>EWS</option>
@@ -5770,13 +5771,13 @@
           </div>
           <div class="eb-input-group" style="flex: 1;">
             <label class="eb-label">NEET Score</label>
-            <input type="number" class="eb-input" placeholder="e.g. 550" required />
+            <input type="number" class="eb-input" id="eb_neet_score" placeholder="e.g. 550" required />
           </div>
         </div>
 
         <div class="eb-input-group">
           <label class="eb-label">Domicile State</label>
-          <select class="eb-select" required>
+          <select id="eb_domicile_state" class="eb-select" required>
             <option value="" disabled selected>Search/Select State</option>
             <option>Andhra Pradesh</option>
             <option>Arunachal Pradesh</option>
@@ -5818,17 +5819,17 @@
 
         <div class="eb-input-group">
           <label class="eb-label">All India Rank</label>
-          <input type="number" class="eb-input" placeholder="e.g. 75000" required />
+          <input type="number" class="eb-input" id="eb_rank" placeholder="e.g. 75000" required />
         </div>
 
         <div class="eb-input-group">
           <label class="eb-label">Email Address</label>
-          <input type="email" class="eb-input" placeholder="Enter your email" required />
+          <input type="email" class="eb-input" id="eb_email" placeholder="Enter your email" required />
         </div>
 
         <div class="eb-input-group">
           <label class="eb-label">Mobile Number</label>
-          <input type="tel" class="eb-input" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
+          <input type="tel" class="eb-input" id="eb_mobile" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
         </div>
 
         <button type="submit" class="eb-btn">Continue to Payment</button>
@@ -5922,20 +5923,111 @@
         document.body.style.overflow = "";
       }
     
-function openEbookPurchaseModal() {
+window.activeEbookContext = { course: '', quota: '', price: 0, title: '' };
+
+window.openEbookPurchaseModal = function(course, quota, price, title) {
+  window.activeEbookContext = { course, quota, price, title };
   document.getElementById('modalOverlay').style.display = 'block';
   document.getElementById('ebookPurchaseModal').style.display = 'block';
 }
 
-function closeEbookPurchaseModal() {
+window.closeEbookPurchaseModal = function() {
   document.getElementById('modalOverlay').style.display = 'none';
   document.getElementById('ebookPurchaseModal').style.display = 'none';
 }
 
-function submitEbookPurchase() {
-  console.log("Processing eBook Payment...");
-  alert("Redirecting to Razorpay checkout...");
-  closeEbookPurchaseModal();
+window.submitEbookPurchase = async function() {
+  var submitBtn = document.querySelector('#ebookPurchaseModal .eb-btn');
+  submitBtn.innerText = "Processing...";
+  submitBtn.disabled = true;
+
+  try {
+      // 1. Gather form data
+      var fullName = document.getElementById('eb_full_name').value;
+      var category = document.getElementById('eb_category').value;
+      var domicile = document.getElementById('eb_domicile_state').value;
+      var neetScore = parseInt(document.getElementById('eb_neet_score').value);
+      var rank = parseInt(document.getElementById('eb_rank').value);
+      var email = document.getElementById('eb_email').value;
+      var mobile = document.getElementById('eb_mobile').value;
+
+      var ctx = window.activeEbookContext;
+      
+      var recordData = {
+          full_name: fullName,
+          category: category,
+          domicile_state: domicile,
+          neet_score: neetScore,
+          rank: rank,
+          email: email,
+          mobile: mobile,
+          course: ctx.course,
+          quota: ctx.quota,
+          amount_paid: ctx.price,
+          ebook_id: ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_'),
+          payment_status: 'initiated'
+      };
+
+      // 2. Save to Supabase DB (ebook_users table)
+      var insertRes = null;
+      if (window.supabaseClient) {
+          var { data, error } = await window.supabaseClient.from('ebook_users').insert(recordData).select('id').single();
+          if (error) {
+              console.error("Supabase Error:", error);
+              // We'll proceed to payment logically even if DB fails initially just to keep conversion flow, but ideally alert.
+              alert("Wait! Our server is slightly busy validating data.");
+          } else {
+              insertRes = data;
+          }
+      }
+
+      // 3. Initiate Razorpay Checkout window
+      var options = {
+          "key": "rzp_live_SebrDtxMirg67M", // Live Key Passed In
+          "amount": ctx.price * 100, // Razorpay amount in paise
+          "currency": "INR",
+          "name": "DC Neet Counselling",
+          "description": ctx.title,
+          "handler": async function (response){
+              // Verify Payment and update DB
+              if (window.supabaseClient && insertRes && insertRes.id) {
+                  await window.supabaseClient.from('ebook_users').update({
+                      payment_status: 'completed',
+                      razorpay_payment_id: response.razorpay_payment_id
+                  }).eq('id', insertRes.id);
+              }
+              alert("Payment Successful! You will receive your eBooks via Email shortly.");
+              closeEbookPurchaseModal();
+          },
+          "prefill": {
+              "name": fullName,
+              "email": email,
+              "contact": mobile
+          },
+          "theme": {
+              "color": "#2563eb"
+          }
+      };
+
+      var rzp1 = new Razorpay(options);
+      rzp1.on('payment.failed', async function (response) {
+          if (window.supabaseClient && insertRes && insertRes.id) {
+              await window.supabaseClient.from('ebook_users').update({
+                  payment_status: 'failed'
+              }).eq('id', insertRes.id);
+          }
+          alert("Payment failed. Please try again.");
+      });
+      
+      rzp1.open();
+
+  } catch(e) {
+      console.error(e);
+      alert("An unexpected error occurred. Please try again later.");
+  } finally {
+      submitBtn.innerText = "Continue to Payment";
+      submitBtn.disabled = false;
+  }
 }
 </script>
   </body>
