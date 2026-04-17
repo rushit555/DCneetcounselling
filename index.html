@@ -4820,999 +4820,337 @@
       <div id="section-dashboard" class="page-section"></div>
 
       <!-- eBooks Section -->
-      <!-- eBooks Section -->
       <div
         id="section-ebooks"
         class="page-section"
         style="
           background: #f8fafc;
-          padding: 12px;
-          font-family: &quot;Poppins&quot;, var(--font-main);
+          padding: 16px;
+          font-family: 'Poppins', var(--font-main);
           min-height: 100vh;
         "
       >
+        <style>
+          .ebook-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(2, 1fr);
+          }
+          @media (min-width: 768px) {
+            .ebook-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+          @media (min-width: 1024px) {
+            .ebook-grid {
+              grid-template-columns: repeat(4, 1fr);
+            }
+          }
+          .ebook-card-v2 {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            /* Add transparent border by default to prevent layout shift on hover */
+            border: 1px solid transparent;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+          }
+          .ebook-card-v2:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            border-color: #e2e8f0;
+          }
+          .ec-badge {
+            position: absolute;
+            top: -8px;
+            right: 12px;
+            background: #ef4444;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+          }
+          .ec-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 12px;
+          }
+          .ec-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 0 0 4px 0;
+          }
+          .ec-courses {
+            font-size: 12px;
+            color: #64748b;
+            margin: 0 0 8px 0;
+          }
+          .ec-price {
+            font-size: 11px;
+            font-weight: 500;
+            color: #16a34a;
+            margin: 0 0 14px 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+          .ec-btn {
+            margin-top: auto;
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            transition: filter 0.2s;
+          }
+          .ec-btn:hover {
+            filter: brightness(1.1);
+          }
+        </style>
+
         <div
           style="
             max-width: 1200px;
             margin: 0 auto;
-            padding-top: 80px;
-            padding-bottom: 80px;
+            padding-top: 60px;
+            padding-bottom: 60px;
+            text-align: center;
           "
         >
-          <!-- Extras: Sticky Header with Search & Filter -->
-          <div
-            style="
-              position: sticky;
-              top: 70px;
-              background: rgba(248, 250, 252, 0.95);
-              backdrop-filter: blur(8px);
-              z-index: 100;
-              padding: 10px 0;
-              margin-bottom: 20px;
-              display: flex;
-              flex-direction: column;
-              gap: 10px;
-            "
-          >
-            <div style="display: flex; gap: 10px; align-items: center">
-              <input
-                type="text"
-                placeholder="Search eBooks by Course or Category..."
-                style="
-                  flex: 1;
-                  padding: 12px 16px;
-                  border-radius: 12px;
-                  border: 1px solid #e2e8f0;
-                  outline: none;
-                  font-size: 14px;
-                  font-family: inherit;
-                  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-                "
-              />
-              <button
-                style="
-                  padding: 12px 16px;
-                  border-radius: 12px;
-                  background: #2563eb;
-                  color: #fff;
-                  border: none;
-                  font-weight: 600;
-                  font-size: 14px;
-                  cursor: pointer;
-                  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-                "
-              >
-                Search
+          <!-- Header -->
+          <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 28px; font-weight: 800; color: #1e293b; margin: 0 0 6px 0;">Explore eBooks</h2>
+            <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Cutoff Data & Counselling Guides</p>
+          </div>
+
+          <!-- Grid Category Layout -->
+          <div class="ebook-grid">
+            
+            <!-- Medical -->
+            <div class="ebook-card-v2" onclick="window.navigate('medical-options')">
+              <div class="ec-badge">Popular</div>
+              <div class="ec-icon" style="color: #2563eb;">
+                <i class="fas fa-stethoscope"></i>
+              </div>
+              <h3 class="ec-title">Medical</h3>
+              <p class="ec-courses">MBBS, BDS</p>
+              <div class="ec-price">
+                <i class="fas fa-tag"></i> Starts from ₹99
+              </div>
+              <button class="ec-btn" style="background: #2563eb;" onclick="event.stopPropagation(); window.navigate('medical-options')">
+                View eBooks
               </button>
             </div>
-            <div
-              style="
-                display: flex;
-                gap: 8px;
-                overflow-x: auto;
-                padding-bottom: 4px;
-                scrollbar-width: none;
-              "
-            >
-              <span
-                style="
-                  background: #e2e8f0;
-                  color: #334155;
-                  padding: 6px 12px;
-                  border-radius: 20px;
-                  font-size: 12px;
-                  font-weight: 600;
-                  white-space: nowrap;
-                  cursor: pointer;
-                "
-                >Filters:</span
-              >
-              <span
-                style="
-                  border: 1px solid #cbd5e1;
-                  color: #475569;
-                  padding: 6px 12px;
-                  border-radius: 20px;
-                  font-size: 12px;
-                  font-weight: 500;
-                  white-space: nowrap;
-                  cursor: pointer;
-                "
-                >Category</span
-              >
-              <span
-                style="
-                  border: 1px solid #cbd5e1;
-                  color: #475569;
-                  padding: 6px 12px;
-                  border-radius: 20px;
-                  font-size: 12px;
-                  font-weight: 500;
-                  white-space: nowrap;
-                  cursor: pointer;
-                "
-                >Price</span
-              >
-              <span
-                style="
-                  border: 1px solid #cbd5e1;
-                  color: #475569;
-                  padding: 6px 12px;
-                  border-radius: 20px;
-                  font-size: 12px;
-                  font-weight: 500;
-                  white-space: nowrap;
-                  cursor: pointer;
-                "
-                >Course</span
-              >
+
+            <!-- Dental -->
+            <div class="ebook-card-v2" onclick="console.log('open_category: dental')">
+              <div class="ec-icon" style="color: #06b6d4;">
+                <i class="fas fa-tooth"></i>
+              </div>
+              <h3 class="ec-title">Dental</h3>
+              <p class="ec-courses">BDS</p>
+              <div class="ec-price">
+                <i class="fas fa-tag"></i> Starts from ₹99
+              </div>
+              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); console.log('open_ebooks')">
+                View eBooks
+              </button>
             </div>
+
+            <!-- AYUSH -->
+            <div class="ebook-card-v2" onclick="console.log('open_category: ayush')">
+              <div class="ec-icon" style="color: #16a34a;">
+                <i class="fas fa-leaf"></i>
+              </div>
+              <h3 class="ec-title">AYUSH</h3>
+              <p class="ec-courses">BAMS, BHMS, BSMS, BUMS</p>
+              <div class="ec-price">
+                <i class="fas fa-tag"></i> Starts from ₹99
+              </div>
+              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); console.log('open_ebooks')">
+                View eBooks
+              </button>
+            </div>
+
+            <!-- Veterinary -->
+            <div class="ebook-card-v2" onclick="console.log('open_category: veterinary')">
+              <div class="ec-icon" style="color: #f59e0b;">
+                <i class="fas fa-paw"></i>
+              </div>
+              <h3 class="ec-title">Veterinary</h3>
+              <p class="ec-courses">BVSc</p>
+              <div class="ec-price">
+                <i class="fas fa-tag"></i> Starts from ₹99
+              </div>
+              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); console.log('open_ebooks')">
+                View eBooks
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- Medical Options Screen -->
+      <div
+        id="section-medical-options"
+        class="page-section"
+        style="
+          background: #f8fafc;
+          padding: 20px;
+          font-family: 'Poppins', var(--font-main);
+          min-height: 100vh;
+          display: none;
+        "
+      >
+        <style>
+          .mo-grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 1fr;
+          }
+          @media (min-width: 768px) {
+            .mo-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+          .mo-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+          }
+          .mo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+          }
+          .mo-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 16px;
+          }
+          .mo-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 6px 0;
+          }
+          .mo-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin: 0 0 16px 0;
+          }
+          .mo-highlight {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+          }
+          .mo-btn {
+            margin-top: auto;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            color: #ffffff;
+            cursor: pointer;
+            transition: filter 0.2s;
+          }
+          .mo-btn:hover {
+            filter: brightness(1.1);
+          }
+        </style>
+
+        <div
+          style="
+            max-width: 800px;
+            margin: 0 auto;
+            padding-top: 80px;
+            padding-bottom: 80px;
+            text-align: center;
+          "
+        >
+          <!-- Back Button -->
+          <div style="text-align: left; margin-bottom: 20px;">
+            <button onclick="window.navigate('ebooks')" style="background: transparent; border: none; color: #64748b; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+              <i class="fas fa-arrow-left"></i> Back to eBooks
+            </button>
           </div>
 
           <!-- Header -->
-          <div style="text-align: left; margin: 24px 0 32px 0">
-            <h2
-              style="
-                font-size: 32px;
-                font-weight: 800;
-                color: #1e293b;
-                margin-bottom: 8px;
-              "
-            >
-              Explore eBooks
-            </h2>
-            <p style="font-size: 16px; color: #64748b; font-weight: 500">
-              Category-wise Cutoff Data & Counselling Guides
-            </p>
+          <div style="margin-bottom: 40px;">
+            <h2 style="font-size: 32px; font-weight: 800; color: #1e293b; margin: 0 0 8px 0;">Medical eBooks</h2>
+            <p style="font-size: 16px; color: #64748b; margin: 0; font-weight: 500;">Select Quota Type</p>
           </div>
 
-          <!-- Categories Container -->
-          <div style="display: flex; flex-direction: column; gap: 32px">
-            <!-- MEDICAL CATEGORY -->
-            <div
-              style="
-                border-radius: 16px;
-                padding: 16px;
-                background: #ffffff;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-                border-left: 5px solid #2563eb;
-              "
-            >
-              <h3
-                style="
-                  font-size: 22px;
-                  font-weight: 700;
-                  color: #1e293b;
-                  display: flex;
-                  align-items: center;
-                  gap: 10px;
-                  margin-bottom: 20px;
-                "
-              >
-                <span style="color: #2563eb; font-size: 24px">🩺</span> Medical
-              </h3>
-
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                  gap: 16px;
-                "
-              >
-                <!-- MBBS Subcategory -->
-                <div
-                  style="
-                    background: #f8fafc;
-                    border-radius: 14px;
-                    padding: 14px;
-                    border: 1px solid #f1f5f9;
-                  "
-                >
-                  <div
-                    style="
-                      display: flex;
-                      justify-content: space-between;
-                      align-items: center;
-                      margin-bottom: 16px;
-                    "
-                  >
-                    <h4
-                      style="
-                        font-size: 17px;
-                        font-weight: 700;
-                        color: #334155;
-                        margin: 0;
-                      "
-                    >
-                      MBBS eBooks
-                    </h4>
-                    <span
-                      style="
-                        background: #ef4444;
-                        color: white;
-                        padding: 4px 10px;
-                        border-radius: 12px;
-                        font-size: 11px;
-                        font-weight: 700;
-                        letter-spacing: 0.5px;
-                      "
-                      >High Demand</span
-                    >
-                  </div>
-                  <div
-                    style="
-                      width: 100%;
-                      height: 120px;
-                      border-radius: 10px;
-                      overflow: hidden;
-                      margin-bottom: 15px;
-                    "
-                  >
-                    <img
-                      src="/images/mbbs.jpg"
-                      alt="MBBS"
-                      style="width: 100%; height: 100%; object-fit: cover"
-                      onerror="
-                        this.src =
-                          'https://via.placeholder.com/300x120?text=MBBS+eBooks'
-                      "
-                    />
-                  </div>
-
-                  <div style="display: flex; flex-direction: column; gap: 14px">
-                    <!-- Ebook Card -->
-                    <div
-                      style="
-                        background: #ffffff;
-                        border-radius: 14px;
-                        padding: 16px;
-                        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                        position: relative;
-                      "
-                    >
-                      <span
-                        style="
-                          position: absolute;
-                          top: -12px;
-                          right: 12px;
-                          background: #f59e0b;
-                          color: #fff;
-                          font-size: 11px;
-                          font-weight: 700;
-                          padding: 4px 10px;
-                          border-radius: 8px;
-                          box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
-                        "
-                        >Best Seller</span
-                      >
-                      <h5
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #0f172a;
-                          margin: 0;
-                          padding-top: 6px;
-                          line-height: 1.4;
-                        "
-                      >
-                        MBBS All Category Cutoff 2025
-                      </h5>
-                      <ul
-                        style="
-                          padding-left: 20px;
-                          margin: 6px 0;
-                          font-size: 13px;
-                          color: #475569;
-                          line-height: 1.6;
-                        "
-                      >
-                        <li>All India Quota + State Data</li>
-                        <li>Category-wise Cutoff</li>
-                        <li>Top College Analysis</li>
-                      </ul>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: 10px;
-                          margin-top: auto;
-                          padding-top: 8px;
-                        "
-                      >
-                        <span
-                          style="
-                            font-size: 20px;
-                            font-weight: 800;
-                            color: #2563eb;
-                          "
-                          >₹499</span
-                        >
-                        <span
-                          style="
-                            font-size: 14px;
-                            text-decoration: line-through;
-                            color: #94a3b8;
-                            font-weight: 500;
-                          "
-                          >₹999</span
-                        >
-                        <button
-                          class="glow-hover scale-up"
-                          style="
-                            margin-left: auto;
-                            background: #2563eb;
-                            color: #ffffff;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 10px;
-                            font-weight: 600;
-                            font-size: 14px;
-                            cursor: pointer;
-                          "
-                        >
-                          Buy Now
-                        </button>
-                      </div>
-                    </div>
-                    <!-- Ebook Card -->
-                    <div
-                      style="
-                        background: #ffffff;
-                        border-radius: 14px;
-                        padding: 16px;
-                        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                      "
-                    >
-                      <h5
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #0f172a;
-                          margin: 0;
-                          line-height: 1.4;
-                        "
-                      >
-                        MBBS UR Category Cutoff
-                      </h5>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: 10px;
-                          margin-top: auto;
-                          padding-top: 4px;
-                        "
-                      >
-                        <span
-                          style="
-                            font-size: 20px;
-                            font-weight: 800;
-                            color: #2563eb;
-                          "
-                          >₹199</span
-                        >
-                        <button
-                          class="scale-up"
-                          style="
-                            margin-left: auto;
-                            background: #f1f5f9;
-                            color: #2563eb;
-                            border: 1px solid #cbd5e1;
-                            padding: 10px 20px;
-                            border-radius: 10px;
-                            font-weight: 600;
-                            font-size: 14px;
-                            cursor: pointer;
-                          "
-                        >
-                          Buy Now
-                        </button>
-                      </div>
-                    </div>
-                    <!-- Ebook Card -->
-                    <div
-                      style="
-                        background: #ffffff;
-                        border-radius: 14px;
-                        padding: 16px;
-                        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                      "
-                    >
-                      <h5
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #0f172a;
-                          margin: 0;
-                          line-height: 1.4;
-                        "
-                      >
-                        MBBS OBC Category Cutoff
-                      </h5>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: 10px;
-                          margin-top: auto;
-                          padding-top: 4px;
-                        "
-                      >
-                        <span
-                          style="
-                            font-size: 20px;
-                            font-weight: 800;
-                            color: #2563eb;
-                          "
-                          >₹199</span
-                        >
-                        <button
-                          class="scale-up"
-                          style="
-                            margin-left: auto;
-                            background: #f1f5f9;
-                            color: #2563eb;
-                            border: 1px solid #cbd5e1;
-                            padding: 10px 20px;
-                            border-radius: 10px;
-                            font-weight: 600;
-                            font-size: 14px;
-                            cursor: pointer;
-                          "
-                        >
-                          Buy Now
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <!-- Options Grid -->
+          <div class="mo-grid">
+            
+            <!-- AIQ Card -->
+            <div class="mo-card" onclick="console.log('open_aiq_ebooks')">
+              <div class="mo-icon" style="color: #2563eb;">
+                <i class="fas fa-globe"></i>
               </div>
+              <h3 class="mo-title">All India Quota</h3>
+              <p class="mo-subtitle">15% AIQ Counselling</p>
+              <div class="mo-highlight" style="background: rgba(37,99,235,0.1); color: #2563eb;">
+                Top Colleges Included
+              </div>
+              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); console.log('open_aiq_ebooks')">
+                View AIQ eBooks
+              </button>
             </div>
 
-            <!-- AYUSH CATEGORY -->
-            <div
-              style="
-                border-radius: 16px;
-                padding: 16px;
-                background: #ffffff;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-                border-left: 5px solid #16a34a;
-              "
-            >
-              <h3
-                style="
-                  font-size: 22px;
-                  font-weight: 700;
-                  color: #1e293b;
-                  display: flex;
-                  align-items: center;
-                  gap: 10px;
-                  margin-bottom: 20px;
-                "
-              >
-                <span style="color: #16a34a; font-size: 24px">🌿</span> AYUSH
-              </h3>
-
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                  gap: 16px;
-                "
-              >
-                <!-- BAMS -->
-                <div
-                  style="
-                    background: #f8fafc;
-                    border-radius: 14px;
-                    padding: 14px;
-                    border: 1px solid #f1f5f9;
-                  "
-                >
-                  <h4
-                    style="
-                      font-size: 17px;
-                      font-weight: 700;
-                      color: #334155;
-                      margin-bottom: 12px;
-                      margin-top: 0;
-                    "
-                  >
-                    BAMS eBooks
-                  </h4>
-                  <div
-                    style="
-                      width: 100%;
-                      height: 120px;
-                      border-radius: 10px;
-                      overflow: hidden;
-                      margin-bottom: 15px;
-                    "
-                  >
-                    <img
-                      src="/images/bams.jpg"
-                      alt="BAMS"
-                      style="width: 100%; height: 100%; object-fit: cover"
-                      onerror="
-                        this.src =
-                          'https://via.placeholder.com/300x120?text=BAMS+eBooks'
-                      "
-                    />
-                  </div>
-                  <div style="display: flex; flex-direction: column; gap: 14px">
-                    <!-- Combo -->
-                    <div
-                      style="
-                        background: #ffffff;
-                        border-radius: 14px;
-                        padding: 16px;
-                        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                        position: relative;
-                      "
-                    >
-                      <span
-                        style="
-                          position: absolute;
-                          top: -12px;
-                          right: 12px;
-                          background: #3b82f6;
-                          color: #fff;
-                          font-size: 11px;
-                          font-weight: 700;
-                          padding: 4px 10px;
-                          border-radius: 8px;
-                        "
-                        >Most Popular</span
-                      >
-                      <h5
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #0f172a;
-                          margin: 0;
-                          padding-top: 6px;
-                          line-height: 1.4;
-                        "
-                      >
-                        BAMS All Category Cutoff 2025
-                      </h5>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: 10px;
-                          margin-top: auto;
-                          padding-top: 8px;
-                        "
-                      >
-                        <span
-                          style="
-                            font-size: 20px;
-                            font-weight: 800;
-                            color: #16a34a;
-                          "
-                          >₹399</span
-                        >
-                        <span
-                          style="
-                            font-size: 14px;
-                            text-decoration: line-through;
-                            color: #94a3b8;
-                            font-weight: 500;
-                          "
-                          >₹799</span
-                        >
-                        <button
-                          class="glow-hover scale-up"
-                          style="
-                            margin-left: auto;
-                            background: #16a34a;
-                            color: #ffffff;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 10px;
-                            font-weight: 600;
-                            font-size: 14px;
-                            cursor: pointer;
-                          "
-                        >
-                          Buy Now
-                        </button>
-                      </div>
-                    </div>
-                    <!-- SC -->
-                    <div
-                      style="
-                        background: #ffffff;
-                        border-radius: 14px;
-                        padding: 16px;
-                        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                      "
-                    >
-                      <h5
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #0f172a;
-                          margin: 0;
-                          line-height: 1.4;
-                        "
-                      >
-                        BAMS SC Category
-                      </h5>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: 10px;
-                          margin-top: auto;
-                          padding-top: 4px;
-                        "
-                      >
-                        <span
-                          style="
-                            font-size: 20px;
-                            font-weight: 800;
-                            color: #16a34a;
-                          "
-                          >₹149</span
-                        >
-                        <button
-                          class="scale-up"
-                          style="
-                            margin-left: auto;
-                            background: #f1f5f9;
-                            color: #16a34a;
-                            border: 1px solid #cbd5e1;
-                            padding: 10px 20px;
-                            border-radius: 10px;
-                            font-weight: 600;
-                            font-size: 14px;
-                            cursor: pointer;
-                          "
-                        >
-                          Buy Now
-                        </button>
-                      </div>
-                    </div>
-                    <!-- ST -->
-                    <div
-                      style="
-                        background: #ffffff;
-                        border-radius: 14px;
-                        padding: 16px;
-                        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                      "
-                    >
-                      <h5
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #0f172a;
-                          margin: 0;
-                          line-height: 1.4;
-                        "
-                      >
-                        BAMS ST Category
-                      </h5>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: 10px;
-                          margin-top: auto;
-                          padding-top: 4px;
-                        "
-                      >
-                        <span
-                          style="
-                            font-size: 20px;
-                            font-weight: 800;
-                            color: #16a34a;
-                          "
-                          >₹149</span
-                        >
-                        <button
-                          class="scale-up"
-                          style="
-                            margin-left: auto;
-                            background: #f1f5f9;
-                            color: #16a34a;
-                            border: 1px solid #cbd5e1;
-                            padding: 10px 20px;
-                            border-radius: 10px;
-                            font-weight: 600;
-                            font-size: 14px;
-                            cursor: pointer;
-                          "
-                        >
-                          Buy Now
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Other AYUSH -->
-                <div style="display: flex; flex-direction: column; gap: 16px">
-                  <!-- BHMS -->
-                  <div
-                    style="
-                      background: #f8fafc;
-                      border-radius: 14px;
-                      padding: 16px;
-                      border: 1px solid #f1f5f9;
-                      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-                    "
-                  >
-                    <div
-                      style="
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 12px;
-                      "
-                    >
-                      <h4
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #475569;
-                          margin: 0;
-                        "
-                      >
-                        BHMS eBooks
-                      </h4>
-                      <span
-                        style="
-                          font-size: 12px;
-                          color: #64748b;
-                          font-weight: 600;
-                          background: #e2e8f0;
-                          padding: 4px 8px;
-                          border-radius: 8px;
-                        "
-                        >Coming Soon</span
-                      >
-                    </div>
-                  </div>
-                  <!-- BSMS -->
-                  <div
-                    style="
-                      background: #f8fafc;
-                      border-radius: 14px;
-                      padding: 16px;
-                      border: 1px solid #f1f5f9;
-                      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-                    "
-                  >
-                    <div
-                      style="
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 12px;
-                      "
-                    >
-                      <h4
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #475569;
-                          margin: 0;
-                        "
-                      >
-                        BSMS eBooks
-                      </h4>
-                      <span
-                        style="
-                          font-size: 12px;
-                          color: #64748b;
-                          font-weight: 600;
-                          background: #e2e8f0;
-                          padding: 4px 8px;
-                          border-radius: 8px;
-                        "
-                        >Coming Soon</span
-                      >
-                    </div>
-                  </div>
-                  <!-- BUMS -->
-                  <div
-                    style="
-                      background: #f8fafc;
-                      border-radius: 14px;
-                      padding: 16px;
-                      border: 1px solid #f1f5f9;
-                      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-                    "
-                  >
-                    <div
-                      style="
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 12px;
-                      "
-                    >
-                      <h4
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #475569;
-                          margin: 0;
-                        "
-                      >
-                        BUMS eBooks
-                      </h4>
-                      <span
-                        style="
-                          font-size: 12px;
-                          color: #64748b;
-                          font-weight: 600;
-                          background: #e2e8f0;
-                          padding: 4px 8px;
-                          border-radius: 8px;
-                        "
-                        >Coming Soon</span
-                      >
-                    </div>
-                  </div>
-                </div>
+            <!-- State Quota Card -->
+            <div class="mo-card" onclick="console.log('open_state_ebooks')">
+              <div class="mo-icon" style="color: #16a34a;">
+                <i class="fas fa-map"></i>
               </div>
+              <h3 class="mo-title">State Quota</h3>
+              <p class="mo-subtitle">85% State Counselling</p>
+              <div class="mo-highlight" style="background: rgba(22,163,74,0.1); color: #16a34a;">
+                State-wise Detailed Data
+              </div>
+              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); console.log('open_state_ebooks')">
+                View State eBooks
+              </button>
             </div>
 
-            <!-- VETERINARY CATEGORY -->
-            <div
-              style="
-                border-radius: 16px;
-                padding: 16px;
-                background: #ffffff;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-                border-left: 5px solid #f59e0b;
-              "
-            >
-              <h3
-                style="
-                  font-size: 22px;
-                  font-weight: 700;
-                  color: #1e293b;
-                  display: flex;
-                  align-items: center;
-                  gap: 10px;
-                  margin-bottom: 20px;
-                "
-              >
-                <span style="color: #f59e0b; font-size: 24px">🐾</span>
-                Veterinary
-              </h3>
-
-              <div
-                style="
-                  display: grid;
-                  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                  gap: 16px;
-                "
-              >
-                <!-- BVSc -->
-                <div
-                  style="
-                    background: #f8fafc;
-                    border-radius: 14px;
-                    padding: 14px;
-                    border: 1px solid #f1f5f9;
-                  "
-                >
-                  <h4
-                    style="
-                      font-size: 17px;
-                      font-weight: 700;
-                      color: #334155;
-                      margin-bottom: 12px;
-                      margin-top: 0;
-                    "
-                  >
-                    BVSc eBooks
-                  </h4>
-                  <div
-                    style="
-                      width: 100%;
-                      height: 120px;
-                      border-radius: 10px;
-                      overflow: hidden;
-                      margin-bottom: 15px;
-                    "
-                  >
-                    <img
-                      src="/images/vet.jpg"
-                      alt="Veterinary"
-                      style="width: 100%; height: 100%; object-fit: cover"
-                      onerror="
-                        this.src =
-                          'https://via.placeholder.com/300x120?text=BVSc+eBooks'
-                      "
-                    />
-                  </div>
-                  <div style="display: flex; flex-direction: column; gap: 14px">
-                    <div
-                      style="
-                        background: #ffffff;
-                        border-radius: 14px;
-                        padding: 16px;
-                        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-                        display: flex;
-                        flex-direction: column;
-                        gap: 10px;
-                      "
-                    >
-                      <h5
-                        style="
-                          font-size: 16px;
-                          font-weight: 700;
-                          color: #0f172a;
-                          margin: 0;
-                          line-height: 1.4;
-                        "
-                      >
-                        Veterinary Cutoff 2025 (All Categories)
-                      </h5>
-                      <div
-                        style="
-                          display: flex;
-                          align-items: center;
-                          gap: 10px;
-                          margin-top: auto;
-                          padding-top: 8px;
-                        "
-                      >
-                        <span
-                          style="
-                            font-size: 20px;
-                            font-weight: 800;
-                            color: #f59e0b;
-                          "
-                          >₹299</span
-                        >
-                        <button
-                          class="glow-hover scale-up"
-                          style="
-                            margin-left: auto;
-                            background: #f59e0b;
-                            color: #ffffff;
-                            border: none;
-                            padding: 10px 20px;
-                            border-radius: 10px;
-                            font-weight: 600;
-                            font-size: 14px;
-                            cursor: pointer;
-                          "
-                        >
-                          Buy Now
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
