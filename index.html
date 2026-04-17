@@ -4972,7 +4972,7 @@
               <div class="ec-price">
                 <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); console.log('open_ebooks')">
+              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
                 Buy eBooks
               </button>
             </div>
@@ -4987,7 +4987,7 @@
               <div class="ec-price">
                 <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); console.log('open_ebooks')">
+              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
                 Buy eBooks
               </button>
             </div>
@@ -5002,7 +5002,7 @@
               <div class="ec-price">
                 <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); console.log('open_ebooks')">
+              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
                 Buy eBooks
               </button>
             </div>
@@ -5122,7 +5122,7 @@
           <div class="mo-grid">
             
             <!-- AIQ Card -->
-            <div class="mo-card" onclick="console.log('open_aiq_ebooks')">
+            <div class="mo-card" onclick="openEbookPurchaseModal()">
               <div class="mo-icon" style="color: #2563eb;">
                 <i class="fas fa-globe"></i>
               </div>
@@ -5134,13 +5134,13 @@
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); console.log('open_aiq_ebooks')">
+              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
                 Buy AIQ eBooks
               </button>
             </div>
 
             <!-- State Quota Card -->
-            <div class="mo-card" onclick="console.log('open_state_ebooks')">
+            <div class="mo-card" onclick="openEbookPurchaseModal()">
               <div class="mo-icon" style="color: #16a34a;">
                 <i class="fas fa-map"></i>
               </div>
@@ -5152,7 +5152,7 @@
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <i class="fas fa-tag"></i> Starts from ₹99
               </div>
-              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); console.log('open_state_ebooks')">
+              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal()">
                 Buy State eBooks
               </button>
             </div>
@@ -5651,6 +5651,184 @@
     <script src="js/supabaseClient.js"></script>
     <script src="js/app_v2.js?v=force_refresh_102"></script>
 
+    <!-- eBook Purchase Modal -->
+    <div
+      id="ebookPurchaseModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 420px;
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 24px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        z-index: 10000002;
+        font-family: 'Poppins', var(--font-main);
+        box-sizing: border-box;
+      "
+    >
+      <style>
+        .eb-input-group {
+          margin-bottom: 12px;
+          text-align: left;
+        }
+        .eb-label {
+          display: block;
+          font-size: 13px;
+          font-weight: 600;
+          color: #334155;
+          margin-bottom: 6px;
+        }
+        .eb-input, .eb-select {
+          width: 100%;
+          padding: 10px;
+          border-radius: 10px;
+          border: 1px solid #cbd5e1;
+          font-size: 14px;
+          font-family: inherit;
+          color: #1e293b;
+          box-sizing: border-box;
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .eb-input:focus, .eb-select:focus {
+          border-color: #2563eb;
+          box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+        }
+        .eb-btn {
+          width: 100%;
+          height: 44px;
+          background: #2563eb;
+          color: #ffffff;
+          border: none;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 15px;
+          cursor: pointer;
+          margin-top: 10px;
+          transition: filter 0.2s;
+        }
+        .eb-btn:hover {
+          filter: brightness(1.1);
+        }
+        .close-eb-btn {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+          background: transparent;
+          border: none;
+          font-size: 20px;
+          color: #94a3b8;
+          cursor: pointer;
+          transition: color 0.2s;
+        }
+        .close-eb-btn:hover {
+          color: #1e293b;
+        }
+      </style>
+
+      <button class="close-eb-btn" onclick="closeEbookPurchaseModal()">&times;</button>
+      
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h3 style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0;">Complete Your Details</h3>
+        <p style="font-size: 14px; color: #64748b; margin: 0;">Get personalized cutoff insights</p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); submitEbookPurchase();">
+        <div class="eb-input-group">
+          <label class="eb-label">Full Name</label>
+          <input type="text" class="eb-input" placeholder="Enter your name" required />
+        </div>
+        
+        <div style="display: flex; gap: 12px;">
+          <div class="eb-input-group" style="flex: 1;">
+            <label class="eb-label">Category</label>
+            <select class="eb-select" required>
+              <option value="" disabled selected>Select</option>
+              <option>Open (UR)</option>
+              <option>EWS</option>
+              <option>OBC</option>
+              <option>SC</option>
+              <option>ST</option>
+            </select>
+          </div>
+          <div class="eb-input-group" style="flex: 1;">
+            <label class="eb-label">NEET Score</label>
+            <input type="number" class="eb-input" placeholder="e.g. 550" required />
+          </div>
+        </div>
+
+        <div class="eb-input-group">
+          <label class="eb-label">Domicile State</label>
+          <select class="eb-select" required>
+            <option value="" disabled selected>Search/Select State</option>
+            <option>Andhra Pradesh</option>
+            <option>Arunachal Pradesh</option>
+            <option>Assam</option>
+            <option>Bihar</option>
+            <option>Chhattisgarh</option>
+            <option>Goa</option>
+            <option>Gujarat</option>
+            <option>Haryana</option>
+            <option>Himachal Pradesh</option>
+            <option>Jharkhand</option>
+            <option>Karnataka</option>
+            <option>Kerala</option>
+            <option>Madhya Pradesh</option>
+            <option>Maharashtra</option>
+            <option>Manipur</option>
+            <option>Meghalaya</option>
+            <option>Mizoram</option>
+            <option>Nagaland</option>
+            <option>Odisha</option>
+            <option>Punjab</option>
+            <option>Rajasthan</option>
+            <option>Sikkim</option>
+            <option>Tamil Nadu</option>
+            <option>Telangana</option>
+            <option>Tripura</option>
+            <option>Uttar Pradesh</option>
+            <option>Uttarakhand</option>
+            <option>West Bengal</option>
+            <option>Delhi</option>
+            <option>Jammu & Kashmir</option>
+            <option>Ladakh</option>
+            <option>Chandigarh</option>
+            <option>Puducherry</option>
+            <option>Andaman & Nicobar</option>
+            <option>Dadra & Nagar Haveli</option>
+          </select>
+        </div>
+
+        <div class="eb-input-group">
+          <label class="eb-label">All India Rank</label>
+          <input type="number" class="eb-input" placeholder="e.g. 75000" required />
+        </div>
+
+        <div class="eb-input-group">
+          <label class="eb-label">Email Address</label>
+          <input type="email" class="eb-input" placeholder="Enter your email" required />
+        </div>
+
+        <div class="eb-input-group">
+          <label class="eb-label">Mobile Number</label>
+          <input type="tel" class="eb-input" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
+        </div>
+
+        <button type="submit" class="eb-btn">Continue to Payment</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 16px;">
+        <p style="font-size: 11px; color: #94a3b8; margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px;">
+          <i class="fas fa-shield-alt"></i> Your data is सुरक्षित and used only for cutoff analysis.
+        </p>
+      </div>
+    </div>
+
     <!-- Video Testimonial Modal -->
     <div
       id="videoModal"
@@ -5731,6 +5909,22 @@
         modal.style.display = "none";
         document.body.style.overflow = "";
       }
-    </script>
+    
+function openEbookPurchaseModal() {
+  document.getElementById('modalOverlay').style.display = 'block';
+  document.getElementById('ebookPurchaseModal').style.display = 'block';
+}
+
+function closeEbookPurchaseModal() {
+  document.getElementById('modalOverlay').style.display = 'none';
+  document.getElementById('ebookPurchaseModal').style.display = 'none';
+}
+
+function submitEbookPurchase() {
+  console.log("Processing eBook Payment...");
+  alert("Redirecting to Razorpay checkout...");
+  closeEbookPurchaseModal();
+}
+</script>
   </body>
 </html>
