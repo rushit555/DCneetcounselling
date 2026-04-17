@@ -5662,6 +5662,8 @@
         transform: translate(-50%, -50%);
         width: 100%;
         max-width: 420px;
+        max-height: 90vh;
+        overflow-y: auto;
         background: #ffffff;
         border-radius: 18px;
         padding: 24px;
@@ -5717,21 +5719,31 @@
         }
         .close-eb-btn {
           position: absolute;
-          top: 16px;
-          right: 16px;
-          background: transparent;
+          top: 18px;
+          right: 18px;
+          background: #f1f5f9;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
           border: none;
-          font-size: 20px;
-          color: #94a3b8;
+          font-size: 16px;
+          color: #475569;
           cursor: pointer;
-          transition: color 0.2s;
+          transition: background 0.2s, color 0.2s;
+        }
+        .close-eb-btn:hover {
+          background: #e2e8f0;
+          color: #0f172a;
         }
         .close-eb-btn:hover {
           color: #1e293b;
         }
       </style>
 
-      <button class="close-eb-btn" onclick="closeEbookPurchaseModal()">&times;</button>
+      <button class="close-eb-btn" onclick="closeEbookPurchaseModal()"><i class="fas fa-times"></i></button>
       
       <div style="text-align: center; margin-bottom: 24px;">
         <h3 style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0;">Complete Your Details</h3>
