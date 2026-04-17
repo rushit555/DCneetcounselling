@@ -110,6 +110,7 @@
               "flex:1;padding:12px;border:none;background:transparent;border-radius:8px;color:var(--color-text-muted);font-weight:500;cursor:pointer;transition:0.3s;font-family:var(--font-main);";
           if (nameWrap) nameWrap.style.display = "block";
           if (nameInp) nameInp.required = true;
+          if (nameInp) nameInp.required = true;
           if (title) title.innerText = "Create Account";
           if (btn) btn.innerText = "Sign Up";
         } else {
@@ -120,6 +121,7 @@
             tabUp.style.cssText =
               "flex:1;padding:12px;border:none;background:transparent;border-radius:8px;color:var(--color-text-muted);font-weight:500;cursor:pointer;transition:0.3s;font-family:var(--font-main);";
           if (nameWrap) nameWrap.style.display = "none";
+          if (nameInp) nameInp.required = false;
           if (nameInp) nameInp.required = false;
           if (title) title.innerText = "Welcome Back";
           if (btn) btn.innerText = "Sign In";
@@ -231,6 +233,12 @@
         if (user) {
           if (lBtn) lBtn.style.display = "none";
           if (pBtn) pBtn.style.display = "flex";
+          var cBtn = document.getElementById("cartBtnNavbar");
+          if (cBtn) cBtn.style.display = "flex";
+
+          // Initial Cart Sync
+          if (window.loadCartStates) window.loadCartStates();
+          if (window.updateCartBadge) window.updateCartBadge();
 
           var name =
             (user.user_metadata && user.user_metadata.full_name) ||
@@ -283,6 +291,8 @@
         } else {
           if (lBtn) lBtn.style.display = "block";
           if (pBtn) pBtn.style.display = "none";
+          var cBtn = document.getElementById("cartBtnNavbar");
+          if (cBtn) cBtn.style.display = "none";
 
           // Mobile state updates
           if (mdLoggedOutContent) mdLoggedOutContent.style.display = "flex";
@@ -4551,6 +4561,7 @@
                     "
                   />
                 </div>
+
                 <div style="margin-bottom: 20px">
                   <input
                     type="email"
@@ -4839,7 +4850,7 @@
           }
           @media (min-width: 768px) {
             .ebook-grid {
-              grid-template-columns: repeat(2, 1fr);
+              grid-template-columns: repeat(3, 1fr);
             }
           }
           @media (min-width: 1024px) {
@@ -4927,7 +4938,73 @@
           .ec-btn:hover {
             filter: brightness(1.1);
           }
-        </style>
+          .ec-cart-btn {
+            margin-top: 6px;
+            width: 100%;
+            padding: 7px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            border: 1.5px solid #2563eb;
+            color: #2563eb;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+          }
+          .ec-cart-btn:hover { background: #eff6ff; }
+          .ec-cart-btn.in-cart { background: #e0f2fe; border-color: #0ea5e9; color: #0369a1; }
+
+          /* Toast */
+          #cartToast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 99999;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+          }
+          #cartToast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+          }
+        
+          .ec-heart {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f8fafc;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            color: #94a3b8;
+            transition: transform 0.2s, color 0.2s;
+            z-index: 2;
+          }
+          .ec-heart:hover { color: #ef4444; }
+          .ec-heart.active { color: #ef4444; }
+          .ec-heart.pop { animation: heartPop 0.35s ease; }
+          @keyframes heartPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.35); }
+            100% { transform: scale(1); }
+          }
+</style>
 
         <div
           style="
@@ -4949,6 +5026,7 @@
             
             <!-- Medical -->
             <div class="ebook-card-v2" onclick="window.navigate('medical-options')">
+              <button class="ec-heart" data-ebook="medical" onclick="event.stopPropagation(); toggleWishlist(this, 'medical')"><i class="far fa-heart"></i></button>
               <div class="ec-badge">Popular</div>
               <div class="ec-icon" style="color: #2563eb;">
                 <i class="fas fa-stethoscope"></i>
@@ -4961,10 +5039,12 @@
               <button class="ec-btn" style="background: #2563eb;" onclick="event.stopPropagation(); window.navigate('medical-options')">
                 Buy eBooks
               </button>
+              <button class="ec-cart-btn" data-ebook="medical" onclick="event.stopPropagation(); addToCart(this, 'medical')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
             </div>
 
             <!-- Dental -->
             <div class="ebook-card-v2" onclick="console.log('open_category: dental')">
+              <button class="ec-heart" data-ebook="dental" onclick="event.stopPropagation(); toggleWishlist(this, 'dental')"><i class="far fa-heart"></i></button>
               <div class="ec-icon" style="color: #06b6d4;">
                 <i class="fas fa-tooth"></i>
               </div>
@@ -4976,10 +5056,12 @@
               <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
                 Buy eBooks
               </button>
+              <button class="ec-cart-btn" data-ebook="dental" onclick="event.stopPropagation(); addToCart(this, 'dental')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
             </div>
 
             <!-- AYUSH -->
             <div class="ebook-card-v2" onclick="console.log('open_category: ayush')">
+              <button class="ec-heart" data-ebook="ayush" onclick="event.stopPropagation(); toggleWishlist(this, 'ayush')"><i class="far fa-heart"></i></button>
               <div class="ec-icon" style="color: #16a34a;">
                 <i class="fas fa-leaf"></i>
               </div>
@@ -4991,10 +5073,12 @@
               <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 149, 'AYUSH Cutoff eBooks')">
                 Buy eBooks
               </button>
+              <button class="ec-cart-btn" data-ebook="ayush" onclick="event.stopPropagation(); addToCart(this, 'ayush')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
             </div>
 
             <!-- Veterinary -->
             <div class="ebook-card-v2" onclick="console.log('open_category: veterinary')">
+              <button class="ec-heart" data-ebook="veterinary" onclick="event.stopPropagation(); toggleWishlist(this, 'veterinary')"><i class="far fa-heart"></i></button>
               <div class="ec-icon" style="color: #f59e0b;">
                 <i class="fas fa-paw"></i>
               </div>
@@ -5006,6 +5090,7 @@
               <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 149, 'Veterinary Cutoff eBooks')">
                 Buy eBooks
               </button>
+              <button class="ec-cart-btn" data-ebook="veterinary" onclick="event.stopPropagation(); addToCart(this, 'veterinary')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
             </div>
 
           </div>
@@ -5158,6 +5243,150 @@
               </button>
             </div>
 
+          </div>
+        </div>
+      </div>
+
+      
+      
+      <!-- Cart Section -->
+      <div
+        id="section-cart"
+        class="page-section"
+        style="
+          background: #f8fafc;
+          padding: 20px;
+          font-family: 'Poppins', var(--font-main);
+          min-height: 100vh;
+        "
+      >
+        <div style="max-width: 1100px; margin: 0 auto; padding-top: 80px; padding-bottom: 60px;">
+          <!-- Header -->
+          <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Your Cart 🛒</h2>
+            <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Review your selected eBooks</p>
+          </div>
+
+          <!-- Empty State -->
+          <div id="cartEmpty" style="display: none; text-align: center; padding: 60px 20px;">
+            <div style="font-size: 56px; color: #cbd5e1; margin-bottom: 16px;"><i class="fas fa-shopping-cart"></i></div>
+            <h3 style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 8px 0;">Your cart is empty</h3>
+            <p style="font-size: 13px; color: #64748b; margin: 0 0 24px 0;">Add ebooks to continue</p>
+            <button onclick="window.navigate('ebooks')" style="background: #2563eb; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;">Browse eBooks</button>
+          </div>
+
+          <!-- Cart Items + Summary (Two Column) -->
+          <div id="cartContent" style="display: none; gap: 20px; align-items: flex-start;" class="cart-layout">
+            <style>
+              .cart-layout { display: flex; flex-direction: column; gap: 20px; }
+              @media(min-width: 768px) { .cart-layout { flex-direction: row; } }
+              .cart-left { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+              .cart-right { width: 100%; }
+              @media(min-width: 768px) { .cart-right { width: 280px; min-width: 280px; } }
+              .cart-item-card {
+                background: #ffffff;
+                border-radius: 14px;
+                padding: 12px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                display: flex;
+                align-items: center;
+                gap: 14px;
+              }
+              .cart-item-icon {
+                width: 44px; height: 44px;
+                border-radius: 10px;
+                background: #f1f5f9;
+                display: flex; align-items: center; justify-content: center;
+                font-size: 22px;
+                flex-shrink: 0;
+              }
+              .cart-item-info { flex: 1; }
+              .cart-item-title { font-size: 14px; font-weight: 600; color: #0f172a; margin: 0 0 2px; }
+              .cart-item-sub { font-size: 12px; color: #64748b; margin: 0; }
+              .cart-item-price { font-size: 14px; font-weight: 700; color: #16a34a; }
+              .cart-item-remove {
+                background: transparent; border: none;
+                color: #ef4444; font-size: 16px; cursor: pointer;
+                padding: 4px; flex-shrink: 0;
+              }
+              .cart-summary-card {
+                background: #fff;
+                border-radius: 14px;
+                padding: 20px;
+                box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+                position: sticky;
+                top: 80px;
+              }
+              .cart-summary-title { font-size: 16px; font-weight: 700; color: #0f172a; margin: 0 0 16px; }
+              .cart-summary-row { display: flex; justify-content: space-between; font-size: 14px; color: #64748b; margin-bottom: 10px; }
+              .cart-summary-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #0f172a; padding-top: 12px; border-top: 1px solid #f1f5f9; margin-top: 4px; }
+              .cart-checkout-btn {
+                width: 100%;
+                margin-top: 16px;
+                padding: 12px;
+                border-radius: 10px;
+                background: #16a34a;
+                color: #fff;
+                font-weight: 700;
+                font-size: 15px;
+                border: none;
+                cursor: pointer;
+                font-family: inherit;
+                transition: filter 0.2s;
+              }
+              .cart-checkout-btn:hover { filter: brightness(1.05); }
+            </style>
+
+            <!-- Left: Items List -->
+            <div class="cart-left" id="cartItemsList"></div>
+
+            <!-- Right: Summary -->
+            <div class="cart-right">
+              <div class="cart-summary-card">
+                <p class="cart-summary-title">Order Summary</p>
+                <div class="cart-summary-row"><span>Items</span><span id="cartTotalItems">0</span></div>
+                <div class="cart-summary-total"><span>Total</span><span id="cartTotalPrice">₹0</span></div>
+                <button class="cart-checkout-btn" onclick="cartCheckout()"><i class="fas fa-lock" style="margin-right:6px;"></i>Proceed to Checkout</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wishlist Section -->
+      <div
+                id="section-wishlist"
+        class="page-section"
+        style="
+          background: #f8fafc;
+          padding: 20px;
+          font-family: 'Poppins', var(--font-main);
+          min-height: 100vh;
+        "
+      >
+        <div
+          style="
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 80px;
+            padding-bottom: 60px;
+            text-align: center;
+          "
+        >
+          <div style="margin-bottom: 40px;">
+            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">My Wishlist ❤️</h2>
+            <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Your saved ebooks</p>
+          </div>
+
+          <div id="wishlistGrid" class="ebook-grid" style="text-align: left; gap: 16px;">
+            <!-- Dynamically populated -->
+          </div>
+
+          <div id="wishlistEmpty" style="display: none; padding: 40px 20px; text-align: center;">
+            <div style="font-size: 48px; color: #cbd5f5; margin-bottom: 16px;"><i class="fas fa-heart"></i></div>
+            <h3 style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 8px 0;">Your Wishlist is Empty</h3>
+            <p style="font-size: 13px; color: #64748b; margin: 0 0 24px 0;">Save ebooks you like by tapping ❤️</p>
+            <button onclick="window.navigate('ebooks')" style="background: #2563eb; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;">Browse eBooks</button>
           </div>
         </div>
       </div>
@@ -5650,9 +5879,105 @@
     <!-- Scripts -->
     <script src="js/supabase.js"></script>
     <script src="js/supabaseClient.js"></script>
-    <script src="js/app_v2.js?v=force_refresh_102"></script>
+    <script src="js/app_v2.js?v=force_refresh_105"></script>
 
-    <!-- eBook Purchase Modal -->
+    <!-- Auth Popup Modal -->
+    <div
+      id="authModal"
+      style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        max-width: 380px;
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        z-index: 10000003;
+        font-family: 'Poppins', var(--font-main);
+        box-sizing: border-box;
+      "
+    >
+      <style>
+        .auth-tab-btn {
+          flex: 1;
+          padding: 10px;
+          border: none;
+          background: transparent;
+          border-radius: 8px;
+          font-weight: 600;
+          font-family: inherit;
+          cursor: pointer;
+          color: #64748b;
+          transition: all 0.2s;
+        }
+        .auth-tab-btn.active {
+          background: #ffffff;
+          color: #0f172a;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+      </style>
+
+      <button class="close-eb-btn" onclick="closeAuthModal()" style="top: 16px; right: 16px;"><i class="fas fa-times"></i></button>
+
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h3 id="authModalTitle" style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">Welcome Back 👋</h3>
+        <p id="authModalSubtitle" style="font-size: 14px; color: #64748b; margin: 0;">Login to continue</p>
+      </div>
+
+      <!-- Tabs -->
+      <div style="display: flex; background: #f1f5f9; padding: 4px; border-radius: 10px; margin-bottom: 24px;">
+        <button id="authTabLogin" class="auth-tab-btn active" onclick="switchAuthModalTab('login')">Login</button>
+        <button id="authTabRegister" class="auth-tab-btn" onclick="switchAuthModalTab('register')">Register</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="authModalLoginForm" onsubmit="event.preventDefault(); submitAuthModal('login');">
+        <div class="eb-input-group">
+          <label class="eb-label">Email</label>
+          <input type="email" id="authLoginEmail" class="eb-input" placeholder="Enter your email" required />
+        </div>
+        <div class="eb-input-group" style="margin-bottom: 18px;">
+          <label class="eb-label">Password</label>
+          <input type="password" id="authLoginPass" class="eb-input" placeholder="Enter password" required />
+        </div>
+        <button type="submit" class="eb-btn" style="background: #2563eb; border-radius: 10px;">Login</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="authModalRegisterForm" style="display: none;" onsubmit="event.preventDefault(); submitAuthModal('register');">
+        <div class="eb-input-group">
+          <label class="eb-label">Full Name</label>
+          <input type="text" id="authRegName" class="eb-input" placeholder="Enter your name" required />
+        </div>
+        <div class="eb-input-group">
+          <label class="eb-label">Email</label>
+          <input type="email" id="authRegEmail" class="eb-input" placeholder="Enter your email" required />
+        </div>
+
+        <div class="eb-input-group" style="margin-bottom: 18px;">
+          <label class="eb-label">Password</label>
+          <input type="password" id="authRegPass" class="eb-input" placeholder="Create password" required />
+        </div>
+        <button type="submit" class="eb-btn" style="background: #16a34a; border-radius: 10px;">Create Account</button>
+      </form>
+
+      <div style="display: flex; align-items: center; margin: 24px 0;">
+        <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+        <span style="padding: 0 12px; color: #94a3b8; font-size: 12px; font-weight: 600;">OR</span>
+        <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+      </div>
+
+      <button onclick="window.signInWithGoogle()" style="width: 100%; padding: 10px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; font-weight: 600; color: #334155; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; transition: box-shadow 0.2s;">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" height="18" />
+        Continue with Google
+      </button>
+
+    </div>
+
     <div
       id="ebookPurchaseModal"
       style="
@@ -5925,8 +6250,29 @@
     
 window.activeEbookContext = { course: '', quota: '', price: 0, title: '' };
 
+
 window.openEbookPurchaseModal = function(course, quota, price, title) {
+  // Verify User Authentication
+  if (!window._authUser && window.supabaseClient) {
+      // Store context before sending to original login page
+      window.activeEbookContext = { course, quota, price, title, origin: 'ebooks' };
+      alert("Please login first to continue your purchase.");
+      window.navigate('login');
+      return;
+  }
+
   window.activeEbookContext = { course, quota, price, title };
+
+  // Pre-fill user data if they are logged in
+  if (window._authUser) {
+      var meta = window._authUser.user_metadata || {};
+      var fullName = meta.full_name || meta.name || '';
+      var email = window._authUser.email || '';
+      
+      document.getElementById('eb_full_name').value = fullName;
+      document.getElementById('eb_email').value = email;
+  }
+
   document.getElementById('modalOverlay').style.display = 'block';
   document.getElementById('ebookPurchaseModal').style.display = 'block';
 }
@@ -5964,7 +6310,7 @@ window.submitEbookPurchase = async function() {
           course: ctx.course,
           quota: ctx.quota,
           amount_paid: ctx.price,
-          ebook_id: ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_'),
+          ebook_id: ctx.is_cart ? ctx.ebook_id : (ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_')),
           payment_status: 'initiated'
       };
 
@@ -5995,6 +6341,13 @@ window.submitEbookPurchase = async function() {
                       payment_status: 'completed',
                       razorpay_payment_id: response.razorpay_payment_id
                   }).eq('id', insertRes.id);
+
+                  // If it was a cart purchase, clear the cart
+                  if (ctx.is_cart) {
+                    await window.supabaseClient.from('cart').delete().eq('user_id', window._authUser.id);
+                    if (window.updateCartBadge) window.updateCartBadge();
+                    if (window.renderCartPage) window.renderCartPage();
+                  }
               }
               alert("Payment Successful! You will receive your eBooks via Email shortly.");
               closeEbookPurchaseModal();
@@ -6029,6 +6382,280 @@ window.submitEbookPurchase = async function() {
       submitBtn.disabled = false;
   }
 }
+
+
+
+
+// ─── Wishlist Logic ──────────────────────────────────
+var EBOOK_META = {
+  'medical': { title: 'Medical', icon: 'fa-stethoscope', color: '#2563eb', price: 99, courses: 'MBBS, BDS', course: 'Medical', quota: 'All India Quota' },
+  'dental': { title: 'Dental', icon: 'fa-tooth', color: '#06b6d4', price: 149, courses: 'BDS', course: 'Dental', quota: 'All Courses' },
+  'ayush': { title: 'AYUSH', icon: 'fa-leaf', color: '#16a34a', price: 149, courses: 'BAMS, BHMS, BSMS, BUMS', course: 'AYUSH', quota: 'All Courses' },
+  'veterinary': { title: 'Veterinary', icon: 'fa-paw', color: '#f59e0b', price: 149, courses: 'BVSc', course: 'Veterinary', quota: 'All Courses' }
+};
+
+window.toggleWishlist = async function(btn, ebookId) {
+  if (!window._authUser) {
+    alert('Please login first to save to wishlist.');
+    window.navigate('login');
+    return;
+  }
+  if (!window.supabaseClient) return;
+
+  var userId = window._authUser.id;
+  var icon = btn.querySelector('i');
+
+  // Check if exists
+  var { data } = await window.supabaseClient.from('wishlist').select('user_id').eq('user_id', userId).eq('ebook_id', ebookId).maybeSingle();
+
+  if (data) {
+    // Remove
+    await window.supabaseClient.from('wishlist').delete().eq('user_id', userId).eq('ebook_id', ebookId);
+    btn.classList.remove('active');
+    icon.className = 'far fa-heart';
+  } else {
+    // Fetch user details for de-normalization
+    var meta = window._authUser.user_metadata || {};
+    var userName = meta.full_name || meta.name || '';
+    var mobile = '';
+    
+    // Fetch mobile from users table
+    var { data: userData } = await window.supabaseClient.from('users').select('mobile_number').eq('id', userId).single();
+    if (userData && userData.mobile_number) mobile = userData.mobile_number;
+
+    // Add
+    await window.supabaseClient.from('wishlist').insert({ 
+        user_id: userId, 
+        ebook_id: ebookId,
+        user_name: userName,
+        mobile_number: mobile,
+        email: window._authUser.email
+    });
+    btn.classList.add('active');
+    icon.className = 'fas fa-heart';
+  }
+  btn.classList.add('pop');
+  setTimeout(function() { btn.classList.remove('pop'); }, 350);
+};
+
+window.loadWishlistStates = async function() {
+  if (!window._authUser || !window.supabaseClient) return;
+  var { data } = await window.supabaseClient.from('wishlist').select('ebook_id').eq('user_id', window._authUser.id);
+  if (!data) return;
+  var ids = data.map(function(r) { return r.ebook_id; });
+  document.querySelectorAll('.ec-heart').forEach(function(btn) {
+    var eid = btn.getAttribute('data-ebook');
+    if (ids.indexOf(eid) > -1) {
+      btn.classList.add('active');
+      btn.querySelector('i').className = 'fas fa-heart';
+    }
+  });
+};
+
+window.renderWishlistPage = async function() {
+  var grid = document.getElementById('wishlistGrid');
+  var empty = document.getElementById('wishlistEmpty');
+  if (!grid || !empty) return;
+
+  if (!window._authUser || !window.supabaseClient) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  var { data } = await window.supabaseClient.from('wishlist').select('ebook_id, created_at').eq('user_id', window._authUser.id).order('created_at', { ascending: false });
+
+  if (!data || data.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+
+  empty.style.display = 'none';
+  var cardsHTML = '';
+  data.forEach(function(item) {
+    var meta = EBOOK_META[item.ebook_id];
+    if (!meta) return;
+    cardsHTML += '<div style="background:#ffffff; border-radius:14px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.06); display:flex; flex-direction:column; align-items:center; text-align:center; position:relative;">' +
+      '<button onclick="removeFromWishlist(this, \'' + item.ebook_id + '\')" style="position:absolute; top:12px; right:12px; background:transparent; border:none; width:auto; height:auto; color:#ef4444; font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;"><i class="fas fa-heart"></i></button>' +
+      '<div style="width:50px; height:50px; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:12px; color:' + meta.color + ';"><i class="fas ' + meta.icon + '"></i></div>' +
+      '<h3 style="font-size:15px; font-weight:600; color:#0f172a; margin:0 0 4px;">' + meta.title + '</h3>' +
+      '<p style="font-size:12px; color:#64748b; margin:0 0 8px;">' + meta.courses + '</p>' +
+      '<div style="font-size:11px; font-weight:500; color:#16a34a; margin:0 0 14px; display:flex; align-items:center; gap:4px;"><i class="fas fa-tag"></i> ₹' + meta.price + '</div>' +
+      '<button onclick="openEbookPurchaseModal(\'' + meta.course + '\', \'' + meta.quota + '\', ' + meta.price + ', \'' + meta.title + ' eBooks\')" style="width:100%; padding:8px; border-radius:8px; font-weight:600; font-size:13px; border:none; color:#ffffff; background:#2563eb; cursor:pointer;">Buy Now</button>' +
+    '</div>';
+  });
+  grid.innerHTML = cardsHTML;
+};
+
+window.removeFromWishlist = async function(btn, ebookId) {
+  if (!window._authUser || !window.supabaseClient) return;
+  await window.supabaseClient.from('wishlist').delete().eq('user_id', window._authUser.id).eq('ebook_id', ebookId);
+
+  // Also update the heart on eBook cards page
+  document.querySelectorAll('.ec-heart[data-ebook="' + ebookId + '"]').forEach(function(h) {
+    h.classList.remove('active');
+    h.querySelector('i').className = 'far fa-heart';
+  });
+
+  // Re-render
+  renderWishlistPage();
+};
+
+
+
+// ─── Cart Logic ──────────────────────────────────────
+window.showToast = function(msg) {
+  var t = document.getElementById('cartToast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+};
+
+window.addToCart = async function(btn, ebookId) {
+  if (!window._authUser) {
+    alert('Please login first to add to cart.');
+    window.navigate('login');
+    return;
+  }
+  if (!window.supabaseClient) return;
+
+  var { data } = await window.supabaseClient.from('cart').select('id').eq('user_id', window._authUser.id).eq('ebook_id', ebookId).maybeSingle();
+
+  if (data) {
+    showToast('Already in cart 🛒');
+    btn.classList.add('in-cart');
+    btn.innerHTML = '<i class="fas fa-check"></i> In Cart';
+  } else {
+    await window.supabaseClient.from('cart').insert({ user_id: window._authUser.id, ebook_id: ebookId });
+    btn.classList.add('in-cart');
+    btn.innerHTML = '<i class="fas fa-check"></i> In Cart';
+    showToast('Added to cart 🛒');
+    updateCartBadge();
+  }
+};
+
+window.loadCartStates = async function() {
+  if (!window._authUser || !window.supabaseClient) return;
+  var { data } = await window.supabaseClient.from('cart').select('ebook_id').eq('user_id', window._authUser.id);
+  if (!data) return;
+  var ids = data.map(function(r) { return r.ebook_id; });
+  document.querySelectorAll('.ec-cart-btn').forEach(function(btn) {
+    var eid = btn.getAttribute('data-ebook');
+    if (ids.indexOf(eid) > -1) {
+      btn.classList.add('in-cart');
+      btn.innerHTML = '<i class="fas fa-check"></i> In Cart';
+    }
+  });
+  updateCartBadge(ids.length);
+};
+
+window.updateCartBadge = async function(count) {
+  if (count === undefined && window._authUser && window.supabaseClient) {
+    var { count: cnt } = await window.supabaseClient.from('cart').select('id', { count: 'exact', head: true }).eq('user_id', window._authUser.id);
+    count = cnt || 0;
+  }
+  var badges = document.querySelectorAll('.cart-badge');
+  badges.forEach(function(b) {
+    b.textContent = count || 0;
+    b.style.display = (count && count > 0) ? 'flex' : 'none';
+  });
+};
+
+window.renderCartPage = async function() {
+  var empty = document.getElementById('cartEmpty');
+  var content = document.getElementById('cartContent');
+  var itemsList = document.getElementById('cartItemsList');
+  if (!empty || !content || !itemsList) return;
+
+  if (!window._authUser || !window.supabaseClient) {
+    empty.style.display = 'block';
+    content.style.display = 'none';
+    return;
+  }
+
+  var { data } = await window.supabaseClient.from('cart').select('ebook_id, created_at').eq('user_id', window._authUser.id).order('created_at', { ascending: false });
+
+  if (!data || data.length === 0) {
+    empty.style.display = 'block';
+    content.style.display = 'none';
+    return;
+  }
+
+  empty.style.display = 'none';
+  content.style.display = 'flex';
+
+  var totalPrice = 0;
+  var cardsHTML = '';
+
+  data.forEach(function(item) {
+    var meta = EBOOK_META[item.ebook_id];
+    if (!meta) return;
+    totalPrice += meta.price;
+    cardsHTML += '<div class="cart-item-card" data-ebook="' + item.ebook_id + '">' +
+      '<div class="cart-item-icon" style="color:' + meta.color + ';"><i class="fas ' + meta.icon + '"></i></div>' +
+      '<div class="cart-item-info">' +
+        '<p class="cart-item-title">' + meta.title + '</p>' +
+        '<p class="cart-item-sub">' + meta.courses + ' &bull; ' + meta.quota + '</p>' +
+      '</div>' +
+      '<span class="cart-item-price">₹' + meta.price + '</span>' +
+      '<button class="cart-item-remove" onclick="removeFromCart(this, \'' + item.ebook_id + '\')" title="Remove"><i class="fas fa-trash"></i></button>' +
+    '</div>';
+  });
+
+  itemsList.innerHTML = cardsHTML;
+  document.getElementById('cartTotalItems').textContent = data.length;
+  document.getElementById('cartTotalPrice').textContent = '₹' + totalPrice;
+};
+
+window.removeFromCart = async function(btn, ebookId) {
+  if (!window._authUser || !window.supabaseClient) return;
+  await window.supabaseClient.from('cart').delete().eq('user_id', window._authUser.id).eq('ebook_id', ebookId);
+  showToast('Removed from cart');
+
+  // Reset the card button on ebook listing page
+  document.querySelectorAll('.ec-cart-btn[data-ebook="' + ebookId + '"]').forEach(function(b) {
+    b.classList.remove('in-cart');
+    b.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+  });
+  updateCartBadge();
+  renderCartPage();
+};
+
+window.cartCheckout = async function() {
+  if (!window._authUser || !window.supabaseClient) {
+    alert('Please login first to checkout.');
+    window.navigate('login');
+    return;
+  }
+  var { data } = await window.supabaseClient.from('cart').select('ebook_id').eq('user_id', window._authUser.id);
+  if (!data || data.length === 0) { showToast('Your cart is empty!'); return; }
+
+  var totalPrice = 0;
+  var titles = [];
+  data.forEach(function(item) {
+    var m = EBOOK_META[item.ebook_id];
+    if (m) { totalPrice += m.price; titles.push(m.title); }
+  });
+
+  var ebookIds = data.map(function(d) { return d.ebook_id; }).join(', ');
+  
+  // Set Cart Context for the shared Modal
+  window.activeEbookContext = {
+    course: 'Cart Checkout',
+    quota: 'Multiple',
+    price: totalPrice,
+    title: 'Cart: ' + titles.join(', '),
+    ebook_id: ebookIds,
+    is_cart: true
+  };
+
+  // Open the exact same form used in single eBook section
+  window.openEbookPurchaseModal('Cart Checkout', 'Multiple', totalPrice, 'Your Cart');
+};
+
 </script>
-  </body>
+    <div id="cartToast"></div>
+</body>
 </html>

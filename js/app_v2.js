@@ -11,6 +11,16 @@ const REDIRECT_URL = window.location.href.split('#')[0].split('?')[0];
 // Enhance the stub navigation with animations and dynamic features
 var originalStub = window.navigate;
 window.navigate = function(route) {
+    if (route === 'ebooks') {
+        setTimeout(function() { if (window.loadWishlistStates) window.loadWishlistStates(); }, 200);
+        setTimeout(function() { if (window.loadCartStates) window.loadCartStates(); }, 250);
+    }
+    if (route === 'cart') {
+        setTimeout(function() { if (window.renderCartPage) window.renderCartPage(); }, 200);
+    }
+    if (route === 'wishlist') {
+        setTimeout(function() { if (window.renderWishlistPage) window.renderWishlistPage(); }, 200);
+    }
     if (route === 'dashboard') {
         var dashEl = document.getElementById('section-dashboard');
         if (dashEl && typeof renderDashboard === 'function') {
@@ -538,6 +548,7 @@ window.handleEmailLogin = async function(e) {
     var email = document.getElementById('pageAuthEmail').value.trim();
     var pass  = document.getElementById('pageAuthPassword').value;
     var full  = nameInp ? nameInp.value.trim() : '';
+    var mobile = '';
 
     if (!email || !pass) {
         showErr('Please enter both email and password.');
@@ -575,7 +586,15 @@ window.handleEmailLogin = async function(e) {
     try {
         if (isSignUp) {
             console.log('Attempting sign up for:', email);
-            var res = await window.supabaseClient.auth.signUp({ email: email, password: pass, options: { data: { full_name: full } } });
+            var res = await window.supabaseClient.auth.signUp({ 
+                email: email, 
+                password: pass, 
+                options: { 
+                    data: { 
+                        full_name: full 
+                    } 
+                } 
+            });
             console.log('Sign up result:', res);
             
             if (res.error) { 
@@ -586,7 +605,17 @@ window.handleEmailLogin = async function(e) {
                 if (res.data && res.data.session) {
                     showOk('✅ Account created successfully! Returning to home...');
                     if (window.updateNavForAuth) window.updateNavForAuth(res.data.session);
-                    setTimeout(function() { window.navigate('home'); }, 1000);
+                    setTimeout(function() { if (window.activeEbookContext && window.activeEbookContext.course) {
+                    var dest = window.activeEbookContext.origin || 'ebooks';
+                    window.navigate(dest);
+                    setTimeout(function() {
+                        if (window.openEbookPurchaseModal) {
+                            window.openEbookPurchaseModal(window.activeEbookContext.course, window.activeEbookContext.quota, window.activeEbookContext.price, window.activeEbookContext.title);
+                        }
+                    }, 500);
+                } else {
+                    window.navigate('home');
+                } }, 1000);
                 } else {
                     showOk('✅ Account created! Please check your email for a confirmation link to sign in.');
                 }

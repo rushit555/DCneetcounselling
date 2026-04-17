@@ -24,6 +24,12 @@
             <div id="authWrapper" style="display: flex; align-items: center; gap: 12px; position: relative;">
                 <a href="#" id="loginBtn" class="btn-ghost" onclick="event.preventDefault(); window.navigate('login');" style="text-decoration: none; font-weight: 600; color: #4b5563;">Login</a>
                 
+                <!-- Cart Icon + Badge -->
+                <button id="cartBtnNavbar" class="cart-nav-btn" onclick="window.navigate('cart')" style="display: none; position: relative; background: none; border: none; padding: 8px; cursor: pointer; color: #4b5563;">
+                    <i class="fas fa-shopping-cart" style="font-size: 1.25rem;"></i>
+                    <span class="cart-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: #ef4444; color: white; font-size: 10px; font-weight: 700; width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;">0</span>
+                </button>
+
                 <!-- Profile Button (Shown when logged in) -->
                 <button id="profileDropdownBtn" class="profile-btn" style="display: none;" onclick="document.getElementById('profileDropdown').classList.toggle('active')">
                     <span id="pdAvatarInitial">S</span>
@@ -41,7 +47,7 @@
                     </div>
                     <div class="pd-menu">
                         <div class="pd-link" onclick="window.navigate('dashboard')">👤 My Profile</div>
-                        <div class="pd-link" onclick="window.navigate('cart')">🛒 Cart</div>
+
                         <div class="pd-link" onclick="window.navigate('wishlist')">❤️ Wishlist</div>
                     </div>
                     <div class="pd-divider"></div>
@@ -87,7 +93,9 @@
                 <!-- Logged In State Menu -->
                 <div id="mdLoggedInContent" style="display: none; width: 100%; flex-direction: column; gap: 12px;">
                     <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('dashboard'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">👤 My Profile</a>
-                    <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('cart'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">🛒 Cart</a>
+                    <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('cart'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">
+                        🛒 Cart <span class="cart-badge" style="display: none; background: #ef4444; color: white; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 10px; align-items: center; justify-content: center; margin-left: auto;">0</span>
+                    </a>
                     <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('wishlist'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">❤️ Wishlist</a>
                     <button class="md-cta-btn logout" onclick="window.doLogout(); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">Sign Out</button>
                     <!-- Hidden elements so we don't break existing index.html auth logic target elements -->
