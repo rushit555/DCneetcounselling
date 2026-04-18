@@ -25,10 +25,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/main.css?v=fresh_fix_102" />
-    <link rel="stylesheet" href="css/home.css" />
-    <link rel="stylesheet" href="css/header.css?v=fresh_fix_102" />
-    <link rel="stylesheet" href="css/dashboard.css?v=fresh_fix_102" />
+    <link rel="stylesheet" href="css/main.css?v=2026.04.18.8" />
+    <link rel="stylesheet" href="css/home.css?v=2026.04.18.8" />
+    <link rel="stylesheet" href="css/header.css?v=2026.04.18.8" />
+    <link rel="stylesheet" href="css/dashboard.css?v=2026.04.18.8" />
 
     <!-- Bulletproof Navigation Stub -->
     <script>
@@ -51,11 +51,40 @@
           else link.classList.remove("active");
         });
       };
-      // Handle browser Back/Forward buttons
+      // Handle browser Back/Forward buttons and Initial Load
       window.onpopstate = function () {
-        var hash = window.location.hash.replace("#", "") || "home";
-        window.navigate(hash);
+        var path = window.location.pathname.replace(/^\/|\/$/g, "");
+        var hash = window.location.hash.replace("#", "");
+        
+        console.log("Routing:", { path, hash });
+
+        // Priority 1: Check for Reset Password path or hash
+        if (path === 'reset-password' || hash === 'reset-password') {
+          window.location.replace('/reset-password/' + window.location.hash);
+          return;
+        }
+
+        // Priority 1.5: Intercept Supabase Recovery Hashes
+        if (hash.includes('access_token=') && hash.includes('type=recovery')) {
+          console.log("Recovery hash intercepted by main router");
+          window.location.replace('/reset-password/' + window.location.hash);
+          return;
+        }
+
+        // Priority 1.6: Intercept Supabase Recover Errors
+        if (hash.includes('error=') && (hash.includes('expire') || hash.includes('invalid'))) {
+          window.location.replace('/reset-password/' + window.location.hash);
+          return;
+        }
+
+        // Priority 2: Standard hash navigation
+        window.navigate(hash || "home");
       };
+
+      // Run routing on initial load
+      document.addEventListener("DOMContentLoaded", function() {
+        window.onpopstate();
+      });
 
       // ─── Mobile Menu Toggle ──────────────────────────────────────────
       document.addEventListener("DOMContentLoaded", function () {
@@ -96,6 +125,7 @@
         var nameInp = document.getElementById("pageAuthName");
         var title = document.getElementById("pageAuthTitle");
         var btn = document.getElementById("pageAuthSubmitBtn");
+        var forgotLink = document.getElementById("pageForgotPassLink");
         var errBox = document.getElementById("pageAuthError");
         var okBox = document.getElementById("pageAuthSuccess");
         if (errBox) errBox.style.display = "none";
@@ -110,9 +140,9 @@
               "flex:1;padding:12px;border:none;background:transparent;border-radius:8px;color:var(--color-text-muted);font-weight:500;cursor:pointer;transition:0.3s;font-family:var(--font-main);";
           if (nameWrap) nameWrap.style.display = "block";
           if (nameInp) nameInp.required = true;
-          if (nameInp) nameInp.required = true;
           if (title) title.innerText = "Create Account";
           if (btn) btn.innerText = "Sign Up";
+          if (forgotLink) forgotLink.style.display = "none";
         } else {
           if (tabIn)
             tabIn.style.cssText =
@@ -122,9 +152,9 @@
               "flex:1;padding:12px;border:none;background:transparent;border-radius:8px;color:var(--color-text-muted);font-weight:500;cursor:pointer;transition:0.3s;font-family:var(--font-main);";
           if (nameWrap) nameWrap.style.display = "none";
           if (nameInp) nameInp.required = false;
-          if (nameInp) nameInp.required = false;
           if (title) title.innerText = "Welcome Back";
           if (btn) btn.innerText = "Sign In";
+          if (forgotLink) forgotLink.style.display = "block";
         }
         console.log("Tab switched to:", signup ? "Sign Up" : "Sign In");
       };
@@ -2191,7 +2221,7 @@
                 >
                   Book Counselling
                 </button>
-                <button class="btn btn-ghost scale-up">WhatsApp Us</button>
+                <button class="btn btn-ghost scale-up" onclick="window.open('https://wa.me/919694673555', '_blank')">WhatsApp Us</button>
               </div>
             </div>
           </div>
@@ -2305,14 +2335,13 @@
             >
               <!-- Medical Counselling -->
               <div
-                class="counselling-card fade-up"
+                class="counselling-card fade-up scale-up"
                 style="
                   background: linear-gradient(135deg, #fed700, #fed700);
                   padding: 24px;
                   border-radius: 16px;
                   color: #000;
                   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                  transition: transform 0.3s ease;
                   cursor: pointer;
                 "
                 onclick="window.navigate('medical-pricing')"
@@ -2330,14 +2359,13 @@
 
               <!-- AYUSH Counselling -->
               <div
-                class="counselling-card fade-up stagger-1"
+                class="counselling-card fade-up stagger-1 scale-up"
                 style="
                   background: linear-gradient(135deg, #a5d6a7, #66bb6a);
                   padding: 24px;
                   border-radius: 16px;
                   color: #000;
                   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                  transition: transform 0.3s ease;
                   cursor: pointer;
                 "
                 onclick="window.navigate('ayush-pricing')"
@@ -2355,14 +2383,13 @@
 
               <!-- Veterinary Counselling -->
               <div
-                class="counselling-card fade-up stagger-2"
+                class="counselling-card fade-up stagger-2 scale-up"
                 style="
                   background: linear-gradient(135deg, #90caf9, #42a5f5);
                   padding: 24px;
                   border-radius: 16px;
                   color: #000;
                   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                  transition: transform 0.3s ease;
                   cursor: pointer;
                   position: relative;
                 "
@@ -2381,14 +2408,13 @@
 
               <!-- Combo Counselling -->
               <div
-                class="counselling-card fade-up stagger-3"
+                class="counselling-card fade-up stagger-3 scale-up"
                 style="
                   background: linear-gradient(135deg, #ff8a65, #ff5722);
                   padding: 24px;
                   border-radius: 16px;
                   color: #fff;
                   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                  transition: transform 0.3s ease;
                   cursor: pointer;
                   position: relative;
                 "
@@ -2420,12 +2446,7 @@
               </div>
             </div>
           </div>
-          <style>
-            .counselling-card:hover {
-              transform: scale(1.05) translateZ(0);
-              box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2) !important;
-            }
-          </style>
+
         </section>
       </div>
 
@@ -2460,6 +2481,7 @@
             </h2>
 
             <div
+              class="stagger-in"
               style="
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -2470,15 +2492,15 @@
             >
               <!-- Basic Plan -->
               <div
-                class="med-pricing-card fade-up"
+                class="med-pricing-card fade-up scale-up"
                 style="
                   background: #ffffff;
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
+                  height: 100%;
                 "
               >
                 <span
@@ -2509,6 +2531,7 @@
                   ₹4,999
                 </div>
                 <ul
+                  class="stagger-in"
                   style="
                     list-style: none;
                     padding: 0;
@@ -2630,6 +2653,8 @@
                   </li>
                 </ul>
                 <div
+                  class="btn glow-hover"
+                  onclick="window.openCounsellingBooking('med_basic')"
                   style="
                     padding: 12px;
                     background: #000;
@@ -2646,16 +2671,15 @@
 
               <!-- Gold Plan -->
               <div
-                class="med-pricing-card fade-up stagger-1"
+                class="med-pricing-card fade-up stagger-1 scale-up pulse-gold"
                 style="
                   background: linear-gradient(135deg, #fed700, #fed700);
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
-                  transform: scale(1.03);
+                  height: 100%;
                 "
               >
                 <span
@@ -2686,6 +2710,7 @@
                   ₹9,999
                 </div>
                 <ul
+                  class="stagger-in"
                   style="
                     list-style: none;
                     padding: 0;
@@ -2819,6 +2844,8 @@
                   </li>
                 </ul>
                 <div
+                  class="btn glow-hover"
+                  onclick="window.openCounsellingBooking('med_gold')"
                   style="
                     padding: 12px;
                     background: #000;
@@ -2835,13 +2862,12 @@
 
               <!-- Private MBBS / BDS -->
               <div
-                class="med-pricing-card fade-up stagger-2"
+                class="med-pricing-card fade-up stagger-2 scale-up"
                 style="
                   background: #ffffff;
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
                 "
@@ -2874,6 +2900,7 @@
                   ₹14,999
                 </div>
                 <ul
+                  class="stagger-in"
                   style="
                     list-style: none;
                     padding: 0;
@@ -2928,6 +2955,8 @@
                   </li>
                 </ul>
                 <div
+                  class="btn glow-hover"
+                  onclick="window.openCounsellingBooking('med_platinum')"
                   style="
                     padding: 12px;
                     background: #000;
@@ -2944,25 +2973,6 @@
               </div>
             </div>
           </div>
-          <style>
-            .med-pricing-card {
-              transition:
-                transform 0.3s ease,
-                box-shadow 0.3s ease;
-            }
-            .med-pricing-card:hover {
-              transform: translateY(-5px) scale(1.02);
-              box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18) !important;
-            }
-            @media (max-width: 768px) {
-              .med-pricing-card[style*="transform: scale"] {
-                transform: scale(1) !important;
-              }
-              .med-pricing-card:hover {
-                transform: translateY(-5px) scale(1) !important;
-              }
-            }
-          </style>
         </section>
       </div>
 
@@ -3007,15 +3017,15 @@
             >
               <!-- Basic Plan -->
               <div
-                class="ayush-pricing-card fade-up"
+                class="ayush-pricing-card fade-up scale-up"
                 style="
                   background: #ffffff;
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
+                  height: 100%;
                 "
               >
                 <span
@@ -3144,6 +3154,7 @@
                   </li>
                 </ul>
                 <div
+                  onclick="window.openCounsellingBooking('ayush_basic')"
                   style="
                     padding: 12px;
                     background: #000;
@@ -3160,16 +3171,14 @@
 
               <!-- Gold Plan -->
               <div
-                class="ayush-pricing-card fade-up stagger-1"
+                class="ayush-pricing-card fade-up stagger-1 scale-up pulse-green"
                 style="
                   background: linear-gradient(135deg, #81c784, #43a047);
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
-                  transform: scale(1.05);
                   color: #fff;
                 "
               >
@@ -3351,13 +3360,12 @@
 
               <!-- Private AYUSH -->
               <div
-                class="ayush-pricing-card fade-up stagger-2"
+                class="ayush-pricing-card fade-up stagger-2 scale-up"
                 style="
                   background: #ffffff;
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
                 "
@@ -3449,25 +3457,7 @@
               </div>
             </div>
           </div>
-          <style>
-            .ayush-pricing-card {
-              transition:
-                transform 0.3s ease,
-                box-shadow 0.3s ease;
-            }
-            .ayush-pricing-card:hover {
-              transform: translateY(-5px) scale(1.02);
-              box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18) !important;
-            }
-            @media (max-width: 768px) {
-              .ayush-pricing-card[style*="transform: scale"] {
-                transform: scale(1) !important;
-              }
-              .ayush-pricing-card:hover {
-                transform: translateY(-5px) scale(1) !important;
-              }
-            }
-          </style>
+
         </section>
       </div>
 
@@ -3512,13 +3502,12 @@
             >
               <!-- Basic Plan -->
               <div
-                class="vet-pricing-card fade-up"
+                class="vet-pricing-card fade-up scale-up"
                 style="
                   background: #ffffff;
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
                 "
@@ -3653,16 +3642,14 @@
 
               <!-- Gold Plan -->
               <div
-                class="vet-pricing-card fade-up stagger-1"
+                class="vet-pricing-card fade-up stagger-1 scale-up pulse-blue"
                 style="
                   background: linear-gradient(135deg, #64b5f6, #1976d2);
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
-                  transform: scale(1.05);
                   color: #fff;
                 "
               >
@@ -3832,13 +3819,12 @@
 
               <!-- Private Plan -->
               <div
-                class="vet-pricing-card fade-up stagger-2"
+                class="vet-pricing-card fade-up stagger-2 scale-up"
                 style="
                   background: #ffffff;
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
                   display: flex;
                   flex-direction: column;
                 "
@@ -3920,23 +3906,7 @@
             </div>
           </div>
           <style>
-            .vet-pricing-card {
-              transition:
-                transform 0.3s ease,
-                box-shadow 0.3s ease;
-            }
-            .vet-pricing-card:hover {
-              transform: translateY(-5px) scale(1.02);
-              box-shadow: 0 15px 40px rgba(0, 0, 0, 0.18) !important;
-            }
-            @media (max-width: 768px) {
-              .vet-pricing-card[style*="transform: scale"] {
-                transform: scale(1) !important;
-              }
-              .vet-pricing-card:hover {
-                transform: translateY(-5px) scale(1) !important;
-              }
-            }
+
           </style>
         </section>
       </div>
@@ -3982,13 +3952,12 @@
             >
               <!-- Basic Combo -->
               <div
-                class="combo-pricing-card fade-up"
+                class="combo-pricing-card fade-up scale-up"
                 style="
                   background: #ffffff;
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
                   display: flex;
                   flex-direction: column;
                 "
@@ -4159,16 +4128,14 @@
 
               <!-- Premium Combo -->
               <div
-                class="combo-pricing-card fade-up stagger-1"
+                class="combo-pricing-card fade-up stagger-1 scale-up pulse-orange"
                 style="
                   background: linear-gradient(135deg, #ff8a65, #ff5722);
                   padding: 24px;
                   border-radius: 18px;
                   position: relative;
-                  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
                   display: flex;
                   flex-direction: column;
-                  transform: scale(1.06);
                   color: #fff;
                 "
               >
@@ -4350,26 +4317,7 @@
               </div>
             </div>
           </div>
-          <style>
-            .combo-pricing-card {
-              transition:
-                transform 0.3s ease,
-                box-shadow 0.3s ease;
-            }
-            .combo-pricing-card:hover {
-              transform: translateY(-5px) scale(1.03);
-              box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2) !important;
-            }
-            /* Base zoom out styling resets on mobile */
-            @media (max-width: 768px) {
-              .combo-pricing-card[style*="transform: scale"] {
-                transform: scale(1) !important;
-              }
-              .combo-pricing-card:hover {
-                transform: translateY(-5px) scale(1) !important;
-              }
-            }
-          </style>
+
         </section>
       </div>
 
@@ -4597,6 +4545,9 @@
                       outline: none;
                     "
                   />
+                  <div id="pageForgotPassLink" style="text-align: right; margin-top: 8px;">
+                    <a href="javascript:void(0)" onclick="window.navigate('forgot-password')" style="font-size: 13px; color: #2563eb; text-decoration: none; font-weight: 500;">Forgot Password?</a>
+                  </div>
                 </div>
                 <button
                   type="submit"
@@ -4702,28 +4653,7 @@
 
                   try {
                     if (!window.supabaseClient) {
-                      const _SUPA_URL =
-                        "https://qlaewtlbielpzlxyfrhg.supabase.co";
-                      const _SUPA_ANON =
-                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsYWV3dGxiaWVscHpseHlmcmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMjEwMjEsImV4cCI6MjA5MDU5NzAyMX0.YNobjm1U1bkflgQ5hRUbxXMo6LC9GPOFeuFXpN9vWKM";
-                      if (window.supabase) {
-                        window.supabaseClient = window.supabase.createClient(
-                          _SUPA_URL,
-                          _SUPA_ANON,
-                          {
-                            auth: {
-                              storage: window.localStorage,
-                              autoRefreshToken: true,
-                              persistSession: true,
-                              detectSessionInUrl: true,
-                            },
-                          },
-                        );
-                      } else {
-                        throw new Error(
-                          "Supabase library not loaded. Check internet connection.",
-                        );
-                      }
+                      throw new Error("Initializing connection... please wait.");
                     }
 
                     var client = window.supabaseClient;
@@ -4786,27 +4716,7 @@
                 window.googleLogin = async function () {
                   try {
                     if (!window.supabaseClient) {
-                      const _SUPA_URL =
-                        "https://qlaewtlbielpzlxyfrhg.supabase.co";
-                      const _SUPA_ANON =
-                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFsYWV3dGxiaWVscHpseHlmcmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwMjEwMjEsImV4cCI6MjA5MDU5NzAyMX0.YNobjm1U1bkflgQ5hRUbxXMo6LC9GPOFeuFXpN9vWKM";
-                      if (window.supabase) {
-                        window.supabaseClient = window.supabase.createClient(
-                          _SUPA_URL,
-                          _SUPA_ANON,
-                          {
-                            auth: {
-                              persistSession: true,
-                              autoRefreshToken: true,
-                              detectSessionInUrl: true,
-                            },
-                          },
-                        );
-                      } else {
-                        throw new Error(
-                          "Supabase library not loaded. Check internet connection.",
-                        );
-                      }
+                      throw new Error("Initializing connection... please wait.");
                     }
                     var client = window.supabaseClient;
                     var res = await client.auth.signInWithOAuth({
@@ -4823,6 +4733,82 @@
                   }
                 };
               </script>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Forgot Password Section -->
+      <section id="section-forgot-password" class="page-section">
+        <div class="auth-container" style="max-width: 450px; margin: 60px auto; padding: 40px; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 60px; height: 60px; background: #eff6ff; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #2563eb; font-size: 24px;">
+              <i class="fas fa-key"></i>
+            </div>
+            <h2 style="font-size: 28px; font-weight: 800; color: #1e293b; margin-bottom: 10px;">Forgot Password?</h2>
+            <p style="color: #64748b; font-size: 15px;">Enter your email and we'll send you a link to reset your password.</p>
+          </div>
+
+          <div id="forgotPasswordError" style="display: none; background: #fef2f2; color: #991b1b; padding: 12px; border-radius: 10px; font-size: 14px; margin-bottom: 20px; border: 1px solid #fee2e2;"></div>
+          <div id="forgotPasswordSuccess" style="display: none; background: #ecfdf5; color: #065f46; padding: 12px; border-radius: 10px; font-size: 14px; margin-bottom: 20px; border: 1px solid #d1fae5;"></div>
+
+          <form onsubmit="window.handleForgotPassword(event)">
+            <div style="margin-bottom: 20px;">
+              <input type="email" id="forgotEmail" class="eb-input" placeholder="Enter your email" required style="width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); outline: none; transition: all 0.3s;" />
+            </div>
+            <button type="submit" id="forgotSubmitBtn" class="btn btn-primary" style="width: 100%; padding: 15px; border-radius: 12px; font-weight: 600; font-size: 16px;">Send Reset Link</button>
+          </form>
+          
+          <div style="text-align: center; margin-top: 25px;">
+            <a href="javascript:void(0)" onclick="window.navigate('login')" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+              <i class="fas fa-arrow-left"></i> Back to Login
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <script>
+        window.handleForgotPassword = async function(e) {
+          if (e) e.preventDefault();
+          var email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+          var btn = document.getElementById('forgotSubmitBtn');
+          var errBox = document.getElementById('forgotPasswordError');
+          var okBox = document.getElementById('forgotPasswordSuccess');
+          
+          if (errBox) errBox.style.display = 'none';
+          if (okBox) okBox.style.display = 'none';
+          if (!email) return;
+
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+          btn.disabled = true;
+
+          try {
+            if (!window.supabaseClient) throw new Error("Connection error. Please refresh.");
+            
+            var { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+              redirectTo: 'https://dcneetcounselling.com/reset-password/'
+            });
+
+            if (error) throw error;
+
+            if (okBox) {
+              okBox.innerText = "Check your email for the reset link! (Also check spam)";
+              okBox.style.display = 'block';
+            }
+            btn.innerHTML = "Link Sent!";
+          } catch(err) {
+            console.error("Forgot Pass Error:", err);
+            if (errBox) {
+              errBox.innerText = err.message || "Failed to send reset link.";
+              errBox.style.display = 'block';
+            }
+            btn.innerHTML = "Send Reset Link";
+            btn.disabled = false;
+          }
+        };
+
+
+      </script>
             </div>
           </div>
         </section>
@@ -4873,11 +4859,7 @@
             cursor: pointer;
             position: relative;
           }
-          .ebook-card-v2:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-            border-color: #e2e8f0;
-          }
+
           .ec-badge {
             position: absolute;
             top: -8px;
@@ -5025,7 +5007,7 @@
           <div class="ebook-grid">
             
             <!-- Medical -->
-            <div class="ebook-card-v2" onclick="window.navigate('medical-options')">
+            <div class="ebook-card-v2 scale-up" onclick="window.navigate('medical-options')">
               <button class="ec-heart" data-ebook="medical" onclick="event.stopPropagation(); toggleWishlist(this, 'medical')"><i class="far fa-heart"></i></button>
               <div class="ec-badge">Popular</div>
               <div class="ec-icon" style="color: #2563eb;">
@@ -5043,7 +5025,7 @@
             </div>
 
             <!-- Dental -->
-            <div class="ebook-card-v2" onclick="console.log('open_category: dental')">
+            <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: dental')">
               <button class="ec-heart" data-ebook="dental" onclick="event.stopPropagation(); toggleWishlist(this, 'dental')"><i class="far fa-heart"></i></button>
               <div class="ec-icon" style="color: #06b6d4;">
                 <i class="fas fa-tooth"></i>
@@ -5060,7 +5042,7 @@
             </div>
 
             <!-- AYUSH -->
-            <div class="ebook-card-v2" onclick="console.log('open_category: ayush')">
+            <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: ayush')">
               <button class="ec-heart" data-ebook="ayush" onclick="event.stopPropagation(); toggleWishlist(this, 'ayush')"><i class="far fa-heart"></i></button>
               <div class="ec-icon" style="color: #16a34a;">
                 <i class="fas fa-leaf"></i>
@@ -5077,7 +5059,7 @@
             </div>
 
             <!-- Veterinary -->
-            <div class="ebook-card-v2" onclick="console.log('open_category: veterinary')">
+            <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: veterinary')">
               <button class="ec-heart" data-ebook="veterinary" onclick="event.stopPropagation(); toggleWishlist(this, 'veterinary')"><i class="far fa-heart"></i></button>
               <div class="ec-icon" style="color: #f59e0b;">
                 <i class="fas fa-paw"></i>
@@ -5132,10 +5114,7 @@
             cursor: pointer;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
           }
-          .mo-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-          }
+
           .mo-icon {
             width: 60px;
             height: 60px;
@@ -5208,7 +5187,7 @@
           <div class="mo-grid">
             
             <!-- AIQ Card -->
-            <div class="mo-card" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 149, 'Medical AIQ eBooks')">
+            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 149, 'Medical AIQ eBooks')">
               <div class="mo-icon" style="color: #2563eb;">
                 <i class="fas fa-globe"></i>
               </div>
@@ -5226,7 +5205,7 @@
             </div>
 
             <!-- State Quota Card -->
-            <div class="mo-card" onclick="openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
+            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
               <div class="mo-icon" style="color: #16a34a;">
                 <i class="fas fa-map"></i>
               </div>
@@ -5837,10 +5816,10 @@
               <i class="fas fa-phone" style="font-size: 16px; width: 20px; text-align: center; color: #111;"></i>
               <span>9694673555</span>
             </div>
-            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+            <a href="https://wa.me/919694673555" target="_blank" rel="noopener" style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px; text-decoration: none; color: inherit;">
               <i class="fab fa-whatsapp" style="font-size: 16px; width: 20px; text-align: center; color: #111;"></i>
               <span>9694673555</span>
-            </div>
+            </a>
             <div style="display: flex; gap: 10px; align-items: flex-start;">
               <i class="fas fa-map-marker-alt" style="font-size: 16px; width: 20px; text-align: center; color: #111; margin-top: 2px;"></i>
               <span style="line-height: 1.4; max-width: 250px;">H-301 KESHAVPURA SECTOR-7, KOTA, RAJASTHAN 324009</span>
@@ -5877,9 +5856,9 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="js/supabase.js"></script>
-    <script src="js/supabaseClient.js"></script>
-    <script src="js/app_v2.js?v=force_refresh_105"></script>
+    <script src="js/supabase.js?v=2026.04.18.8"></script>
+    <script src="js/supabaseClient.js?v=2026.04.18.8"></script>
+    <script src="js/app_v2.js?v=2026.04.18.8"></script>
 
     <!-- Auth Popup Modal -->
     <div
@@ -6163,6 +6142,125 @@
       <div style="text-align: center; margin-top: 16px;">
         <p style="font-size: 11px; color: #94a3b8; margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px;">
           <i class="fas fa-shield-alt"></i> Your data is सुरक्षित and used only for cutoff analysis.
+        </p>
+      </div>
+    </div>
+
+    <!-- Counselling Booking Modal -->
+    <div
+      id="counsellingBookingModal"
+      class="eb-modal"
+      style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 440px;
+        background: #fff;
+        z-index: 10001;
+        padding: 32px;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow-y: auto;
+        max-height: 90vh;
+      "
+    >
+      <button class="close-eb-btn" onclick="window.closeCounsellingBookingModal()"><i class="fas fa-times"></i></button>
+      
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h2 style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0;">Book Counselling</h2>
+        <p style="font-size: 14px; color: #64748b; margin: 0;">Fill details to confirm your slot</p>
+      </div>
+
+      <form onsubmit="event.preventDefault(); window.submitCounsellingBooking();">
+        <div class="eb-input-group">
+          <label class="eb-label">Full Name</label>
+          <input type="text" class="eb-input" id="cb_full_name" placeholder="Enter your name" required />
+        </div>
+        
+        <div style="display: flex; gap: 12px;">
+          <div class="eb-input-group" style="flex: 1;">
+            <label class="eb-label">Category</label>
+            <select id="cb_category" class="eb-select" required>
+              <option value="" disabled selected>Select</option>
+              <option>Open (UR)</option>
+              <option>EWS</option>
+              <option>OBC</option>
+              <option>SC</option>
+              <option>ST</option>
+            </select>
+          </div>
+          <div class="eb-input-group" style="flex: 1;">
+            <label class="eb-label">NEET Score</label>
+            <input type="number" class="eb-input" id="cb_neet_score" placeholder="e.g. 550" required />
+          </div>
+        </div>
+
+        <div class="eb-input-group">
+          <label class="eb-label">Domicile State</label>
+          <select id="cb_domicile_state" class="eb-select" required>
+            <option value="" disabled selected>Search/Select State</option>
+            <option>Andhra Pradesh</option>
+            <option>Arunachal Pradesh</option>
+            <option>Assam</option>
+            <option>Bihar</option>
+            <option>Chhattisgarh</option>
+            <option>Goa</option>
+            <option>Gujarat</option>
+            <option>Haryana</option>
+            <option>Himachal Pradesh</option>
+            <option>Jharkhand</option>
+            <option>Karnataka</option>
+            <option>Kerala</option>
+            <option>Madhya Pradesh</option>
+            <option>Maharashtra</option>
+            <option>Manipur</option>
+            <option>Meghalaya</option>
+            <option>Mizoram</option>
+            <option>Nagaland</option>
+            <option>Odisha</option>
+            <option>Punjab</option>
+            <option>Rajasthan</option>
+            <option>Sikkim</option>
+            <option>Tamil Nadu</option>
+            <option>Telangana</option>
+            <option>Tripura</option>
+            <option>Uttar Pradesh</option>
+            <option>Uttarakhand</option>
+            <option>West Bengal</option>
+            <option>Delhi</option>
+            <option>Jammu & Kashmir</option>
+            <option>Ladakh</option>
+            <option>Chandigarh</option>
+            <option>Puducherry</option>
+            <option>Andaman & Nicobar</option>
+            <option>Dadra & Nagar Haveli</option>
+          </select>
+        </div>
+
+        <div class="eb-input-group">
+          <label class="eb-label">All India Rank</label>
+          <input type="number" class="eb-input" id="cb_rank" placeholder="e.g. 75000" required />
+        </div>
+
+        <div class="eb-input-group">
+          <label class="eb-label">Email Address</label>
+          <input type="email" class="eb-input" id="cb_email" placeholder="Enter your email" required />
+        </div>
+
+        <div class="eb-input-group">
+          <label class="eb-label">Mobile Number</label>
+          <input type="tel" class="eb-input" id="cb_mobile" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
+        </div>
+
+        <button type="submit" class="eb-btn">Continue to Payment</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 16px;">
+        <p style="font-size: 11px; color: #94a3b8; margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px;">
+          <i class="fas fa-shield-alt"></i> Official counselling slot booking.
         </p>
       </div>
     </div>

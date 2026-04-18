@@ -84,8 +84,8 @@
 }
 
 @keyframes stat-glow-pulse {
-    0%, 100% { box-shadow: 0 0 10px rgba(255, 193, 7, 0.3), 0 8px 30px rgba(0, 0, 0, 0.10); }
-    50%      { box-shadow: 0 0 20px rgba(255, 193, 7, 0.6), 0 8px 30px rgba(0, 0, 0, 0.10); }
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 193, 7, 0.3), 0 8px 15px rgba(0, 0, 0, 0.10); }
+    50%      { box-shadow: 0 0 10px rgba(255, 193, 7, 0.6), 0 8px 15px rgba(0, 0, 0, 0.10); }
 }
 
 @keyframes num-pop {
@@ -110,7 +110,7 @@
     -webkit-backdrop-filter: none !important;
     border: none !important;
     border-radius: 20px !important;
-    box-shadow: 0 0 10px rgba(255, 193, 7, 0.3), 0 8px 30px rgba(0, 0, 0, 0.10) !important;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.3), 0 8px 15px rgba(0, 0, 0, 0.10) !important;
     transition: all 0.3s ease !important;
 
     /* Entrance only */
@@ -240,7 +240,7 @@
 
 .service-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(147, 51, 234, 0.2);
+    box-shadow: 0 15px 15px rgba(147, 51, 234, 0.2);
     border-color: var(--color-secondary);
 }
 
@@ -435,7 +435,7 @@
 .notif-card:hover {
     transform: translateY(-3px);
     border-color: var(--color-primary);
-    box-shadow: 0 10px 25px rgba(251, 191, 36, 0.12);
+    box-shadow: 0 10px 13px rgba(251, 191, 36, 0.12);
     background: white;
 }
 
@@ -554,7 +554,7 @@
     width: 320px;
     object-fit: cover;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 15px rgba(0,0,0,0.15);
     transition: transform 0.3s ease;
     
     /* Initially hidden for fadeRight */

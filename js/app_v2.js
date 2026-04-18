@@ -1,11 +1,68 @@
 // ─── Supabase Configuration ───────────────────────────────────────────────────
-console.log("APP.JS LOADED - STARTING EXECUTION");
 
 const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
+const COUNSELLING_META = {
+    'med_basic': { title: 'Medical - Basic Plan', price: 4999, type: 'Medical' },
+    'med_gold': { title: 'Medical - Gold Plan', price: 9999, type: 'Medical' },
+    'med_platinum': { title: 'Medical - Private MBBS/BDS', price: 14999, type: 'Medical' },
+    'ayush_basic': { title: 'AYUSH - Basic Plan', price: 4999, type: 'AYUSH' },
+    'ayush_gold': { title: 'AYUSH - Gold Plan', price: 8999, type: 'AYUSH' }
+};
+
 
 const REDIRECT_URL = window.location.href.split('#')[0].split('?')[0];
+
+// ─── Security Utilities ──────────────────────────────────────────────────────
+
+/**
+ * XSS Sanitizer — escapes HTML entities in user-supplied strings
+ * Use this before inserting any user data into innerHTML.
+ */
+window.sanitizeHTML = function(str) {
+    if (!str) return '';
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+};
+
+/**
+ * Login Rate Limiter — prevents brute force attacks client-side.
+ * Allows max 5 attempts within a 5-minute window.
+ */
+var _loginAttempts = [];
+var LOGIN_MAX_ATTEMPTS = 5;
+var LOGIN_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
+
+function isLoginRateLimited() {
+    var now = Date.now();
+    // Purge old attempts outside the window
+    _loginAttempts = _loginAttempts.filter(function(t) { return now - t < LOGIN_WINDOW_MS; });
+    return _loginAttempts.length >= LOGIN_MAX_ATTEMPTS;
+}
+
+function recordLoginAttempt() {
+    _loginAttempts.push(Date.now());
+}
+
+function getLoginLockoutRemaining() {
+    if (_loginAttempts.length === 0) return 0;
+    var oldest = _loginAttempts[0];
+    var remaining = LOGIN_WINDOW_MS - (Date.now() - oldest);
+    return Math.max(0, Math.ceil(remaining / 1000));
+}
+
+/**
+ * Strong password validator
+ * Requires: min 8 chars, at least 1 number, at least 1 special character
+ */
+function validatePasswordStrength(pass) {
+    if (pass.length < 8) return 'Password must be at least 8 characters.';
+    if (!/[0-9]/.test(pass)) return 'Password must contain at least one number.';
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(pass)) return 'Password must contain at least one special character (!@#$%^&* etc).';
+    return null; // passes
+}
 
 // ─── Core Router (Upgraded) ──────────────────────────────────────────────────
 // Enhance the stub navigation with animations and dynamic features
@@ -21,12 +78,27 @@ window.navigate = function(route) {
     if (route === 'wishlist') {
         setTimeout(function() { if (window.renderWishlistPage) window.renderWishlistPage(); }, 200);
     }
+    if (route === 'orders') {
+        var ordersEl = document.getElementById('section-orders');
+        if (ordersEl) {
+            ordersEl.style.display = 'block';
+            ordersEl.innerHTML = '<div style="padding:120px 20px;text-align:center;"><div class="loading-spinner"></div><br>Loading your order history...</div>';
+            renderOrders().then(html => {
+                if (html) ordersEl.innerHTML = html;
+            }).catch(err => {
+                ordersEl.innerHTML = '<div style="padding:120px 20px;text-align:center;color:#ef4444;">Failed to load orders. Please refresh.</div>';
+            });
+        }
+    }
     if (route === 'dashboard') {
         var dashEl = document.getElementById('section-dashboard');
-        if (dashEl && typeof renderDashboard === 'function') {
-            dashEl.innerHTML = '<div style="padding:120px 20px;text-align:center;">Loading...</div>';
+        if (dashEl) {
+            dashEl.style.display = 'block';
+            dashEl.innerHTML = '<div style="padding:120px 20px;text-align:center;"><div class="loading-spinner"></div><br>Loading your dashboard...</div>';
             renderDashboard().then(html => {
                 if (html) dashEl.innerHTML = html;
+            }).catch(err => {
+                dashEl.innerHTML = '<div style="padding:120px 20px;text-align:center;color:#ef4444;">Failed to load dashboard. Please refresh.</div>';
             });
         }
     }
@@ -53,7 +125,7 @@ window.navigate = function(route) {
 // ─── App Boot ─────────────────────────────────────────────────────────────────
 window.bootApp = bootApp; // EXPOSE IMMEDIATELY
 function bootApp() {
-    console.log("bootApp() EXECUTION STARTED");
+
     document.body.classList.add('js-enabled');
 
     // ══════════════════════════════════════════════════════════════════════
@@ -70,7 +142,6 @@ function bootApp() {
 
         // Use onAuthStateChange as SINGLE SOURCE OF TRUTH
         window.supabaseClient.auth.onAuthStateChange(function(event, session) {
-            console.log('🔔 Auth event:', event, session ? '(session exists)' : '(no session)');
 
             if (window.updateNavForAuth) {
                 window.updateNavForAuth(session);
@@ -88,7 +159,7 @@ function bootApp() {
             }
         });
 
-        console.log('✅ Auth sync active');
+
     })();
 
 
@@ -104,14 +175,23 @@ function bootApp() {
     // Initial navigation
     var rawHash = window.location.hash;
     if (rawHash.includes('error=')) {
-        setTimeout(() => {
-            var errStr = decodeURIComponent(rawHash.split('error_description=')[1] || rawHash);
-            alert('Supabase Auth Error: ' + errStr);
-        }, 800);
-        window.navigate('login');
+        var errStr = decodeURIComponent((rawHash.split('error_description=')[1] || '').split('&')[0] || rawHash);
+        if (errStr.toLowerCase().includes('expire') || errStr.toLowerCase().includes('invalid')) {
+            window.location.replace('/reset-password/' + window.location.hash);
+        } else {
+            setTimeout(() => {
+                alert('Supabase Auth Error: ' + errStr);
+            }, 800);
+            window.navigate('login');
+        }
     } else if (rawHash.includes('access_token=')) {
-        // Do not navigate immediately, let Supabase process the token
-        setTimeout(() => window.navigate('home'), 1500); 
+        // Only redirect to home if NOT a password recovery flow
+        if (!rawHash.includes('type=recovery')) {
+            setTimeout(() => window.navigate('home'), 1500);
+        } else {
+            console.log("[App] Recovery link detected, navigating to separate reset-password page.");
+            window.location.replace('/reset-password/' + window.location.hash);
+        }
     } else {
         window.navigate(rawHash.replace('#', '') || 'home');
     }
@@ -142,7 +222,7 @@ function bindDynamicEvents() {
 
 // ─── Animations ───────────────────────────────────────────────────────────────
 function initAnimations() {
-    var fadeUpEls = document.querySelectorAll('.fade-up');
+    var fadeUpEls = document.querySelectorAll('.fade-up, .stagger-in');
     var observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
             if (entry.isIntersecting) {
@@ -161,7 +241,7 @@ function initAnimations() {
         }
     });
 
-    console.log("INITIALIZING ANIMATIONS");
+
     // Small delay to ensure browser has completed initial layout
     setTimeout(function() {
         initCounters();
@@ -248,7 +328,6 @@ function initTiltEffects() {
 
 function initCounters() {
     var counters = document.querySelectorAll('.counter-val');
-    console.log("InitCounters found:", counters.length, "elements");
 
     counters.forEach(function(c, i) {
         // Disconnect previous observer to avoid multiple running instances on nav swap
@@ -266,7 +345,7 @@ function initCounters() {
         var obs = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
-                    console.log("Counter", i, "intersected - starting animation");
+
                     var delay = 100 + i * 150;
                     setTimeout(function() {
                         animateValue(entry.target, 0, targetValue, 2000);
@@ -315,39 +394,70 @@ function animateValue(el, start, end, duration) {
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 async function renderDashboard() {
     var user = window._authUser || {};
-    // Robust name detection: check metadata properties commonly used by Supabase/Google Auth
     var meta = user.user_metadata || {};
     var name = meta.full_name || meta.name || meta.display_name || (user.email ? user.email.split('@')[0] : 'Student');
     var email = user.email || 'No email';
     var mobile = '';
     
-    // Fetch mobile number from the database 'users' table
     if (user && user.id && window.supabaseClient) {
         try {
-            var { data, error } = await window.supabaseClient.from('users').select('mobile_number').eq('id', user.id).single();
-            if (data && data.mobile_number) {
-                mobile = data.mobile_number;
-            }
-        } catch(err) {
-            console.error('Failed to fetch user profile:', err);
-        }
+            var { data } = await window.supabaseClient.from('users').select('mobile_number').eq('id', user.id).single();
+            if (data && data.mobile_number) mobile = data.mobile_number;
+        } catch(err) {}
     }
     
     var mobileDisplay = mobile ? mobile : 'No Mobile Number';
-    
-    // Inject local fallback styles to guarantee layout even if external CSS has issues
+    name = window.sanitizeHTML(name);
+    email = window.sanitizeHTML(email);
+    mobileDisplay = window.sanitizeHTML(mobileDisplay);
+
+    // ─── Fetch Paid eBooks ───
+    var paidEbooks = [];
+    if (user && user.id && window.supabaseClient) {
+        var { data: ebookData } = await window.supabaseClient
+            .from('ebook_users')
+            .select('*')
+            .eq('user_id', user.id)
+            .eq('payment_status', 'paid')
+            .order('created_at', { ascending: false });
+        if (ebookData) paidEbooks = ebookData;
+    }
+
     var localStyles = '<style>' +
         '.dashboard-wrapper { display: flex !important; gap: 24px; padding: 120px 20px 60px; max-width: 1200px; margin: 0 auto; min-height: 80vh; }' +
         '.dashboard-sidebar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }' +
         '.dashboard-content { flex: 1; display: flex; flex-direction: column; gap: 32px; }' +
+        '.ebook-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }' +
+        '.ebook-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 12px; transition: 0.3s; }' +
+        '.ebook-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }' +
         '@media (max-width: 900px) { .dashboard-wrapper { flex-direction: column !important; padding-top: 100px; } .dashboard-sidebar { width: 100%; } }' +
     '</style>';
+
+    var ebooksHtml = '';
+    if (paidEbooks.length > 0) {
+        ebooksHtml = '<div class="ebook-grid">';
+        paidEbooks.forEach(function(eb) {
+            ebooksHtml += '<div class="ebook-card">' +
+                '<div style="font-size: 24px;">📚</div>' +
+                '<h3 style="font-size: 16px; font-weight: 700;">' + eb.course + ' (' + eb.quota + ')</h3>' +
+                '<p style="font-size: 13px; color: #666;">Purchased on ' + new Date(eb.created_at).toLocaleDateString() + '</p>' +
+                '<button class="btn btn-primary" style="margin-top:10px; font-size: 12px; padding: 10px;" onclick="alert(\'Your eBook is being prepared for download. Please check your email.\')">Download PDF</button>' +
+            '</div>';
+        });
+        ebooksHtml += '</div>';
+    } else {
+        ebooksHtml = '<div class="placeholder-section">' +
+            '<div class="placeholder-icon">🚀</div>' +
+            '<h3>Your journey starts here</h3>' +
+            '<p style="color:var(--color-text-muted);margin:10px 0 20px;">Complete your profile or book a session to get started.</p>' +
+            '<button class="btn btn-primary" onclick="window.navigate(\'ebooks\')">Browse eBooks</button>' +
+        '</div>';
+    }
 
     return localStyles + 
     '<div class="dashboard-wrapper">' +
         '<div class="dashboard-sidebar glass-panel">' +
             '<h3 class="sidebar-title">My Profile</h3>' +
-            
             '<div class="sidebar-user-card">' +
                 '<div class="sidebar-avatar">' + name.charAt(0).toUpperCase() + '</div>' +
                 '<div class="sidebar-user-info">' +
@@ -356,39 +466,119 @@ async function renderDashboard() {
                     '<div class="sidebar-user-mobile">' + mobileDisplay + '</div>' +
                 '</div>' +
             '</div>' +
-            
             '<nav class="sidebar-menu">' +
-                '<a href="#" class="menu-item" onclick="event.preventDefault(); window.openAddMobileModal();">' +
-                    '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg></span>' +
-                    '<span class="menu-label">Add Mobile Number</span>' +
-                '</a>' +
                 '<a href="#" class="menu-item" onclick="event.preventDefault(); window.navigate(\'orders\');">' +
                     '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"></path><path d="M1 3H23V8H1V3Z"></path><path d="M10 12H14"></path></svg></span>' +
                     '<span class="menu-label">Order History</span>' +
                 '</a>' +
             '</nav>' +
         '</div>' +
-        
         '<div class="dashboard-content glass-panel">' +
             '<div class="content-header">' +
                 '<h2>Welcome back, ' + name + '! 👋</h2>' +
                 '<p style="color:var(--color-text-muted);margin-top:4px;">Manage your counselling journey and active orders here.</p>' +
             '</div>' +
-            
             '<div class="content-body">' +
-                '<div class="placeholder-section">' +
-                    '<div class="placeholder-icon">🚀</div>' +
-                    '<h3>Your journey starts here</h3>' +
-                    '<p style="color:var(--color-text-muted);margin:10px 0 20px;">Complete your profile or book a session to get started.</p>' +
-                    '<button class="btn btn-primary" onclick="window.navigate(\'counselling\')">Explore Services</button>' +
-                '</div>' +
+                '<h3 style="margin-bottom:10px;">' + (paidEbooks.length > 0 ? 'My Purchased eBooks' : 'Active Items') + '</h3>' +
+                ebooksHtml +
             '</div>' +
         '</div>' +
     '</div>';
 }
 
+// ─── Order History ──────────────────────────────────────────────────────────
+async function renderOrders() {
+    console.log('[App] Rendering Orders...');
+    var user = window._authUser;
+    if (!user && window.supabaseClient) {
+        var { data } = await window.supabaseClient.auth.getSession();
+        if (data && data.session) user = data.session.user;
+    }
+
+    if (!user || !user.id) {
+        return '<div style="padding:160px 20px; text-align:center;">' +
+            '<h3>Access Restricted</h3>' +
+            '<p style="color:#666; margin:10px 0 20px;">Please log in to view your order history.</p>' +
+            '<button class="btn btn-primary" onclick="window.navigate(\'login\')">Sign In</button>' +
+        '</div>';
+    }
+
+    var orders = [];
+    if (window.supabaseClient) {
+        try {
+            var { data: orderData, error } = await window.supabaseClient
+                .from('ebook_users')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+            
+            if (error) throw error;
+            if (orderData) orders = orderData;
+        } catch(err) {
+            console.error('[App] Failed to fetch orders:', err);
+            return '<div style="padding:160px 20px; text-align:center; color:#ef4444;">Error loading orders. Please try again.</div>';
+        }
+    }
+
+    var html = '<div class="orders-page-wrapper" style="padding:120px 20px 60px; max-width: 1000px; margin: 0 auto; min-height: 80vh;">' +
+        '<div class="glass-panel" style="padding:40px; border-radius: 24px;">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap: wrap; gap: 15px;">' +
+                '<div>' +
+                    '<h2 style="font-size: 28px; font-weight: 800; color: #1e40af;">Order History</h2>' +
+                    '<p style="color:#666; font-size: 14px;">Review all your eBook purchases and payment attempts.</p>' +
+                '</div>' +
+                '<button class="btn btn-ghost" style="border: 1px solid #ddd;" onclick="window.navigate(\'dashboard\')">← Back to Dashboard</button>' +
+            '</div>';
+
+    if (orders.length === 0) {
+        html += '<div style="text-align:center; padding:80px 20px; background: rgba(0,0,0,0.02); border-radius: 16px; border: 2px dashed #ddd;">' +
+            '<div style="font-size: 48px; margin-bottom: 20px;">📦</div>' +
+            '<h3 style="font-weight: 600;">No transactions found</h3>' +
+            '<p style="color:#666; margin-top: 5px;">You haven\'t made any eBook purchase attempts yet.</p>' +
+            '<button class="btn btn-primary" style="margin-top:20px;" onclick="window.navigate(\'ebooks\')">Browse eBooks</button>' +
+        '</div>';
+    } else {
+        html += '<div style="overflow-x:auto; margin-top: 20px;">' +
+            '<table style="width:100%; border-collapse:separate; border-spacing: 0 8px; font-size:14px;">' +
+            '<thead>' +
+                '<tr style="color: #666; font-weight: 600;">' +
+                    '<th style="text-align:left; padding:12px;">Date</th>' +
+                    '<th style="text-align:left; padding:12px;">eBook Details</th>' +
+                    '<th style="text-align:left; padding:12px;">Amount</th>' +
+                    '<th style="text-align:left; padding:12px;">Status</th>' +
+                    '<th style="text-align:left; padding:12px;">Payment ID</th>' +
+                '</tr>' +
+            '</thead>' +
+            '<tbody>';
+
+        orders.forEach(function(order) {
+            var badgeBg = '#666';
+            if (order.payment_status === 'paid') badgeBg = '#22c55e';
+            else if (order.payment_status === 'failed') badgeBg = '#ef4444';
+            else if (order.payment_status === 'cancelled') badgeBg = '#f59e0b';
+            else if (order.payment_status === 'initiated') badgeBg = '#3b82f6';
+
+            html += '<tr style="background: rgba(255,255,255,0.5);">' +
+                '<td style="padding:16px 12px; border-radius: 12px 0 0 12px; color: #666;">' + new Date(order.created_at).toLocaleDateString() + '</td>' +
+                '<td style="padding:16px 12px;">' +
+                    '<div style="font-weight:700; color: #1e293b;">' + order.course + '</div>' +
+                    '<div style="font-size: 12px; color: #666;">' + order.quota + '</div>' +
+                '</td>' +
+                '<td style="padding:16px 12px; font-weight: 600;">₹' + order.amount_paid + '</td>' +
+                '<td style="padding:16px 12px;"><span style="padding:4px 8px; border-radius:6px; background:' + badgeBg + '; color:#fff; font-weight:700; font-size:10px; text-transform:uppercase;">' + order.payment_status + '</span></td>' +
+                '<td style="padding:16px 12px; border-radius: 0 12px 12px 0; font-family:monospace; font-size:12px; color:#94a3b8;">' + (order.razorpay_payment_id || '—') + '</td>' +
+            '</tr>';
+        });
+
+        html += '</tbody></table></div>';
+    }
+
+    html += '</div></div>';
+    return html;
+}
+
 function simulateRazorpay() {
-    console.log('Razorpay Checkout Simulated (No UI Alert)');
+
 }
 
 window.openAddMobileModal = function() {
@@ -519,8 +709,7 @@ window.handleEmailLogin = async function(e) {
         e.preventDefault();
         e.stopPropagation();
     }
-    console.log("handleEmailLogin triggered!");
-    
+
     var errBox   = document.getElementById('pageAuthError');
     var okBox    = document.getElementById('pageAuthSuccess');
     var btn      = document.getElementById('pageAuthSubmitBtn');
@@ -558,8 +747,18 @@ window.handleEmailLogin = async function(e) {
         showErr('Please enter your full name.');
         return false;
     }
-    if (pass.length < 6) {
-        showErr('Password must be at least 6 characters.');
+
+    // ─── Rate Limiting Check ─────────────────────────────────────────
+    if (isLoginRateLimited()) {
+        var secs = getLoginLockoutRemaining();
+        showErr('⚠️ Too many login attempts. Please wait ' + Math.ceil(secs / 60) + ' minute(s) before trying again.');
+        return false;
+    }
+
+    // ─── Strong Password Validation ──────────────────────────────────
+    var passErr = validatePasswordStrength(pass);
+    if (passErr) {
+        showErr(passErr);
         return false;
     }
 
@@ -585,7 +784,7 @@ window.handleEmailLogin = async function(e) {
 
     try {
         if (isSignUp) {
-            console.log('Attempting sign up for:', email);
+
             var res = await window.supabaseClient.auth.signUp({ 
                 email: email, 
                 password: pass, 
@@ -595,8 +794,7 @@ window.handleEmailLogin = async function(e) {
                     } 
                 } 
             });
-            console.log('Sign up result:', res);
-            
+
             if (res.error) { 
                 showErr(res.error.message); 
             } else if (res.data && res.data.user && res.data.user.identities && res.data.user.identities.length === 0) {
@@ -621,17 +819,19 @@ window.handleEmailLogin = async function(e) {
                 }
             }
         } else {
-            console.log('Attempting sign in for:', email);
+            recordLoginAttempt();
             var res2 = await window.supabaseClient.auth.signInWithPassword({ email: email, password: pass });
-            console.log('Sign in result:', res2);
+
             if (res2.error) { showErr(res2.error.message); }
             else {
+                // Successful login — clear rate limit history
+                _loginAttempts = [];
                 if (window.updateNavForAuth) window.updateNavForAuth(res2.data.session);
                 window.navigate('home');
             }
         }
     } catch(err) {
-        console.error("Auth Exception:", err);
+
         showErr(err.message || 'Something went wrong. Please verify your connection and credentials.');
     } finally {
         if (btn) {
@@ -714,5 +914,132 @@ function resetPredictor() {
 }
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
-console.log("APP.JS FINAL EXECUTION - BOOTING");
+
 bootApp();
+
+// ─── Counselling Booking Handlers ──────────────────────────────────────────────
+
+window.activeCounsellingContext = null;
+
+window.openCounsellingBooking = function(planId) {
+    const meta = COUNSELLING_META[planId];
+    if (!meta) {
+        console.error("Invalid Counselling Plan:", planId);
+        return;
+    }
+
+    if (!window._authUser && window.supabaseClient) {
+        alert("Please login first to book your counselling plan.");
+        window.navigate('login');
+        return;
+    }
+
+    window.activeCounsellingContext = { planId, ...meta };
+
+    // Fill user data
+    if (window._authUser) {
+        const userMeta = window._authUser.user_metadata || {};
+        document.getElementById('cb_full_name').value = userMeta.full_name || userMeta.name || '';
+        document.getElementById('cb_email').value = window._authUser.email || '';
+    }
+
+    // Modal Display
+    document.getElementById('modalOverlay').style.display = 'block';
+    document.getElementById('counsellingBookingModal').style.display = 'block';
+    
+    // Update labels
+    const titleEl = document.querySelector('#counsellingBookingModal h2');
+    if (titleEl) titleEl.innerText = "Book: " + meta.title;
+};
+
+window.closeCounsellingBookingModal = function() {
+    document.getElementById('modalOverlay').style.display = 'none';
+    document.getElementById('counsellingBookingModal').style.display = 'none';
+};
+
+window.submitCounsellingBooking = async function() {
+    const submitBtn = document.querySelector('#counsellingBookingModal .eb-btn');
+    const originalText = submitBtn.innerText;
+    submitBtn.innerText = "Processing...";
+    submitBtn.disabled = true;
+
+    try {
+        const fullName = document.getElementById('cb_full_name').value;
+        const category = document.getElementById('cb_category').value;
+        const domicile = document.getElementById('cb_domicile_state').value;
+        const neetScore = parseInt(document.getElementById('cb_neet_score').value);
+        const rank = parseInt(document.getElementById('cb_rank').value);
+        const email = document.getElementById('cb_email').value;
+        const mobile = document.getElementById('cb_mobile').value;
+
+        const ctx = window.activeCounsellingContext;
+        
+        const recordData = {
+            user_id: window._authUser ? window._authUser.id : null,
+            full_name: fullName,
+            email: email,
+            mobile: mobile,
+            category: category,
+            domicile_state: domicile,
+            neet_score: neetScore,
+            rank: rank,
+            plan_type: ctx.planId,
+            amount_paid: ctx.price,
+            payment_status: 'initiated'
+        };
+
+        let insertRes = null;
+        if (window.supabaseClient) {
+            const { data, error } = await window.supabaseClient.from('counselling_bookings').insert(recordData).select('id').single();
+            if (error) {
+                console.error("Booking Table Error:", error);
+                alert("Server busy. Please try again in a moment.");
+                return;
+            }
+            insertRes = data;
+        }
+
+        // Razorpay Integration
+        const options = {
+            "key": "rzp_live_SebrDtxMirg67M",
+            "amount": ctx.price * 100, // paisa
+            "currency": "INR",
+            "name": "DC Neet Counselling",
+            "description": ctx.title,
+            "handler": async function (response) {
+                if (window.supabaseClient && insertRes && insertRes.id) {
+                    await window.supabaseClient.from('counselling_bookings').update({
+                        payment_status: 'completed',
+                        razorpay_payment_id: response.razorpay_payment_id
+                    }).eq('id', insertRes.id);
+                }
+                alert("Success! Your booking for " + ctx.title + " has been confirmed. Our team will contact you shortly.");
+                window.closeCounsellingBookingModal();
+            },
+            "prefill": {
+                "name": fullName,
+                "email": email,
+                "contact": mobile
+            },
+            "theme": { "color": "#2563eb" }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.on('payment.failed', async function (response) {
+            if (window.supabaseClient && insertRes && insertRes.id) {
+                await window.supabaseClient.from('counselling_bookings').update({
+                    payment_status: 'failed'
+                }).eq('id', insertRes.id);
+            }
+            alert("Payment failed. Please try again.");
+        });
+        rzp.open();
+
+    } catch (e) {
+        console.error(e);
+        alert("Unexpected error. Please try again.");
+    } finally {
+        submitBtn.innerText = originalText;
+        submitBtn.disabled = false;
+    }
+};

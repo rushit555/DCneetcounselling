@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password - DC NEET Counselling</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .reset-container {
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-banner {
+            width: 65px;
+            height: 65px;
+            background: #f0f9ff;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            color: #0ea5e9;
+            font-size: 26px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            color: #1e293b;
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .msg-box {
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .msg-error { background: #fef2f2; color: #991b1b; border: 1px solid #fee2e2; }
+        .msg-success { background: #ecfdf5; color: #065f46; border: 1px solid #d1fae5; font-weight: 600; font-size: 15px; }
+
+        .btn-reset {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+
+        .btn-reset:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-reset:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 20px 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #3b82f6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .reset-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="reset-container">
+        <div style="text-align: center;">
+            <div class="icon-banner">
+                <i class="fas fa-lock"></i>
+            </div>
+            <h1 style="font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 8px;">Reset Password</h1>
+            <p style="color: #64748b; font-size: 15px; margin-bottom: 30px;">Choose a secure new password for your account.</p>
+        </div>
+
+        <!-- Loading indicator while verifying token -->
+        <div id="loadingState" class="loading-state">
+            <div class="spinner"></div>
+            <p>Verifying your reset link...</p>
+        </div>
+
+        <div id="errorBox" class="msg-box msg-error"></div>
+        <div id="successBox" class="msg-box msg-success"></div>
+
+        <form id="resetForm" style="display:none;">
+            <div class="input-group">
+                <label for="new_password">New Password</label>
+                <input type="password" id="new_password" class="form-input" placeholder="Min. 6 characters" required minlength="6">
+            </div>
+            <div class="input-group">
+                <label for="confirm_password">Confirm New Password</label>
+                <input type="password" id="confirm_password" class="form-input" placeholder="Repeat new password" required minlength="6">
+            </div>
+            
+            <button type="submit" id="submitBtn" class="btn-reset">
+                <i class="fas fa-key"></i> Update Password
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 24px;">
+            <a href="https://dcneetcounselling.com/#login" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'">
+                <i class="fas fa-arrow-left"></i> Back to Login
+            </a>
+        </div>
+    </div>
+
+    <!-- Supabase JS SDK v2 -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
+        const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
+
+        let supabaseClient;
+
+        const errBox      = document.getElementById('errorBox');
+        const okBox       = document.getElementById('successBox');
+        const resetForm   = document.getElementById('resetForm');
+        const loadingState = document.getElementById('loadingState');
+
+        function showError(msg) {
+            loadingState.style.display = 'none';
+            resetForm.style.display = 'none';
+            errBox.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + msg;
+            errBox.style.display = 'block';
+        }
+
+        function showForm() {
+            loadingState.style.display = 'none';
+            errBox.style.display = 'none';
+            resetForm.style.display = 'block';
+        }
+
+        async function init() {
+            try {
+                // Initialize Supabase client with PKCE flow support
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
+                    auth: {
+                        persistSession: true,
+                        autoRefreshToken: true,
+                        detectSessionInUrl: true,
+                        flowType: 'pkce',
+                        storage: window.localStorage
+                    }
+                });
+
+                // --- STEP 1: Check for PKCE token_hash in URL query params (NEW Supabase flow) ---
+                const urlParams = new URLSearchParams(window.location.search);
+                const tokenHash = urlParams.get('token_hash');
+                const type      = urlParams.get('type');
+
+                if (tokenHash && type === 'recovery') {
+                    console.log('[Reset] PKCE token_hash found, verifying OTP...');
+                    const { data, error } = await supabaseClient.auth.verifyOtp({
+                        token_hash: tokenHash,
+                        type: 'recovery'
+                    });
+
+                    if (error) {
+                        console.error('[Reset] verifyOtp error:', error);
+                        showError('This reset link is invalid or has expired. Please <a href="https://dcneetcounselling.com/#login" style="color:#b91c1c;font-weight:700;">request a new one</a>.');
+                        return;
+                    }
+
+                    if (data && data.session) {
+                        console.log('[Reset] PKCE session established for user:', data.session.user.id);
+                        // Strip token from URL for security
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        showForm();
+                        return;
+                    }
+                }
+
+                // --- STEP 2: Check for legacy hash fragment (#access_token=...&type=recovery) ---
+                const hash = window.location.hash;
+                if (hash.includes('access_token=') && hash.includes('type=recovery')) {
+                    console.log('[Reset] Legacy hash token detected, waiting for Supabase to parse...');
+                    // Supabase detectSessionInUrl will handle this; wait for it
+                    supabaseClient.auth.onAuthStateChange((event, session) => {
+                        if (event === 'PASSWORD_RECOVERY' && session) {
+                            console.log('[Reset] PASSWORD_RECOVERY event received.');
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            showForm();
+                        }
+                    });
+
+                    // Fallback: check session after 1.5s
+                    setTimeout(async () => {
+                        if (resetForm.style.display !== 'block') {
+                            const { data: { session } } = await supabaseClient.auth.getSession();
+                            if (session) {
+                                showForm();
+                            } else {
+                                showError('Reset link expired or already used. Please <a href="https://dcneetcounselling.com/#login" style="color:#b91c1c;font-weight:700;">request a new one</a>.');
+                            }
+                        }
+                    }, 1500);
+                    return;
+                }
+
+                // --- STEP 3: Check if an existing valid session is already in localStorage ---
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (session) {
+                    console.log('[Reset] Existing session found:', session.user.id);
+                    showForm();
+                    return;
+                }
+
+                // --- No valid token found ---
+                showError('No valid reset link detected. Please go back and click the link from your email directly.');
+
+            } catch (err) {
+                console.error('[Reset] Init error:', err);
+                showError('Something went wrong. Please try again or contact support.');
+            }
+        }
+
+        // --- Form Submit Handler ---
+        document.getElementById('resetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn   = document.getElementById('submitBtn');
+            const pass1 = document.getElementById('new_password').value;
+            const pass2 = document.getElementById('confirm_password').value;
+
+            errBox.style.display = 'none';
+            okBox.style.display  = 'none';
+
+            // Validation
+            if (pass1 !== pass2) {
+                errBox.innerText = 'Passwords do not match. Please re-enter.';
+                errBox.style.display = 'block';
+                return;
+            }
+            if (pass1.length < 6) {
+                errBox.innerText = 'Password must be at least 6 characters long.';
+                errBox.style.display = 'block';
+                return;
+            }
+
+            // Loading state
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+            try {
+                // Final session check before update
+                const { data: { session }, error: sessErr } = await supabaseClient.auth.getSession();
+                if (sessErr || !session) {
+                    throw new Error('Your session has expired. Please click the email link again to start over.');
+                }
+
+                console.log('[Reset] Calling updateUser for:', session.user.id);
+                const { data, error } = await supabaseClient.auth.updateUser({ password: pass1 });
+
+                if (error) throw error;
+
+                console.log('[Reset] Password updated successfully for:', data.user.id);
+
+                // Success!
+                resetForm.style.display = 'none';
+                okBox.innerHTML = '<i class="fas fa-check-circle"></i> Your password has been successfully changed! Redirecting to login...';
+                okBox.style.display = 'block';
+
+                window.history.replaceState({}, document.title, window.location.pathname);
+
+                setTimeout(() => {
+                    window.location.href = 'https://dcneetcounselling.com/#login';
+                }, 2500);
+
+            } catch (err) {
+                console.error('[Reset] updateUser error:', err);
+                errBox.innerText = err.message || 'Failed to update password. Please try again.';
+                errBox.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-key"></i> Update Password';
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

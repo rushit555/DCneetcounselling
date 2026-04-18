@@ -12,8 +12,8 @@
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(0, 0, 0, 0.1);
     
-    --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.04);
-    --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.1);
+    --shadow-soft: 0 4px 16px rgba(0, 0, 0, 0.03);
+    --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.08);
     --radius-md: 12px;
     --radius-lg: 24px;
     --radius-full: 9999px;
@@ -46,10 +46,11 @@
     width: 40vw;
     height: 40vw;
     background: var(--color-primary);
-    filter: blur(100px);
+    filter: blur(60px);
     border-radius: 50%;
     opacity: 0.25;
     animation: blobMove 40s linear infinite alternate;
+    will-change: transform;
 }
 
 .blob-2 {
@@ -101,7 +102,7 @@
 }
 
 html {
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
 }
 
@@ -111,7 +112,7 @@ body {
     min-height: 100dvh;
     color: var(--color-text);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
     position: relative;
     scroll-behavior: smooth;
@@ -134,8 +135,8 @@ body {
 /* Glassmorphism */
 .glass-panel {
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     border: 1px solid var(--glass-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-soft);
@@ -390,3 +391,34 @@ body.js-enabled .fade-up:not(.visible) {
         justify-self: start !important;
     }
 }
+
+.stagger-in > * { opacity: 0; transform: translateY(15px); transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease; }
+.stagger-in.visible > * { opacity: 1; transform: translateY(0); }
+.stagger-in.visible > *:nth-child(1) { transition-delay: 0.1s; }
+.stagger-in.visible > *:nth-child(2) { transition-delay: 0.2s; }
+.stagger-in.visible > *:nth-child(3) { transition-delay: 0.3s; }
+.stagger-in.visible > *:nth-child(4) { transition-delay: 0.4s; }
+.stagger-in.visible > *:nth-child(5) { transition-delay: 0.5s; }
+@keyframes pulse-gold-glow { 0% { box-shadow: 0 0 0 0 rgba(254, 215, 0, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(254, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(254, 215, 0, 0); } }
+@keyframes pulse-green-glow { 0% { box-shadow: 0 0 0 0 rgba(102, 187, 106, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(102, 187, 106, 0); } 100% { box-shadow: 0 0 0 0 rgba(102, 187, 106, 0); } }
+@keyframes pulse-blue-glow { 0% { box-shadow: 0 0 0 0 rgba(66, 165, 245, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(66, 165, 245, 0); } 100% { box-shadow: 0 0 0 0 rgba(66, 165, 245, 0); } }
+@keyframes pulse-orange-glow { 0% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 87, 34, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 87, 34, 0); } }
+@keyframes pulse-purple-glow { 0% { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(147, 51, 234, 0); } 100% { box-shadow: 0 0 0 0 rgba(147, 51, 234, 0); } }
+
+.pulse-gold { animation: pulse-gold-glow 2.5s infinite; }
+.pulse-green { animation: pulse-green-glow 2.5s infinite; }
+.pulse-blue { animation: pulse-blue-glow 2.5s infinite; }
+.pulse-orange { animation: pulse-orange-glow 2.5s infinite; }
+.pulse-purple { animation: pulse-purple-glow 2.5s infinite; }
+
+.counselling-card, .med-pricing-card, .ayush-pricing-card, .vet-pricing-card, .combo-pricing-card, .ebook-card-v2, .mo-card { 
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, background 0.3s ease !important; 
+}
+
+.counselling-card:hover, .med-pricing-card:hover, .ayush-pricing-card:hover, .vet-pricing-card:hover, .combo-pricing-card:hover, .ebook-card-v2:hover, .mo-card:hover { 
+    transform: scale(1.03) translateY(-5px) !important; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12) !important; 
+}
+
+
+
