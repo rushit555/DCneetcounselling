@@ -183,11 +183,11 @@
         <form id="resetForm" style="display:none;">
             <div class="input-group">
                 <label for="new_password">New Password</label>
-                <input type="password" id="new_password" class="form-input" placeholder="Min. 6 characters" required minlength="6">
+                <input type="password" id="new_password" class="form-input" placeholder="New password" required>
             </div>
             <div class="input-group">
                 <label for="confirm_password">Confirm New Password</label>
-                <input type="password" id="confirm_password" class="form-input" placeholder="Repeat new password" required minlength="6">
+                <input type="password" id="confirm_password" class="form-input" placeholder="Repeat new password" required>
             </div>
             
             <button type="submit" id="submitBtn" class="btn-reset">
@@ -325,11 +325,6 @@
             // Validation
             if (pass1 !== pass2) {
                 errBox.innerText = 'Passwords do not match. Please re-enter.';
-                errBox.style.display = 'block';
-                return;
-            }
-            if (pass1.length < 6) {
-                errBox.innerText = 'Password must be at least 6 characters long.';
                 errBox.style.display = 'block';
                 return;
             }
