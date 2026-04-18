@@ -54,14 +54,11 @@ function getLoginLockoutRemaining() {
 }
 
 /**
- * Strong password validator
- * Requires: min 8 chars, at least 1 number, at least 1 special character
+ * Password validator
+ * Restrictions removed as per user request.
  */
 function validatePasswordStrength(pass) {
-    if (pass.length < 8) return 'Password must be at least 8 characters.';
-    if (!/[0-9]/.test(pass)) return 'Password must contain at least one number.';
-    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~`]/.test(pass)) return 'Password must contain at least one special character (!@#$%^&* etc).';
-    return null; // passes
+    return null; // All passwords pass
 }
 
 // ─── Core Router (Upgraded) ──────────────────────────────────────────────────
