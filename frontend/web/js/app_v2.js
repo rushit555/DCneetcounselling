@@ -100,6 +100,16 @@ window.navigate = function(route) {
         }
     }
     
+    if (route === 'thank-you') {
+        var tpProduct = document.getElementById('il-summary-product');
+        if (tpProduct && window.lastPurchase) {
+            tpProduct.innerText = window.lastPurchase.product;
+            document.getElementById('il-summary-amount').innerText = window.lastPurchase.amount;
+            document.getElementById('il-summary-id').innerText = window.lastPurchase.order_id || 'N/A';
+            document.getElementById('inline-order-summary').style.display = 'block';
+        }
+    }
+    
     if (originalStub && originalStub !== window.navigate) {
         originalStub(route);
     }

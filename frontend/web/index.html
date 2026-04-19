@@ -2230,6 +2230,28 @@
         </section>
       </div>
 
+      <!-- Thank You Section (Native SPA) -->
+      <div id="section-thank-you" class="page-section" style="background-color: #f8fafc; display: none; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Poppins', sans-serif;">
+        <div style="background: #ffffff; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center; max-width: 450px; width: 90%; margin: 120px auto;">
+            <div style="color: #16a34a; font-size: 64px; margin-bottom: 20px;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1 style="color: #1e293b; font-size: 24px; font-weight: 700; margin-bottom: 12px;">Payment Successful ✅</h1>
+            <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin-bottom: 30px;">
+                We have received your payment successfully.<br>
+                Your eBook(s) will be sent to your WhatsApp and Email within 12 hours.
+            </p>
+            
+            <div id="inline-order-summary" style="display:none; background:#f1f5f9; text-align:left; padding:20px; border-radius:10px; margin-bottom:30px;">
+                <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Product:</strong> <span id="il-summary-product"></span></p>
+                <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Amount Paid:</strong> ₹<span id="il-summary-amount"></span></p>
+                <p style="margin:0 0 0px; font-size:14px; color:#475569;"><strong>Payment ID:</strong> <span id="il-summary-id"></span></p>
+            </div>
+
+            <a href="#" onclick="event.preventDefault(); window.navigate('orders');" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 10px; font-weight: 600; transition: opacity 0.2s;">Go to Profile</a>
+        </div>
+      </div>
+
       <!-- About Section -->
       <div id="section-about" class="page-section">
         <section style="padding: 120px 0 60px">
@@ -6650,8 +6672,9 @@ window.submitEbookPurchase = async function() {
                       if (window.renderCartPage) window.renderCartPage();
                   }
                   
-                  // Success Redirect
-                  window.location.href = '/thank-you/?product=' + encodeURIComponent(ctx.title) + '&amount=' + ctx.price + '&order_id=' + response.razorpay_payment_id;
+                  // Success Redirect (Native SPA)
+                  window.lastPurchase = { product: ctx.title, amount: ctx.price, order_id: response.razorpay_payment_id };
+                  window.navigate('thank-you');
               } catch (veriErr) {
                   console.error(veriErr);
                   alert(veriErr.message);
