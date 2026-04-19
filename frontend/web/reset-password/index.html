@@ -196,7 +196,7 @@
         </form>
 
         <div style="text-align: center; margin-top: 24px;">
-            <a href="https://dcneetcounselling.com/#login" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'">
+            <a href="/#login" style="color: #64748b; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#1e293b'" onmouseout="this.style.color='#64748b'">
                 <i class="fas fa-arrow-left"></i> Back to Login
             </a>
         </div>
@@ -254,7 +254,7 @@
 
                     if (error) {
                         console.error('[Reset] verifyOtp error:', error);
-                        showError('This reset link is invalid or has expired. Please <a href="https://dcneetcounselling.com/#login" style="color:#b91c1c;font-weight:700;">request a new one</a>.');
+                        showError('This reset link is invalid or has expired. Please <a href="/#login" style="color:#b91c1c;font-weight:700;">request a new one</a>.');
                         return;
                     }
 
@@ -287,7 +287,7 @@
                             if (session) {
                                 showForm();
                             } else {
-                                showError('Reset link expired or already used. Please <a href="https://dcneetcounselling.com/#login" style="color:#b91c1c;font-weight:700;">request a new one</a>.');
+                                showError('Reset link expired or already used. Please <a href="/#login" style="color:#b91c1c;font-weight:700;">request a new one</a>.');
                             }
                         }
                     }, 1500);
@@ -355,7 +355,7 @@
                 window.history.replaceState({}, document.title, window.location.pathname);
 
                 setTimeout(() => {
-                    window.location.href = 'https://dcneetcounselling.com/#login';
+                    window.location.href = window.location.origin + '/#login';
                 }, 2500);
 
             } catch (err) {
