@@ -50,6 +50,8 @@
             link.classList.add("active");
           else link.classList.remove("active");
         });
+        // Custom Page Hooks
+        if (route === 'orders' && window.renderOrdersPage) window.renderOrdersPage();
       };
       // Handle browser Back/Forward buttons and Initial Load
       window.onpopstate = function () {
@@ -5789,6 +5791,64 @@
       </button>
     </div>
 
+    <!-- Order History Section -->
+    <div id="section-orders" class="page-section" style="display:none; background:#f8fafc; min-height:80vh; padding:60px 20px;">
+      <div class="container" style="max-width:800px; margin:0 auto;">
+        <h2 style="font-size:28px; font-weight:700; color:#1e293b; margin-bottom:10px;"><i class="fas fa-box-open" style="color:#2563eb;"></i> Order History</h2>
+        <p style="color:#64748b; margin-bottom:30px;">View your past eBook purchases and counselling bookings.</p>
+        
+        <div id="ordersList" style="display:flex; flex-direction:column; gap:16px;">
+          <div style="text-align:center; padding:40px; color:#9ca3af;">Loading orders <i class="fas fa-spinner fa-spin"></i></div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      window.renderOrdersPage = async function() {
+        var ordersList = document.getElementById('ordersList');
+        if (!ordersList) return;
+        if (!window._authUser) {
+          ordersList.innerHTML = '<div style="text-align:center; padding:40px; color:#b91c1c;">Please login to view your orders.</div>';
+          return;
+        }
+        ordersList.innerHTML = '<div style="text-align:center; padding:40px; color:#9ca3af;">Loading orders <i class="fas fa-spinner fa-spin"></i></div>';
+        
+        // Natively fetch from Supabase if Express backend isn't mounted (Hostinger Fallback Strategy)
+        if (window.supabaseClient) {
+            try {
+                var { data: fbData, error } = await window.supabaseClient.from('orders').select('*').eq('user_id', window._authUser.id).order('created_at', { ascending: false });
+                if(error) throw error;
+                if(!fbData || fbData.length === 0) {
+                    ordersList.innerHTML = '<div style="text-align:center; padding:40px; background:#fff; border-radius:12px; border:1px solid #e2e8f0; color:#64748b;"><i class="fas fa-box-open" style="font-size:32px; color:#cbd5e1; margin-bottom:12px; display:block;"></i>No orders found.</div>';
+                    return;
+                }
+                let html = '';
+                fbData.forEach(function(o) {
+                    const d = new Date(o.created_at).toLocaleDateString() + ' ' + new Date(o.created_at).toLocaleTimeString();
+                    const statusColor = o.payment_status === 'success' ? '#16a34a' : '#f59e0b';
+                    const statusBg = o.payment_status === 'success' ? '#dcfce7' : '#fef3c7';
+                    const statusIcon = o.payment_status === 'success' ? 'fa-check-circle' : 'fa-clock';
+                    html += '<div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05); border:1px solid #e2e8f0; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px;">' +
+                              '<div style="display:flex; flex-direction:column; gap:4px;">' +
+                                '<h4 style="margin:0; font-size:16px; font-weight:600; color:#0f172a;">' + (o.product_name || 'Purchase') + '</h4>' +
+                                '<p style="margin:0; font-size:12px; color:#64748b;"><i class="far fa-clock"></i> ' + d + '</p>' +
+                                '<p style="margin:0; font-size:11px; color:#94a3b8; font-family:monospace;">ID: ' + (o.razorpay_payment_id || o.id.split('-')[0]) + '</p>' +
+                              '</div>' +
+                              '<div style="text-align:right;">' +
+                                '<div style="font-weight:700; color:#1e293b; font-size:18px; margin-bottom:6px;">₹' + o.amount_paid + '</div>' +
+                                '<span style="background:'+statusBg+'; color:'+statusColor+'; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; text-transform:capitalize;"><i class="fas '+statusIcon+'"></i> '+o.payment_status+'</span>' +
+                              '</div>' +
+                            '</div>';
+                });
+                ordersList.innerHTML = html;
+            } catch(e) {
+                console.error(e);
+                ordersList.innerHTML = '<div style="text-align:center; padding:40px; background:#fee2e2; border-radius:12px; color:#b91c1c;">Could not load orders. ' + (e.message || "Database unreachable.") + '</div>';
+            }
+        }
+      };
+    </script>
+    
     <!-- Footer -->
     <footer class="footer">
       <div class="container footer-content">
@@ -6499,25 +6559,7 @@ window.submitEbookPurchase = async function() {
           payment_status: 'initiated'
       };
 
-      // 2. Save to Supabase DB (ebook_users table)
-      var insertRes = null;
-      if (window.supabaseClient) {
-          var { data, error } = await window.supabaseClient.from('ebook_users').insert(recordData).select('id').single();
-          if (error) {
-              console.error("Supabase Error:", error);
-              if (error.code === '23505') {
-                 alert("Payment Error: You already have an order for this eBook. Please check your email or contact support.");
-              } else {
-                 alert("Payment Error: Unable to initiate order. " + error.message);
-              }
-              submitBtn.innerText = "Continue to Payment";
-              submitBtn.disabled = false;
-              return; // Stop execution to prevent loops
-          }
-          insertRes = data;
-      }
-
-      // 3. Optional: Request Razorpay Order ID from backend (if backend is active)
+      // 2. Optional: Request Razorpay Order ID from backend (if backend is active)
       let order_id = undefined;
       try {
           const orderRes = await fetch("/api/create-order", {
@@ -6533,7 +6575,7 @@ window.submitEbookPurchase = async function() {
           console.warn("Backend /api/create-order unreachable, falling back to frontend-only mode.");
       }
 
-      // 4. Initiate Razorpay Checkout window
+      // 3. Initiate Razorpay Checkout window
       var options = {
           "key": "rzp_live_SebrDtxMirg67M", // Live Key
           "amount": ctx.price * 100, // Razorpay amount in paise
@@ -6562,20 +6604,35 @@ window.submitEbookPurchase = async function() {
                       }
                   }
 
-                  // Verify Payment and update DB upon successful frontend execution or backend verification
-                  if (window.supabaseClient && insertRes && insertRes.id) {
-                      await window.supabaseClient.from('ebook_users').update({
-                          payment_status: 'completed',
-                          razorpay_payment_id: response.razorpay_payment_id,
-                          razorpay_order_id: response.razorpay_order_id || null
-                      }).eq('id', insertRes.id);
-
-                      // If it was a cart purchase, clear the cart
-                      if (ctx.is_cart) {
-                        await window.supabaseClient.from('cart').delete().eq('user_id', window._authUser.id);
-                        if (window.updateCartBadge) window.updateCartBadge();
-                        if (window.renderCartPage) window.renderCartPage();
+                  // Verification successful! Now securely SAVE ORDER into the DB.
+                  if (window.supabaseClient) {
+                      // Prevent duplicate check (upsert or simple select check)
+                      const { data: existing } = await window.supabaseClient.from('orders')
+                          .select('id').eq('razorpay_payment_id', response.razorpay_payment_id).maybeSingle();
+                      
+                      if(!existing) {
+                          const orderEntry = {
+                              user_id: window._authUser ? window._authUser.id : null,
+                              full_name: fullName,
+                              email: email,
+                              mobile: mobile,
+                              product_name: ctx.title,
+                              amount_paid: ctx.price,
+                              razorpay_payment_id: response.razorpay_payment_id,
+                              razorpay_order_id: response.razorpay_order_id || order_id || null,
+                              payment_status: 'success'
+                          };
+                          
+                          const { error: insertErr } = await window.supabaseClient.from('orders').insert(orderEntry);
+                          if(insertErr) throw new Error("Could not save order to database: " + insertErr.message);
                       }
+                  }
+                  
+                  // If it was a cart purchase, clear the cart
+                  if (ctx.is_cart && window.supabaseClient && window._authUser) {
+                      await window.supabaseClient.from('cart').delete().eq('user_id', window._authUser.id);
+                      if (window.updateCartBadge) window.updateCartBadge();
+                      if (window.renderCartPage) window.renderCartPage();
                   }
                   
                   // Success Redirect
@@ -6598,12 +6655,7 @@ window.submitEbookPurchase = async function() {
       };
 
       var rzp1 = new Razorpay(options);
-      rzp1.on('payment.failed', async function (response) {
-          if (window.supabaseClient && insertRes && insertRes.id) {
-              await window.supabaseClient.from('ebook_users').update({
-                  payment_status: 'failed'
-              }).eq('id', insertRes.id);
-          }
+      rzp1.on('payment.failed', function (response) {
           alert("Payment failed. Please try again or contact support.");
           submitBtn.innerText = "Continue to Payment";
           submitBtn.disabled = false;

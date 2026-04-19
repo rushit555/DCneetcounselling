@@ -47,7 +47,7 @@
                     </div>
                     <div class="pd-menu">
                         <div class="pd-link" onclick="window.navigate('dashboard')">👤 My Profile</div>
-
+                        <div class="pd-link" onclick="window.navigate('orders')">📦 Order History</div>
                         <div class="pd-link" onclick="window.navigate('wishlist')">❤️ Wishlist</div>
                     </div>
                     <div class="pd-divider"></div>
@@ -93,6 +93,7 @@
                 <!-- Logged In State Menu -->
                 <div id="mdLoggedInContent" style="display: none; width: 100%; flex-direction: column; gap: 12px;">
                     <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('dashboard'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">👤 My Profile</a>
+                    <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('orders'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">📦 Order History</a>
                     <a href="#" class="md-link" onclick="event.preventDefault(); window.navigate('cart'); document.getElementById('mobileDrawer').classList.remove('active'); document.getElementById('mobileDrawerOverlay').classList.remove('active');">
                         🛒 Cart <span class="cart-badge" style="display: none; background: #ef4444; color: white; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 10px; align-items: center; justify-content: center; margin-left: auto;">0</span>
                     </a>

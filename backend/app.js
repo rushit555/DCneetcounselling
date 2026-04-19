@@ -11,7 +11,9 @@ app.use(express.json());
 
 // Routes
 const paymentRoutes = require('./src/routes/payment');
+const ordersRoutes = require('./src/routes/orders');
 app.use('/api', paymentRoutes);
+app.use('/api/orders', ordersRoutes);
 
 // Basic health check route
 app.get('/health', (req, res) => {
