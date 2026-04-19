@@ -412,10 +412,9 @@ async function renderDashboard() {
     var paidEbooks = [];
     if (user && user.id && window.supabaseClient) {
         var { data: ebookData } = await window.supabaseClient
-            .from('ebook_users')
+            .from('orders')
             .select('*')
             .eq('user_id', user.id)
-            .eq('payment_status', 'paid')
             .order('created_at', { ascending: false });
         if (ebookData) paidEbooks = ebookData;
     }
@@ -435,10 +434,10 @@ async function renderDashboard() {
         ebooksHtml = '<div class="ebook-grid">';
         paidEbooks.forEach(function(eb) {
             ebooksHtml += '<div class="ebook-card">' +
-                '<div style="font-size: 24px;">📚</div>' +
-                '<h3 style="font-size: 16px; font-weight: 700;">' + eb.course + ' (' + eb.quota + ')</h3>' +
-                '<p style="font-size: 13px; color: #666;">Purchased on ' + new Date(eb.created_at).toLocaleDateString() + '</p>' +
-                '<button class="btn btn-primary" style="margin-top:10px; font-size: 12px; padding: 10px;" onclick="alert(\'Your eBook is being prepared for download. Please check your email.\')">Download PDF</button>' +
+                '<div style="font-size: 24px;">📦</div>' +
+                '<h3 style="font-size: 16px; font-weight: 700;">' + eb.product + '</h3>' +
+                '<p style="font-size: 13px; color: #666;">Purchased on ' + new Date(eb.created_at).toLocaleDateString() + ' for ₹' + eb.amount + '</p>' +
+                '<button class="btn btn-primary" style="margin-top:10px; font-size: 12px; padding: 10px;" onclick="window.navigate(\'orders\')">View Order Details</button>' +
             '</div>';
         });
         ebooksHtml += '</div>';
@@ -476,7 +475,7 @@ async function renderDashboard() {
                 '<p style="color:var(--color-text-muted);margin-top:4px;">Manage your counselling journey and active orders here.</p>' +
             '</div>' +
             '<div class="content-body">' +
-                '<h3 style="margin-bottom:10px;">' + (paidEbooks.length > 0 ? 'My Purchased eBooks' : 'Active Items') + '</h3>' +
+                '<h3 style="margin-bottom:10px;">' + (paidEbooks.length > 0 ? 'My Purchased Items' : 'Active Items') + '</h3>' +
                 ebooksHtml +
             '</div>' +
         '</div>' +
@@ -504,7 +503,7 @@ async function renderOrders() {
     if (window.supabaseClient) {
         try {
             var { data: orderData, error } = await window.supabaseClient
-                .from('ebook_users')
+                .from('orders')
                 .select('*')
                 .eq('user_id', user.id)
                 .order('created_at', { ascending: false });
@@ -550,7 +549,7 @@ async function renderOrders() {
 
         orders.forEach(function(order) {
             var badgeBg = '#666';
-            if (order.payment_status === 'paid') badgeBg = '#22c55e';
+            if (order.payment_status === 'success' || order.payment_status === 'paid') badgeBg = '#22c55e';
             else if (order.payment_status === 'failed') badgeBg = '#ef4444';
             else if (order.payment_status === 'cancelled') badgeBg = '#f59e0b';
             else if (order.payment_status === 'initiated') badgeBg = '#3b82f6';
@@ -558,12 +557,12 @@ async function renderOrders() {
             html += '<tr style="background: rgba(255,255,255,0.5);">' +
                 '<td style="padding:16px 12px; border-radius: 12px 0 0 12px; color: #666;">' + new Date(order.created_at).toLocaleDateString() + '</td>' +
                 '<td style="padding:16px 12px;">' +
-                    '<div style="font-weight:700; color: #1e293b;">' + order.course + '</div>' +
-                    '<div style="font-size: 12px; color: #666;">' + order.quota + '</div>' +
+                    '<div style="font-weight:700; color: #1e293b;">' + (order.product || order.course) + '</div>' +
+                    '<div style="font-size: 12px; color: #666;">' + (order.payment_id || order.razorpay_payment_id || 'Secure Log') + '</div>' +
                 '</td>' +
-                '<td style="padding:16px 12px; font-weight: 600;">₹' + order.amount_paid + '</td>' +
+                '<td style="padding:16px 12px; font-weight: 600;">₹' + (order.amount || order.amount_paid) + '</td>' +
                 '<td style="padding:16px 12px;"><span style="padding:4px 8px; border-radius:6px; background:' + badgeBg + '; color:#fff; font-weight:700; font-size:10px; text-transform:uppercase;">' + order.payment_status + '</span></td>' +
-                '<td style="padding:16px 12px; border-radius: 0 12px 12px 0; font-family:monospace; font-size:12px; color:#94a3b8;">' + (order.razorpay_payment_id || '—') + '</td>' +
+                '<td style="padding:16px 12px; border-radius: 0 12px 12px 0; font-family:monospace; font-size:12px; color:#94a3b8;">' + (order.order_id || '—') + '</td>' +
             '</tr>';
         });
 
