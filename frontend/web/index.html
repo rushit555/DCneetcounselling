@@ -6687,6 +6687,9 @@ window.submitEbookPurchase = async function() {
                   
                   // Success Redirect (Native SPA)
                   window.lastPurchase = { product: ctx.title, amount: ctx.price, order_id: response.razorpay_payment_id };
+                  if (typeof closeEbookPurchaseModal === 'function') closeEbookPurchaseModal();
+                  submitBtn.innerText = "Continue to Payment";
+                  submitBtn.disabled = false;
                   window.navigate('thank-you');
               } catch (veriErr) {
                   console.error(veriErr);
