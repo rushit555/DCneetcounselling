@@ -6559,6 +6559,22 @@ window.submitEbookPurchase = async function() {
           payment_status: 'initiated'
       };
 
+      // 1.5. Save Lead unconditionally to ebook_users
+      var insertRes = null;
+      if (window.supabaseClient) {
+          try {
+              const { data, error } = await window.supabaseClient.from('ebook_users').insert(recordData).select('id').single();
+              if (error) throw error;
+              insertRes = data;
+          } catch(e) {
+              console.error("Form Logging Error:", e);
+              alert("Unable to save form data. Please verify your details or network connection. Error: " + e.message);
+              submitBtn.innerText = "Continue to Payment";
+              submitBtn.disabled = false;
+              return; // Halt payment
+          }
+      }
+
       // 2. Optional: Request Razorpay Order ID from backend (if backend is active)
       let order_id = undefined;
       try {
