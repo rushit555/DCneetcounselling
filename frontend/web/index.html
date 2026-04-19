@@ -4810,7 +4810,7 @@
             if (!window.supabaseClient) throw new Error("Connection error. Please refresh.");
             
             var { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
-              redirectTo: window.location.origin + '/reset-password/'
+              redirectTo: 'https://dcneetcounselling.com/reset-password/'
             });
 
             if (error) throw error;
