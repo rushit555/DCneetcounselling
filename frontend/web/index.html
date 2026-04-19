@@ -6505,51 +6505,87 @@ window.submitEbookPurchase = async function() {
           var { data, error } = await window.supabaseClient.from('ebook_users').insert(recordData).select('id').single();
           if (error) {
               console.error("Supabase Error:", error);
-              // We'll proceed to payment logically even if DB fails initially just to keep conversion flow, but ideally alert.
-              alert("Wait! Our server is slightly busy validating data.");
-          } else {
-              insertRes = data;
+              if (error.code === '23505') {
+                 alert("Payment Error: You already have an order for this eBook. Please check your email or contact support.");
+              } else {
+                 alert("Payment Error: Unable to initiate order. " + error.message);
+              }
+              submitBtn.innerText = "Continue to Payment";
+              submitBtn.disabled = false;
+              return; // Stop execution to prevent loops
           }
+          insertRes = data;
       }
 
-      // 3. Initiate Razorpay Checkout window
+      // 3. Optional: Request Razorpay Order ID from backend (if backend is active)
+      let order_id = undefined;
+      try {
+          const orderRes = await fetch("/api/create-order", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ amount: ctx.price })
+          });
+          if (orderRes.ok) {
+              const orderData = await orderRes.json();
+              if (orderData.success) order_id = orderData.order_id;
+          }
+      } catch(e) {
+          console.warn("Backend /api/create-order unreachable, falling back to frontend-only mode.");
+      }
+
+      // 4. Initiate Razorpay Checkout window
       var options = {
-          "key": "rzp_live_SebrDtxMirg67M", // Live Key Passed In
+          "key": "rzp_live_SebrDtxMirg67M", // Live Key
           "amount": ctx.price * 100, // Razorpay amount in paise
           "currency": "INR",
           "name": "DC Neet Counselling",
           "description": ctx.title,
+          ...(order_id && { "order_id": order_id }), // Inject secure order_id if backend responded
           "handler": async function (response){
-              // Verify Payment and update DB
-              if (window.supabaseClient && insertRes && insertRes.id) {
-                  await window.supabaseClient.from('ebook_users').update({
-                      payment_status: 'completed',
-                      razorpay_payment_id: response.razorpay_payment_id
-                  }).eq('id', insertRes.id);
-
-                  // ─── Record Coupon Usage ───
-                  if (ctx.appliedCoupon) {
-                      const finalAmount = ctx.price;
-                      const commission = finalAmount * 0.20;
-                      await window.supabaseClient.from('coupon_usages').insert({
-                          coupon_id: ctx.appliedCoupon.id,
-                          user_email: email,
-                          amount_before: ctx.originalPrice,
-                          discount_applied: ctx.originalPrice - ctx.price,
-                          final_amount: finalAmount,
-                          commission: commission
+              try {
+                  submitBtn.innerText = "Verifying Payment...";
+                  
+                  // Attempt Backend signature Verification if order_id exists
+                  if (order_id) {
+                      const verifyRes = await fetch("/api/verify-payment", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                              razorpay_payment_id: response.razorpay_payment_id,
+                              razorpay_order_id: response.razorpay_order_id,
+                              razorpay_signature: response.razorpay_signature
+                          })
                       });
+                      const verifyData = await verifyRes.json();
+                      if (!verifyRes.ok || !verifyData.success) {
+                          throw new Error(verifyData.error || "Signature validation failed. Payment blocked for security.");
+                      }
                   }
 
-                  // If it was a cart purchase, clear the cart
-                  if (ctx.is_cart) {
-                    await window.supabaseClient.from('cart').delete().eq('user_id', window._authUser.id);
-                    if (window.updateCartBadge) window.updateCartBadge();
-                    if (window.renderCartPage) window.renderCartPage();
+                  // Verify Payment and update DB upon successful frontend execution or backend verification
+                  if (window.supabaseClient && insertRes && insertRes.id) {
+                      await window.supabaseClient.from('ebook_users').update({
+                          payment_status: 'completed',
+                          razorpay_payment_id: response.razorpay_payment_id,
+                          razorpay_order_id: response.razorpay_order_id || null
+                      }).eq('id', insertRes.id);
+
+                      // If it was a cart purchase, clear the cart
+                      if (ctx.is_cart) {
+                        await window.supabaseClient.from('cart').delete().eq('user_id', window._authUser.id);
+                        if (window.updateCartBadge) window.updateCartBadge();
+                        if (window.renderCartPage) window.renderCartPage();
+                      }
                   }
+                  
+                  // Success Redirect
+                  window.location.href = '/thank-you/';
+              } catch (veriErr) {
+                  console.error(veriErr);
+                  alert(veriErr.message);
+                  submitBtn.innerText = "Continue to Payment";
+                  submitBtn.disabled = false;
               }
-              alert("Payment Successful! You will receive your eBooks via Email shortly.");
-              closeEbookPurchaseModal();
           },
           "prefill": {
               "name": fullName,
@@ -6568,7 +6604,9 @@ window.submitEbookPurchase = async function() {
                   payment_status: 'failed'
               }).eq('id', insertRes.id);
           }
-          alert("Payment failed. Please try again.");
+          alert("Payment failed. Please try again or contact support.");
+          submitBtn.innerText = "Continue to Payment";
+          submitBtn.disabled = false;
       });
       
       rzp1.open();
