@@ -70,8 +70,30 @@
             We have received your payment successfully.<br>
             Your eBook(s) will be sent to your WhatsApp and Email within 12 hours.
         </p>
+        
+        <div id="order-summary" style="display:none; background:#f1f5f9; text-align:left; padding:20px; border-radius:10px; margin-bottom:30px;">
+            <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Product:</strong> <span id="summary-product"></span></p>
+            <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Amount Paid:</strong> ₹<span id="summary-amount"></span></p>
+            <p style="margin:0 0 0px; font-size:14px; color:#475569;"><strong>Payment ID:</strong> <span id="summary-id"></span></p>
+        </div>
+
         <a href="/#orders" class="btn-home">Go to Profile</a>
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const params = new URLSearchParams(window.location.search);
+            const product = params.get('product');
+            const amount = params.get('amount');
+            const order_id = params.get('order_id');
+            
+            if (product && amount) {
+                document.getElementById('summary-product').textContent = product;
+                document.getElementById('summary-amount').textContent = amount;
+                document.getElementById('summary-id').textContent = order_id || "N/A";
+                document.getElementById('order-summary').style.display = 'block';
+            }
+        });
+    </script>
 </body>
 </html>

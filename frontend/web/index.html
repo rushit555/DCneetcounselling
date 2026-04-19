@@ -6636,7 +6636,7 @@ window.submitEbookPurchase = async function() {
                   }
                   
                   // Success Redirect
-                  window.location.href = '/thank-you/';
+                  window.location.href = '/thank-you/?product=' + encodeURIComponent(ctx.title) + '&amount=' + ctx.price + '&order_id=' + response.razorpay_payment_id;
               } catch (veriErr) {
                   console.error(veriErr);
                   alert(veriErr.message);
