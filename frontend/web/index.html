@@ -6663,6 +6663,15 @@ window.submitEbookPurchase = async function() {
                           const { error: insertErr } = await window.supabaseClient.from('orders').insert(orderEntry);
                           if(insertErr) throw new Error("Could not save order to database: " + insertErr.message);
                       }
+                      
+                      // Also sync the payment_status to 'success' in ebook_users
+                      if (window._authUser) {
+                          const { error: updateErr } = await window.supabaseClient.from('ebook_users')
+                              .update({ payment_status: 'success' })
+                              .eq('user_id', window._authUser.id)
+                              .eq('payment_status', 'initiated');
+                          if (updateErr) console.warn("Could not sync ebook_users table status:", updateErr);
+                      }
                   }
                   
                   // If it was a cart purchase, clear the cart
