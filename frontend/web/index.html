@@ -6585,7 +6585,7 @@ window.submitEbookPurchase = async function() {
       // 1.5. Save Lead unconditionally to ebook_users
       if (window.supabaseClient) {
           try {
-              const { error } = await window.supabaseClient.from('ebook_users').insert(recordData);
+              const { error } = await window.supabaseClient.from('ebook_users').upsert(recordData, { onConflict: 'user_id,course,quota' });
               if (error) throw error;
           } catch(e) {
               console.error("Form Logging Error:", e);
