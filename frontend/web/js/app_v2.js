@@ -568,7 +568,7 @@ async function renderOrders() {
                 '<td style="padding:16px 12px; border-radius: 12px 0 0 12px; color: #666;">' + new Date(order.created_at).toLocaleDateString() + '</td>' +
                 '<td style="padding:16px 12px;">' +
                     '<div style="font-weight:700; color: #1e293b;">' + (order.product || order.course) + '</div>' +
-                    '<div style="font-size: 12px; color: #666;">' + (order.payment_id || order.razorpay_payment_id || 'Secure Log') + '</div>' +
+                    '<div style="font-size: 12px; color: #666;">Payment ID: ' + (order.payment_id || order.razorpay_payment_id || 'N/A') + '</div>' +
                 '</td>' +
                 '<td style="padding:16px 12px; font-weight: 600;">₹' + (order.amount || order.amount_paid) + '</td>' +
                 '<td style="padding:16px 12px;"><span style="padding:4px 8px; border-radius:6px; background:' + badgeBg + '; color:#fff; font-weight:700; font-size:10px; text-transform:uppercase;">' + order.payment_status + '</span></td>' +

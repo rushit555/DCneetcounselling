@@ -6667,7 +6667,11 @@ window.submitEbookPurchase = async function() {
                       // Also sync the payment_status to 'success' in ebook_users
                       if (window._authUser) {
                           const { error: updateErr } = await window.supabaseClient.from('ebook_users')
-                              .update({ payment_status: 'success' })
+                              .update({ 
+                                  payment_status: 'success',
+                                  razorpay_payment_id: response.razorpay_payment_id,
+                                  razorpay_order_id: response.razorpay_order_id || order_id || null
+                              })
                               .eq('user_id', window._authUser.id)
                               .eq('payment_status', 'initiated');
                           if (updateErr) console.warn("Could not sync ebook_users table status:", updateErr);
