@@ -999,7 +999,7 @@ window.submitCounsellingBooking = async function() {
         // Razorpay Integration
         const options = {
             "key": "rzp_live_SebrDtxMirg67M",
-            "amount": ctx.price * 100, // paisa
+            "amount": Math.round(ctx.price * 100), // paisa
             "currency": "INR",
             "name": "DC Neet Counselling",
             "description": ctx.title,
@@ -1009,6 +1009,20 @@ window.submitCounsellingBooking = async function() {
                         payment_status: 'completed',
                         razorpay_payment_id: response.razorpay_payment_id
                     }).eq('id', insertRes.id);
+
+                    // ─── Record Coupon Usage (Counselling) ───
+                    if (ctx.appliedCoupon) {
+                        const finalAmount = ctx.price;
+                        const commission = finalAmount * 0.20;
+                        await window.supabaseClient.from('coupon_usages').insert({
+                            coupon_id: ctx.appliedCoupon.id,
+                            user_email: email,
+                            amount_before: ctx.originalPrice,
+                            discount_applied: ctx.originalPrice - ctx.price,
+                            final_amount: finalAmount,
+                            commission: commission
+                        });
+                    }
                 }
                 alert("Success! Your booking for " + ctx.title + " has been confirmed. Our team will contact you shortly.");
                 window.closeCounsellingBookingModal();

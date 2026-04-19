@@ -1,13 +1,18 @@
 {
-  "name": "dcneetcounselling",
+  "name": "dcneetcounselling-monorepo",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "frontend/web",
+    "frontend/admin",
+    "backend"
+  ],
   "scripts": {
-    "dev": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview"
+    "install:all": "npm install",
+    "dev": "concurrently \"npm run dev -w frontend/web\" \"npm run dev -w frontend/admin\" \"npm run dev -w backend\"",
+    "build": "npm run build -w frontend/web && npm run build -w frontend/admin"
   },
   "devDependencies": {
-    "vite": "^6.0.0"
+    "concurrently": "^8.2.2"
   }
 }

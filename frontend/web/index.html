@@ -5857,7 +5857,7 @@
 
     <!-- Scripts -->
     <script src="js/supabase.js?v=2026.04.18.8"></script>
-    <script src="js/supabaseClient.js?v=2026.04.18.8"></script>
+    <script type="module" src="/js/supabaseClient.js?v=2026.04.18.8"></script>
     <script src="js/app_v2.js?v=2026.04.18.8"></script>
 
     <!-- Auth Popup Modal -->
@@ -6064,14 +6064,7 @@
         <div style="display: flex; gap: 12px;">
           <div class="eb-input-group" style="flex: 1;">
             <label class="eb-label">Category</label>
-            <select id="eb_category" class="eb-select" required>
-              <option value="" disabled selected>Select</option>
-              <option>Open (UR)</option>
-              <option>EWS</option>
-              <option>OBC</option>
-              <option>SC</option>
-              <option>ST</option>
-            </select>
+            <input type="text" id="eb_category" class="eb-input" placeholder="e.g. Open (UR), SC, ST..." required />
           </div>
           <div class="eb-input-group" style="flex: 1;">
             <label class="eb-label">NEET Score</label>
@@ -6136,6 +6129,22 @@
           <input type="tel" class="eb-input" id="eb_mobile" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
         </div>
 
+        <!-- Coupon Section -->
+        <div class="eb-input-group" style="margin-top: 15px; background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(37, 99, 235, 0.2);">
+          <label class="eb-label" style="color: #2563eb; font-weight: 600;">Have a Coupon?</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" class="eb-input" id="eb_coupon_code" placeholder="Enter code" style="margin-bottom: 0;" />
+            <button type="button" class="eb-btn" style="width: auto; margin-top: 0; padding: 0 15px; font-size: 13px;" onclick="validateCoupon('eb')">Apply</button>
+          </div>
+          <div id="eb_coupon_msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
+          <div id="eb_price_display" style="margin-top: 10px; font-weight: 700; color: #1e293b; display: none;">
+            New Total: <span style="text-decoration: line-through; color: #94a3b8; font-weight: 400; font-size: 13px;" id="eb_old_price"></span> <span id="eb_new_price" style="color: #16a34a;"></span>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: #b91c1c; background: #fee2e2; padding: 10px; border-radius: 8px; margin-top: 15px; margin-bottom: 12px; font-weight: 500; text-align: center; border: 1px solid #fca5a5;">
+          Note: Please ensure your category is entered correctly before proceeding. Fees are non-refundable.
+        </div>
         <button type="submit" class="eb-btn">Continue to Payment</button>
       </form>
 
@@ -6183,14 +6192,7 @@
         <div style="display: flex; gap: 12px;">
           <div class="eb-input-group" style="flex: 1;">
             <label class="eb-label">Category</label>
-            <select id="cb_category" class="eb-select" required>
-              <option value="" disabled selected>Select</option>
-              <option>Open (UR)</option>
-              <option>EWS</option>
-              <option>OBC</option>
-              <option>SC</option>
-              <option>ST</option>
-            </select>
+            <input type="text" id="cb_category" class="eb-input" placeholder="e.g. Open (UR), SC, ST..." required />
           </div>
           <div class="eb-input-group" style="flex: 1;">
             <label class="eb-label">NEET Score</label>
@@ -6252,9 +6254,25 @@
 
         <div class="eb-input-group">
           <label class="eb-label">Mobile Number</label>
-          <input type="tel" class="eb-input" id="cb_mobile" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
+          <input type="tel" class="eb-input" id="eb_mobile" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
         </div>
 
+        <!-- Coupon Section -->
+        <div class="eb-input-group" style="margin-top: 15px; background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(37, 99, 235, 0.2);">
+          <label class="eb-label" style="color: #2563eb; font-weight: 600;">Have a Coupon?</label>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" class="eb-input" id="cb_coupon_code" placeholder="Enter code" style="margin-bottom: 0;" />
+            <button type="button" class="eb-btn" style="width: auto; margin-top: 0; padding: 0 15px; font-size: 13px;" onclick="validateCoupon('cb')">Apply</button>
+          </div>
+          <div id="cb_coupon_msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
+          <div id="cb_price_display" style="margin-top: 10px; font-weight: 700; color: #1e293b; display: none;">
+            New Total: <span style="text-decoration: line-through; color: #94a3b8; font-weight: 400; font-size: 13px;" id="cb_old_price"></span> <span id="cb_new_price" style="color: #16a34a;"></span>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: #b91c1c; background: #fee2e2; padding: 10px; border-radius: 8px; margin-top: 15px; margin-bottom: 12px; font-weight: 500; text-align: center; border: 1px solid #fca5a5;">
+          Note: Please ensure your category is entered correctly before proceeding. Fees are non-refundable.
+        </div>
         <button type="submit" class="eb-btn">Continue to Payment</button>
       </form>
 
@@ -6376,9 +6394,80 @@ window.openEbookPurchaseModal = function(course, quota, price, title) {
 }
 
 window.closeEbookPurchaseModal = function() {
-  document.getElementById('modalOverlay').style.display = 'none';
-  document.getElementById('ebookPurchaseModal').style.display = 'none';
-}
+   document.getElementById('modalOverlay').style.display = 'none';
+   document.getElementById('ebookPurchaseModal').style.display = 'none';
+   // Reset coupon fields
+   ['eb', 'cb'].forEach(prefix => {
+       const msg = document.getElementById(prefix + '_coupon_msg');
+       const display = document.getElementById(prefix + '_price_display');
+       const code = document.getElementById(prefix + '_coupon_code');
+       if(msg) msg.style.display = 'none';
+       if(display) display.style.display = 'none';
+       if(code) code.value = '';
+   });
+ }
+
+ window.validateCoupon = async function(prefix) {
+   const codeInput = document.getElementById(prefix + '_coupon_code');
+   const msgBox = document.getElementById(prefix + '_coupon_msg');
+   const priceDisplay = document.getElementById(prefix + '_price_display');
+   const oldPriceEl = document.getElementById(prefix + '_old_price');
+   const newPriceEl = document.getElementById(prefix + '_new_price');
+   
+   const code = codeInput.value.trim().toUpperCase();
+   if (!code) return;
+
+   msgBox.style.display = 'block';
+   msgBox.style.color = '#64748b';
+   msgBox.innerText = "Validating...";
+
+   if (!window.supabaseClient) return alert("Auth service unavailable");
+
+   const { data, error } = await window.supabaseClient
+     .from('coupons')
+     .select('*')
+     .eq('code', code)
+     .eq('is_active', true)
+     .maybeSingle();
+
+   if (error || !data) {
+     msgBox.style.color = '#ef4444';
+     msgBox.innerText = "Invalid or expired coupon.";
+     priceDisplay.style.display = 'none';
+     if (window.activeEbookContext) {
+        window.activeEbookContext.price = window.activeEbookContext.originalPrice || window.activeEbookContext.price;
+        window.activeEbookContext.appliedCoupon = null;
+     }
+     if (window.activeCounsellingContext) {
+        window.activeCounsellingContext.price = window.activeCounsellingContext.originalPrice || window.activeCounsellingContext.price;
+        window.activeCounsellingContext.appliedCoupon = null;
+     }
+     return;
+   }
+
+   // Valid Coupon
+   const ctx = prefix === 'eb' ? window.activeEbookContext : window.activeCounsellingContext;
+   if (!ctx) return;
+
+   if (!ctx.originalPrice) ctx.originalPrice = ctx.price;
+   
+   let discount = 0;
+   if (data.discount_type === 'percentage') {
+     discount = (ctx.originalPrice * data.discount_value) / 100;
+   } else {
+     discount = data.discount_value;
+   }
+
+   ctx.price = Math.max(0, ctx.originalPrice - discount);
+   ctx.appliedCoupon = data;
+
+   msgBox.style.color = '#16a34a';
+   msgBox.innerText = "Coupon applied! ₹" + discount + " off.";
+   
+   oldPriceEl.innerText = "₹" + ctx.originalPrice;
+   newPriceEl.innerText = "₹" + ctx.price;
+   priceDisplay.style.display = 'block';
+ }
 
 window.submitEbookPurchase = async function() {
   var submitBtn = document.querySelector('#ebookPurchaseModal .eb-btn');
@@ -6439,6 +6528,20 @@ window.submitEbookPurchase = async function() {
                       payment_status: 'completed',
                       razorpay_payment_id: response.razorpay_payment_id
                   }).eq('id', insertRes.id);
+
+                  // ─── Record Coupon Usage ───
+                  if (ctx.appliedCoupon) {
+                      const finalAmount = ctx.price;
+                      const commission = finalAmount * 0.20;
+                      await window.supabaseClient.from('coupon_usages').insert({
+                          coupon_id: ctx.appliedCoupon.id,
+                          user_email: email,
+                          amount_before: ctx.originalPrice,
+                          discount_applied: ctx.originalPrice - ctx.price,
+                          final_amount: finalAmount,
+                          commission: commission
+                      });
+                  }
 
                   // If it was a cart purchase, clear the cart
                   if (ctx.is_cart) {
