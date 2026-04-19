@@ -6594,6 +6594,20 @@ window.submitEbookPurchase = async function() {
               submitBtn.disabled = false;
               return; // Halt payment
           }
+          
+          // 1.6. Sync Mobile Number to Profile 
+          if (window._authUser && mobile) {
+              try {
+                  const { data: profile } = await window.supabaseClient.from('users')
+                      .select('mobile_number').eq('id', window._authUser.id).maybeSingle();
+                      
+                  if (!profile || !profile.mobile_number || profile.mobile_number !== mobile) {
+                      await window.supabaseClient.from('users')
+                          .update({ mobile_number: mobile })
+                          .eq('id', window._authUser.id);
+                  }
+              } catch(e) { console.warn("Could not sync mobile number:", e); }
+          }
       }
 
       // 2. Optional: Request Razorpay Order ID from backend (if backend is active)
