@@ -6556,16 +6556,15 @@ window.submitEbookPurchase = async function() {
           quota: ctx.quota,
           amount_paid: ctx.price,
           ebook_id: ctx.is_cart ? ctx.ebook_id : (ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_')),
-          payment_status: 'initiated'
+          payment_status: 'initiated',
+          user_id: window._authUser ? window._authUser.id : null
       };
 
       // 1.5. Save Lead unconditionally to ebook_users
-      var insertRes = null;
       if (window.supabaseClient) {
           try {
-              const { data, error } = await window.supabaseClient.from('ebook_users').insert(recordData).select('id').single();
+              const { error } = await window.supabaseClient.from('ebook_users').insert(recordData);
               if (error) throw error;
-              insertRes = data;
           } catch(e) {
               console.error("Form Logging Error:", e);
               alert("Unable to save form data. Please verify your details or network connection. Error: " + e.message);
