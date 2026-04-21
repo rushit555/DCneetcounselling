@@ -12,6 +12,7 @@
       content="NEET counselling, MBBS admission India, NEET college predictor, medical admission guidance"
     />
     <title>DC NEET Counselling - Expert Medical Admission Guidance</title>
+    <link rel="icon" type="image/jpeg" href="assets/logo.jpg" />
 
     <!-- Google Fonts: Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -25,10 +26,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="./css/main.css?v=2026.04.18.8" />
-    <link rel="stylesheet" href="./css/home.css?v=2026.04.18.8" />
-    <link rel="stylesheet" href="./css/header.css?v=2026.04.18.8" />
-    <link rel="stylesheet" href="./css/dashboard.css?v=2026.04.18.8" />
+    <link rel="stylesheet" href="css/main.css?v=2026.04.18.8" />
+    <link rel="stylesheet" href="css/home.css?v=2026.04.18.8" />
+    <link rel="stylesheet" href="css/header.css?v=2026.04.18.8" />
+    <link rel="stylesheet" href="css/dashboard.css?v=2026.04.18.8" />
 
     <!-- Bulletproof Navigation Stub -->
     <script>
@@ -50,8 +51,6 @@
             link.classList.add("active");
           else link.classList.remove("active");
         });
-        // Custom Page Hooks
-        if (route === 'orders' && window.renderOrdersPage) window.renderOrdersPage();
       };
       // Handle browser Back/Forward buttons and Initial Load
       window.onpopstate = function () {
@@ -88,7 +87,7 @@
         window.onpopstate();
       });
 
-      // ─── Mobile Menu Toggle ──────────────────────────────────────────
+      // â”€â”€â”€ Mobile Menu Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       document.addEventListener("DOMContentLoaded", function () {
         var mobileBtn = document.getElementById("mobileMenuBtn");
         var navLinks = document.getElementById("navLinks");
@@ -116,7 +115,7 @@
         }
       });
 
-      // ─── Bulletproof Auth Tab Switch ───────────────────────────────────
+      // â”€â”€â”€ Bulletproof Auth Tab Switch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       // This lives in <head> so it is available the instant buttons render.
       window._isSignUp = false;
       window.switchAuthTab = function (signup) {
@@ -161,7 +160,7 @@
         console.log("Tab switched to:", signup ? "Sign Up" : "Sign In");
       };
 
-      // ─── Bulletproof Google Login ─────────────────────────────────────────
+      // â”€â”€â”€ Bulletproof Google Login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       window.googleLogin = async function () {
         console.log("Google login clicked");
         var errBox = document.getElementById("pageAuthError");
@@ -192,7 +191,7 @@
         if (gBtn) {
           gBtn.disabled = true;
           gBtn.innerHTML =
-            '<span style="display:inline-block;width:18px;height:18px;border:2px solid #ccc;border-top-color:#333;border-radius:50%;animation:spin 0.6s linear infinite;"></span> Connecting to Google…';
+            '<span style="display:inline-block;width:18px;height:18px;border:2px solid #ccc;border-top-color:#333;border-radius:50%;animation:spin 0.6s linear infinite;"></span> Connecting to Googleâ€¦';
         }
 
         try {
@@ -238,7 +237,7 @@
         }
       };
 
-      // ─── Header Auth Controller ──────────────────────────────────────────
+      // â”€â”€â”€ Header Auth Controller â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       window.updateNavForAuth = function (session) {
         var user = session
           ? session.user
@@ -406,425 +405,156 @@
       <!-- Home Section -->
       <div id="section-home" class="page-section active">
         <!-- Premium Hero Section Fix -->
-        <section
-          class="premium-hero-section"
-          style="
-            width: 100%;
-            padding: 60px 20px 80px;
-            background: transparent;
-            position: relative;
-            overflow: hidden;
-            font-family: &quot;Poppins&quot;, var(--font-main);
-          "
-        >
-          <!-- Background Pattern Overlay -->
-          <div
-            style="
-              position: absolute;
-              inset: 0;
-              background-image: url(&quot;assets/bg-pattern.png&quot;);
-              background-size: 260px;
-              background-repeat: repeat;
-              opacity: 0.04;
-              mix-blend-mode: color-burn;
-            "
-          ></div>
-
-          <div class="container" style="position: relative; z-index: 1">
-            <!-- Latest News and Notifications -->
-            <h3
-              style="
-                text-align: center;
-                font-size: 20px;
-                font-weight: 700;
-                margin-bottom: 30px;
-                color: #1f2937;
-                letter-spacing: 0.5px;
-              "
-            >
-              Latest News and Notifications
-            </h3>
-
-            <style>
-              .notif-card {
-                transition: all 0.3s ease !important;
-              }
-              .notif-card.nc-active {
-                transform: scale(1.05) !important;
-                box-shadow: none !important;
-                opacity: 1 !important;
-              }
-              .notif-card.nc-side {
-                opacity: 0.6 !important;
-                transform: scale(0.92) !important;
-              }
-            </style>
-            <div
-              class="carousel-wrapper"
-              style="
-                position: relative;
-                display: flex;
-                align-items: center;
-                max-width: 900px;
-                margin: 0 auto;
-                padding: 10px 20px;
-              "
-            >
-              <button
-                id="newsCarouselLeft"
-                onmouseover="
-                  this.style.transform = 'translateY(-50%) scale(1.15)'
-                "
-                onmouseout="this.style.transform = 'translateY(-50%)'"
-                style="
-                  position: absolute;
-                  left: 0;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  background: transparent;
-                  border: none;
-                  cursor: pointer;
-                  z-index: 10;
-                  font-size: 22px;
-                  color: #fed700;
-                  transition: transform 0.2s;
-                "
-              >
-                &#10094;
-              </button>
-
-              <div
-                id="newsCarouselTrack"
-                style="
-                  display: flex;
-                  gap: 20px;
-                  overflow-x: hidden;
-                  padding: 10px 10px 20px;
-                  scroll-behavior: smooth;
-                  scrollbar-width: none;
-                  width: 100%;
-                "
-              >
-                <div
-                  class="notif-card nc-active"
-                  style="
-                    flex: 0 0 auto;
-                    min-width: 280px;
-                    padding: 14px 18px;
-                    border-radius: 20px;
-                    background: #ffffff;
-                    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                  "
-                >
-                  <h4
-                    style="
-                      font-weight: 500;
-                      font-size: 14px;
-                      margin: 0;
-                      color: #333;
-                      line-height: 1.3;
-                      text-align: center;
-                    "
-                  >
-                    Latest news will appear here
-                  </h4>
-                </div>
-                <div
-                  class="notif-card nc-side"
-                  style="
-                    flex: 0 0 auto;
-                    min-width: 280px;
-                    padding: 14px 18px;
-                    border-radius: 20px;
-                    background: #ffffff;
-                    box-shadow: none;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                  "
-                >
-                  <h4
-                    style="
-                      font-weight: 500;
-                      font-size: 14px;
-                      margin: 0;
-                      color: #333;
-                      line-height: 1.3;
-                      text-align: center;
-                    "
-                  >
-                    Latest news will appear here
-                  </h4>
-                </div>
-                <div
-                  class="notif-card nc-side"
-                  style="
-                    flex: 0 0 auto;
-                    min-width: 280px;
-                    padding: 14px 18px;
-                    border-radius: 20px;
-                    background: #ffffff;
-                    box-shadow: none;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                  "
-                >
-                  <h4
-                    style="
-                      font-weight: 500;
-                      font-size: 14px;
-                      margin: 0;
-                      color: #333;
-                      line-height: 1.3;
-                      text-align: center;
-                    "
-                  >
-                    Latest news will appear here
-                  </h4>
-                </div>
-                <div
-                  class="notif-card nc-side"
-                  style="
-                    flex: 0 0 auto;
-                    min-width: 280px;
-                    padding: 14px 18px;
-                    border-radius: 20px;
-                    background: #ffffff;
-                    box-shadow: none;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                  "
-                >
-                  <h4
-                    style="
-                      font-weight: 500;
-                      font-size: 14px;
-                      margin: 0;
-                      color: #333;
-                      line-height: 1.3;
-                      text-align: center;
-                    "
-                  >
-                    Latest news will appear here
-                  </h4>
+        <section class="hero" id="hero-main">
+          <!-- Top News Ticker Bar -->
+          <div class="top-news-bar">
+            <div class="news-left-group">
+              <div class="news-badge">
+                <i class="fa-solid fa-sparkles"></i> What's New
+              </div>
+              <div class="news-slider">
+                <div class="news-slider-track">
+                  <span>NTA Announces NEET 2025 Exam Date</span>
+                  <span class="news-dot"></span>
+                  <span>Top Medical Colleges Accepting NEET Scores</span>
+                  <span class="news-dot"></span>
+                  <span>NTA Announces NEET 2025 Exam Date</span>
+                  <span class="news-dot"></span>
+                  <span>Top Medical Colleges Accepting NEET Scores</span>
+                  <span class="news-dot"></span>
                 </div>
               </div>
-
-              <button
-                id="newsCarouselRight"
-                onmouseover="
-                  this.style.transform = 'translateY(-50%) scale(1.15)'
-                "
-                onmouseout="this.style.transform = 'translateY(-50%)'"
-                style="
-                  position: absolute;
-                  right: 0;
-                  top: 50%;
-                  transform: translateY(-50%);
-                  background: transparent;
-                  border: none;
-                  cursor: pointer;
-                  z-index: 10;
-                  font-size: 22px;
-                  color: #fed700;
-                  transition: transform 0.2s;
-                "
-              >
-                &#10095;
-              </button>
             </div>
-            <script>
-              (function () {
-                var track = document.getElementById("newsCarouselTrack");
-                if (!track) return;
-                function updateActiveCard() {
-                  var cards = track.querySelectorAll(".notif-card");
-                  var trackRect = track.getBoundingClientRect();
-                  var center = trackRect.left + trackRect.width / 2;
-                  var closest = null,
-                    closestDist = Infinity;
-                  cards.forEach(function (c) {
-                    var r = c.getBoundingClientRect();
-                    var d = Math.abs(r.left + r.width / 2 - center);
-                    if (d < closestDist) {
-                      closestDist = d;
-                      closest = c;
-                    }
-                  });
-                  cards.forEach(function (c) {
-                    if (c === closest) {
-                      c.classList.add("nc-active");
-                      c.classList.remove("nc-side");
+            <div class="news-view-all">View All</div>
+          </div>
+
+          <div class="hero-container">
+            <!-- LEFT -->
+            <div class="hero-left">
+
+              <h1 class="hero-title">
+                <span class="hl-line" style="animation: none; opacity: 0; transform: none; transition: opacity 400ms ease-out;" id="hl-line-1">Turn Your NEET Rank</span>
+                <span class="hl-line" style="animation: none; opacity: 0; transform: none; transition: opacity 400ms ease-out;" id="hl-line-2">Into Your Dream</span>
+                <span class="hl-line" style="animation: none; opacity: 0; transform: none; transition: opacity 400ms ease-out; position: relative;" id="hl-line-3">
+                  <span class="highlight" style="visibility: hidden;">Medical College</span>
+                  <span style="position: absolute; left: 0; top: 0; display: flex; align-items: center; width: 100%;">
+                    <span class="highlight" id="typed-text"></span>
+                    <span id="typed-cursor" style="color: #F4A300; font-weight: 400; opacity: 1; margin-left: 2px;">|</span>
+                  </span>
+                </span>
+              </h1>
+
+              <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                  const line1 = document.getElementById("hl-line-1");
+                  const line2 = document.getElementById("hl-line-2");
+                  const line3 = document.getElementById("hl-line-3");
+                  const typedText = document.getElementById("typed-text");
+                  const cursor = document.getElementById("typed-cursor");
+                  
+                  // Initial Fade in for all lines containers
+                  setTimeout(() => {
+                    line1.style.opacity = "1";
+                    line2.style.opacity = "1";
+                    line3.style.opacity = "1";
+                  }, 50);
+
+                  const targetText = "Medical College";
+                  let charIndex = 0;
+
+                  // Cursor Blink
+                  const cursorBlink = setInterval(() => {
+                    cursor.style.opacity = cursor.style.opacity === "0" ? "1" : "0";
+                  }, 500);
+
+                  // Typing Effect
+                  function typeChar() {
+                    if (charIndex < targetText.length) {
+                      typedText.textContent += targetText.charAt(charIndex);
+                      charIndex++;
+                      // Duration 1300ms total for 15 chars = ~86ms per char, or 60ms as per request
+                      setTimeout(typeChar, 60);
                     } else {
-                      c.classList.remove("nc-active");
-                      c.classList.add("nc-side");
+                      // Hide cursor after complete
+                      setTimeout(() => {
+                        clearInterval(cursorBlink);
+                        cursor.style.display = "none";
+                      }, 1000);
                     }
-                  });
-                }
-                track.addEventListener("scroll", updateActiveCard);
-                var leftBtn = document.getElementById("newsCarouselLeft");
-                var rightBtn = document.getElementById("newsCarouselRight");
-                if (leftBtn)
-                  leftBtn.addEventListener("click", function () {
-                    track.scrollBy({ left: -300, behavior: "smooth" });
-                  });
-                if (rightBtn)
-                  rightBtn.addEventListener("click", function () {
-                    track.scrollBy({ left: 300, behavior: "smooth" });
-                  });
-              })();
-            </script>
-
-            <!-- Main Hero Header -->
-            <h1
-              style="
-                text-align: center;
-                font-size: 40px;
-                font-weight: 800;
-                margin: 50px auto 30px;
-                max-width: 800px;
-                color: #111827;
-                line-height: 1.2;
-              "
-            >
-              Turn Your NEET Rank Into Your Dream Medical College
-            </h1>
-
-            <!-- Search Bar Row -->
-            <div
-              style="
-                display: flex;
-                justify-content: center;
-                margin-bottom: 25px;
-              "
-            >
-              <div
-                style="
-                  display: flex;
-                  width: 100%;
-                  max-width: 650px;
-                  border-radius: 60px;
-                  overflow: hidden;
-                  background: #ffffff;
-                  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-                "
-              >
-                <input
-                  type="text"
-                  placeholder="Explore colleges..."
-                  style="
-                    flex: 1;
-                    padding: 18px 22px;
-                    border: none;
-                    outline: none;
-                    font-size: 16px;
-                    color: #333;
-                  "
-                />
-                <button
-                  style="
-                    background: #fed700;
-                    color: #111;
-                    padding: 0 24px;
-                    border: none;
-                    cursor: pointer;
-                    font-size: 18px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                  "
-                >
-                  🔍
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="stats">
-          <div class="container stats-grid">
-            <div class="stat-card fade-up">
-              <h2 class="counter-val text-gradient" data-target="5000">0</h2>
-              <span>+</span>
-              <p>Students Guided</p>
-            </div>
-            <div class="stat-card fade-up stagger-1">
-              <h2 class="counter-val text-gradient" data-target="500">0</h2>
-              <span>+</span>
-              <p>Medical Colleges Covered</p>
-            </div>
-            <div class="stat-card fade-up stagger-2">
-              <h2 class="counter-val text-gradient" data-target="100">0</h2>
-              <span>%</span>
-              <p>Transparent Process</p>
-            </div>
-          </div>
-          <script>
-            (function () {
-              var statsSection = document.querySelector(".stats");
-              if (!statsSection) return;
-
-              var duration = 2000;
-
-              // easeOutExpo for a premium feel
-              function easeOutExpo(t) {
-                return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
-              }
-
-              function animateCountUp(el) {
-                var target = parseInt(el.getAttribute("data-target"), 10);
-                if (isNaN(target)) return;
-
-                var startTime = null;
-
-                function step(currentTime) {
-                  if (!startTime) startTime = currentTime;
-                  var progress = Math.min(
-                    (currentTime - startTime) / duration,
-                    1,
-                  );
-                  var currentVal = Math.floor(easeOutExpo(progress) * target);
-
-                  el.innerText = currentVal;
-
-                  if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                  } else {
-                    el.innerText = target;
                   }
-                }
 
-                window.requestAnimationFrame(step);
-              }
+                  // Start typing after fade-in
+                  setTimeout(typeChar, 450);
+                });
+              </script>
 
-              var observer = new IntersectionObserver(
-                function (entries) {
-                  entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                      statsSection
-                        .querySelectorAll(".counter-val")
-                        .forEach(function (counter) {
-                          animateCountUp(counter);
-                        });
-                      observer.disconnect();
-                    }
-                  });
-                },
-                { threshold: 0.2 },
-              );
+              <p class="hero-subtitle">
+                Use smart filters, real-time data & expert insights to choose the best college for your NEET rank.
+              </p>
 
-              observer.observe(statsSection);
-            })();
-          </script>
+              <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input placeholder="Search colleges, locations, or courses..." />
+                <button>Search Colleges &rarr;</button>
+              </div>
+
+              <div class="popular-searches">
+                <div class="popular-left">
+                  <span class="popular-label">Popular Searches:</span>
+                  <div class="popular-chips">
+                    <span class="chip" style="animation-delay: 0ms">AIIMS Delhi</span>
+                    <span class="chip" style="animation-delay: 100ms">CMC Vellore</span>
+                    <span class="chip" style="animation-delay: 200ms">KMC Manipal</span>
+                    <span class="chip" style="animation-delay: 300ms">BHU</span>
+                    <span class="chip" style="animation-delay: 400ms">JIPMER</span>
+                  </div>
+                </div>
+                <div class="popular-view-all">View All <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></div>
+              </div>
+
+              <div class="trust-indicators">
+                <div class="trust-item" style="animation-delay: 0ms">
+                  <i class="fa-solid fa-shield trust-icon"></i>
+                  <div class="trust-text">
+                    <div class="trust-title">100%</div>
+                    <div class="trust-subtitle">Verified Data</div>
+                  </div>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item" style="animation-delay: 120ms">
+                  <i class="fa-solid fa-clock trust-icon"></i>
+                  <div class="trust-text">
+                    <div class="trust-title">Updated</div>
+                    <div class="trust-subtitle">Every 24 Hours</div>
+                  </div>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item" style="animation-delay: 240ms">
+                  <i class="fa-solid fa-users trust-icon"></i>
+                  <div class="trust-text">
+                    <div class="trust-title">Trusted by</div>
+                    <div class="trust-subtitle">Lakhs of Students</div>
+                  </div>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item" style="animation-delay: 360ms">
+                  <i class="fa-solid fa-shield-heart trust-icon"></i>
+                  <div class="trust-text">
+                    <div class="trust-title">Expert</div>
+                    <div class="trust-subtitle">Counseling Support</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <!-- RIGHT -->
+            <div class="hero-right">
+              <img src="assets/doctor.png" class="doctor-image-full" alt="NEET Counselling Assured Strategy Image" />
+            </div>
+
+          </div>
         </section>
 
         <!-- Animated Feature Section -->
@@ -886,7 +616,7 @@
               }
             }
 
-            /* ── Why Choose Us Animations ── */
+            /* â”€â”€ Why Choose Us Animations â”€â”€ */
             @keyframes wcu-slide-left {
               from {
                 opacity: 0;
@@ -1010,7 +740,7 @@
                     cursor: default;
                   "
                 >
-                  <span style="font-size: 20px; flex-shrink: 0">🎯</span>
+                  <span style="font-size: 20px; flex-shrink: 0">ðŸŽ¯</span>
                   <span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >Personalized counselling based on your NEET rank</span
@@ -1030,7 +760,7 @@
                     animation-delay: 0.2s;
                   "
                 >
-                  <span style="font-size: 20px; flex-shrink: 0">📊</span>
+                  <span style="font-size: 20px; flex-shrink: 0">ðŸ“Š</span>
                   <span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >Accurate college prediction using smart tools</span
@@ -1050,7 +780,7 @@
                     animation-delay: 0.4s;
                   "
                 >
-                  <span style="font-size: 20px; flex-shrink: 0">📘</span>
+                  <span style="font-size: 20px; flex-shrink: 0">ðŸ“˜</span>
                   <span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >Guides and eBooks to simplify your decisions</span
@@ -1070,7 +800,7 @@
                     animation-delay: 0.6s;
                   "
                 >
-                  <span style="font-size: 20px; flex-shrink: 0">🏥</span>
+                  <span style="font-size: 20px; flex-shrink: 0">ðŸ¥</span>
                   <span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >Real insights from students in top colleges</span
@@ -1108,7 +838,7 @@
                 "
               >
                 <img
-                  src="./assets/doctor-no-bg.png?v=anim1"
+                  src="assets/doctor-no-bg.png?v=anim1"
                   alt="Doctor"
                   style="
                     display: block;
@@ -1138,7 +868,7 @@
                           el.classList.add("wcu-animate");
                         }, i * 100);
                       });
-                    // Text cards — 150ms stagger on mobile, 200ms on desktop
+                    // Text cards â€” 150ms stagger on mobile, 200ms on desktop
                     var cardStagger = window.innerWidth <= 768 ? 150 : 200;
                     section
                       .querySelectorAll(".wcu-text-card")
@@ -1190,7 +920,7 @@
               grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             }
 
-            /* ── Counselling Section Animations ── */
+            /* â”€â”€ Counselling Section Animations â”€â”€ */
             @keyframes cs-slide-right {
               from {
                 opacity: 0;
@@ -1296,7 +1026,7 @@
               "
             >
               <img
-                src="./assets/counselling-illustration.png?v=fixed"
+                src="assets/counselling-illustration.png?v=fixed"
                 alt="Counselling Illustration"
                 style="
                   width: 100%;
@@ -1336,7 +1066,7 @@
                 "
               >
                 Smart Counselling
-                <span style="color: #fed700">That Actually Works</span>
+                <span style="color: purple">That Actually Works</span>
               </h2>
 
               <!-- Grid Section -->
@@ -1375,7 +1105,7 @@
                       justify-content: center;
                       border-radius: 12px;
                     "
-                    >🎯</span
+                    >ðŸŽ¯</span
                   >
                   <div
                     style="
@@ -1416,7 +1146,7 @@
                       justify-content: center;
                       border-radius: 12px;
                     "
-                    >💰</span
+                    >ðŸ’°</span
                   >
                   <div
                     style="
@@ -1457,7 +1187,7 @@
                       justify-content: center;
                       border-radius: 12px;
                     "
-                    >📝</span
+                    >ðŸ“</span
                   >
                   <div
                     style="
@@ -1498,7 +1228,7 @@
                       justify-content: center;
                       border-radius: 12px;
                     "
-                    >🌐</span
+                    >ðŸŒ</span
                   >
                   <div
                     style="
@@ -1539,7 +1269,7 @@
                       justify-content: center;
                       border-radius: 12px;
                     "
-                    >📘</span
+                    >ðŸ“˜</span
                   >
                   <div
                     style="
@@ -1580,7 +1310,7 @@
                       justify-content: center;
                       border-radius: 12px;
                     "
-                    >📉</span
+                    >ðŸ“‰</span
                   >
                   <div
                     style="
@@ -1608,8 +1338,8 @@
                   data-route="counselling"
                   onclick="window.navigate('counselling')"
                   style="
-                    background: white;
-                    color: #fed700;
+                    background: linear-gradient(135deg, #a855f7, #7e22ce);
+                    color: white;
                     padding: 14px 32px;
                     border-radius: 999px;
                     font-weight: 700;
@@ -1628,7 +1358,7 @@
                     this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
                   "
                 >
-                  Explore Plans →
+                  Explore Plans â†’
                 </button>
                 <span style="font-size: 14px; color: #6b7280; font-weight: 500"
                   >Trusted by 5000+ Students</span
@@ -1833,7 +1563,7 @@
             >
               <div class="eb-img-inner">
                 <img
-                  src="./assets/ebook-illustration.png"
+                  src="assets/ebook-illustration.png"
                   alt="NEET eBook Guide"
                   style="width: 460px; border-radius: 20px"
                 />
@@ -1884,7 +1614,7 @@
                     background: rgba(255, 255, 255, 0.7);
                   "
                 >
-                  <span style="font-size: 18px">📘</span
+                  <span style="font-size: 18px">ðŸ“˜</span
                   ><span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >Step-by-step counselling roadmap</span
@@ -1901,7 +1631,7 @@
                     background: rgba(255, 255, 255, 0.7);
                   "
                 >
-                  <span style="font-size: 18px">📊</span
+                  <span style="font-size: 18px">ðŸ“Š</span
                   ><span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >Updated cutoff &amp; category-wise trends</span
@@ -1918,7 +1648,7 @@
                     background: rgba(255, 255, 255, 0.7);
                   "
                 >
-                  <span style="font-size: 18px">🎯</span
+                  <span style="font-size: 18px">ðŸŽ¯</span
                   ><span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >Smart college selection strategies</span
@@ -1935,7 +1665,7 @@
                     background: rgba(255, 255, 255, 0.7);
                   "
                 >
-                  <span style="font-size: 18px">🏫</span
+                  <span style="font-size: 18px">ðŸ«</span
                   ><span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >College insights &amp; seat matrix details</span
@@ -1952,7 +1682,7 @@
                     background: rgba(255, 255, 255, 0.7);
                   "
                 >
-                  <span style="font-size: 18px">💡</span
+                  <span style="font-size: 18px">ðŸ’¡</span
                   ><span
                     style="color: #1f2937; font-size: 15px; font-weight: 500"
                     >Pro tips to maximize your chances</span
@@ -1967,8 +1697,8 @@
                   data-route="ebooks"
                   onclick="window.navigate('ebooks')"
                   style="
-                    background: #ffffff;
-                    color: #fed700;
+                    background: linear-gradient(135deg, #a855f7, #7e22ce);
+                    color: white;
                     padding: 14px 30px;
                     border-radius: 999px;
                     font-weight: 700;
@@ -1980,7 +1710,7 @@
                   onmouseover="this.style.transform = 'scale(1.05)'"
                   onmouseout="this.style.transform = 'scale(1)'"
                 >
-                  Get eBook →
+                  Get eBook â†’
                 </button>
               </div>
             </div>
@@ -2230,28 +1960,6 @@
         </section>
       </div>
 
-      <!-- Thank You Section (Native SPA) -->
-      <div id="section-thank-you" class="page-section" style="background-color: #f8fafc; display: none; align-items: center; justify-content: center; min-height: 100vh; font-family: 'Poppins', sans-serif;">
-        <div style="background: #ffffff; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center; max-width: 450px; width: 90%; margin: 120px auto;">
-            <div style="color: #16a34a; font-size: 64px; margin-bottom: 20px;">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <h1 style="color: #1e293b; font-size: 24px; font-weight: 700; margin-bottom: 12px;">Payment Successful ✅</h1>
-            <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin-bottom: 30px;">
-                We have received your payment successfully.<br>
-                Your eBook(s) will be sent to your WhatsApp and Email within 12 hours.
-            </p>
-            
-            <div id="inline-order-summary" style="display:none; background:#f1f5f9; text-align:left; padding:20px; border-radius:10px; margin-bottom:30px;">
-                <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Product:</strong> <span id="il-summary-product"></span></p>
-                <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Amount Paid:</strong> ₹<span id="il-summary-amount"></span></p>
-                <p style="margin:0 0 0px; font-size:14px; color:#475569;"><strong>Payment ID:</strong> <span id="il-summary-id"></span></p>
-            </div>
-
-            <a href="#" onclick="event.preventDefault(); window.navigate('orders');" style="display: inline-block; background: #2563eb; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 10px; font-weight: 600; transition: opacity 0.2s;">Go to Profile</a>
-        </div>
-      </div>
-
       <!-- About Section -->
       <div id="section-about" class="page-section">
         <section style="padding: 120px 0 60px">
@@ -2370,7 +2078,7 @@
                 "
                 onclick="window.navigate('medical-pricing')"
               >
-                <div style="font-size: 32px; margin-bottom: 12px">🩺</div>
+                <div style="font-size: 32px; margin-bottom: 12px">ðŸ©º</div>
                 <h3
                   style="font-size: 18px; font-weight: 600; margin-bottom: 8px"
                 >
@@ -2394,7 +2102,7 @@
                 "
                 onclick="window.navigate('ayush-pricing')"
               >
-                <div style="font-size: 32px; margin-bottom: 12px">🌿</div>
+                <div style="font-size: 32px; margin-bottom: 12px">ðŸŒ¿</div>
                 <h3
                   style="font-size: 18px; font-weight: 600; margin-bottom: 8px"
                 >
@@ -2419,7 +2127,7 @@
                 "
                 onclick="window.navigate('veterinary-pricing')"
               >
-                <div style="font-size: 32px; margin-bottom: 12px">🐾</div>
+                <div style="font-size: 32px; margin-bottom: 12px">ðŸ¾</div>
                 <h3
                   style="font-size: 18px; font-weight: 600; margin-bottom: 8px"
                 >
@@ -2458,7 +2166,7 @@
                   "
                   >Best Value</span
                 >
-                <div style="font-size: 32px; margin-bottom: 12px">🚀</div>
+                <div style="font-size: 32px; margin-bottom: 12px">ðŸš€</div>
                 <h3
                   style="font-size: 18px; font-weight: 600; margin-bottom: 8px"
                 >
@@ -2469,6 +2177,9 @@
                 </p>
               </div>
             </div>
+
+
+
           </div>
 
         </section>
@@ -2490,7 +2201,7 @@
               onclick="window.navigate('counselling')"
               style="margin-bottom: 20px; color: #4b5563; font-weight: 600"
             >
-              ← Back to Options
+              â† Back to Options
             </button>
             <h2
               style="
@@ -2552,7 +2263,7 @@
                     color: #111;
                   "
                 >
-                  ₹4,999
+                  â‚¹4,999
                 </div>
                 <ul
                   class="stagger-in"
@@ -2572,7 +2283,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete counselling support till college
+                    <span>âœ“</span> Complete counselling support till college
                     admission
                   </li>
                   <li
@@ -2584,7 +2295,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Calling + WhatsApp support
+                    <span>âœ“</span> Calling + WhatsApp support
                   </li>
                   <li
                     style="
@@ -2595,7 +2306,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cutoff data + premium PDFs
+                    <span>âœ“</span> Cutoff data + premium PDFs
                   </li>
                   <li
                     style="
@@ -2606,7 +2317,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Rank-based counselling strategy
+                    <span>âœ“</span> Rank-based counselling strategy
                   </li>
                   <li
                     style="
@@ -2617,7 +2328,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Fees, bond & stipend details
+                    <span>âœ“</span> Fees, bond & stipend details
                   </li>
                   <li
                     style="
@@ -2628,7 +2339,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Premium discussion group access
+                    <span>âœ“</span> Premium discussion group access
                   </li>
                   <li
                     style="
@@ -2639,7 +2350,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Personal counsellor guidance
+                    <span>âœ“</span> Personal counsellor guidance
                   </li>
                   <li
                     style="
@@ -2650,7 +2361,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Preference list based on score
+                    <span>âœ“</span> Preference list based on score
                   </li>
                   <li
                     style="
@@ -2661,7 +2372,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Document support guidance
+                    <span>âœ“</span> Document support guidance
                   </li>
                   <li
                     style="
@@ -2673,7 +2384,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✕</span> Form filling not included (self filling)
+                    <span>âœ•</span> Form filling not included (self filling)
                   </li>
                 </ul>
                 <div
@@ -2731,7 +2442,7 @@
                     color: #000;
                   "
                 >
-                  ₹9,999
+                  â‚¹9,999
                 </div>
                 <ul
                   class="stagger-in"
@@ -2751,7 +2462,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete counselling support till college
+                    <span>âœ“</span> Complete counselling support till college
                     admission
                   </li>
                   <li
@@ -2763,7 +2474,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Calling + WhatsApp support
+                    <span>âœ“</span> Calling + WhatsApp support
                   </li>
                   <li
                     style="
@@ -2774,7 +2485,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cutoff data + premium PDFs
+                    <span>âœ“</span> Cutoff data + premium PDFs
                   </li>
                   <li
                     style="
@@ -2785,7 +2496,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Rank-based counselling strategy
+                    <span>âœ“</span> Rank-based counselling strategy
                   </li>
                   <li
                     style="
@@ -2796,7 +2507,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Fees, bond & stipend details
+                    <span>âœ“</span> Fees, bond & stipend details
                   </li>
                   <li
                     style="
@@ -2807,7 +2518,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Premium discussion group access
+                    <span>âœ“</span> Premium discussion group access
                   </li>
                   <li
                     style="
@@ -2818,7 +2529,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Personal counsellor guidance
+                    <span>âœ“</span> Personal counsellor guidance
                   </li>
                   <li
                     style="
@@ -2829,7 +2540,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Preference list based on score
+                    <span>âœ“</span> Preference list based on score
                   </li>
                   <li
                     style="
@@ -2840,19 +2551,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Document support guidance
-                  </li>
-                  <li
-                    style="
-                      font-size: 13px;
-                      margin-bottom: 8px;
-                      color: #222;
-                      font-weight: 600;
-                      display: flex;
-                      gap: 8px;
-                    "
-                  >
-                    <span>✓</span> Cyber café support included
+                    <span>âœ“</span> Document support guidance
                   </li>
                   <li
                     style="
@@ -2864,7 +2563,19 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete form filling + choice filling
+                    <span>âœ“</span> Cyber cafÃ© support included
+                  </li>
+                  <li
+                    style="
+                      font-size: 13px;
+                      margin-bottom: 8px;
+                      color: #222;
+                      font-weight: 600;
+                      display: flex;
+                      gap: 8px;
+                    "
+                  >
+                    <span>âœ“</span> Complete form filling + choice filling
                   </li>
                 </ul>
                 <div
@@ -2921,7 +2632,7 @@
                     color: #111;
                   "
                 >
-                  ₹14,999
+                  â‚¹14,999
                 </div>
                 <ul
                   class="stagger-in"
@@ -2942,7 +2653,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> All features of Gold Plan
+                    <span>âœ“</span> All features of Gold Plan
                   </li>
                   <li
                     style="
@@ -2953,7 +2664,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Private/deemed university guidance
+                    <span>âœ“</span> Private/deemed university guidance
                   </li>
                   <li
                     style="
@@ -2964,7 +2675,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Budget-based college selection
+                    <span>âœ“</span> Budget-based college selection
                   </li>
                   <li
                     style="
@@ -2975,7 +2686,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Seat confirmation strategy
+                    <span>âœ“</span> Seat confirmation strategy
                   </li>
                 </ul>
                 <div
@@ -3016,7 +2727,7 @@
               onclick="window.navigate('counselling')"
               style="margin-bottom: 20px; color: #4b5563; font-weight: 600"
             >
-              ← Back to Options
+              â† Back to Options
             </button>
             <h2
               style="
@@ -3077,7 +2788,7 @@
                     color: #111;
                   "
                 >
-                  ₹4,999
+                  â‚¹4,999
                 </div>
                 <ul
                   style="
@@ -3096,7 +2807,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete counselling support till admission
+                    <span>âœ“</span> Complete counselling support till admission
                   </li>
                   <li
                     style="
@@ -3107,7 +2818,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Calling + WhatsApp support
+                    <span>âœ“</span> Calling + WhatsApp support
                   </li>
                   <li
                     style="
@@ -3118,7 +2829,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cutoff data + PDFs
+                    <span>âœ“</span> Cutoff data + PDFs
                   </li>
                   <li
                     style="
@@ -3129,7 +2840,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Strategy planning
+                    <span>âœ“</span> Strategy planning
                   </li>
                   <li
                     style="
@@ -3140,7 +2851,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Fees & college details
+                    <span>âœ“</span> Fees & college details
                   </li>
                   <li
                     style="
@@ -3151,7 +2862,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Preference list
+                    <span>âœ“</span> Preference list
                   </li>
                   <li
                     style="
@@ -3162,7 +2873,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Document support
+                    <span>âœ“</span> Document support
                   </li>
                   <li
                     style="
@@ -3174,7 +2885,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✕</span> No form filling
+                    <span>âœ•</span> No form filling
                   </li>
                 </ul>
                 <div
@@ -3231,7 +2942,7 @@
                     color: #fff;
                   "
                 >
-                  ₹8,999
+                  â‚¹8,999
                 </div>
                 <ul
                   style="
@@ -3250,7 +2961,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete counselling support till admission
+                    <span>âœ“</span> Complete counselling support till admission
                   </li>
                   <li
                     style="
@@ -3261,7 +2972,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Calling + WhatsApp support
+                    <span>âœ“</span> Calling + WhatsApp support
                   </li>
                   <li
                     style="
@@ -3272,7 +2983,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cutoff data + PDFs
+                    <span>âœ“</span> Cutoff data + PDFs
                   </li>
                   <li
                     style="
@@ -3283,7 +2994,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Strategy planning
+                    <span>âœ“</span> Strategy planning
                   </li>
                   <li
                     style="
@@ -3294,7 +3005,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Fees & college details
+                    <span>âœ“</span> Fees & college details
                   </li>
                   <li
                     style="
@@ -3305,7 +3016,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Preference list
+                    <span>âœ“</span> Preference list
                   </li>
                   <li
                     style="
@@ -3316,19 +3027,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Document support
-                  </li>
-                  <li
-                    style="
-                      font-size: 13px;
-                      margin-bottom: 8px;
-                      color: #fff;
-                      font-weight: 600;
-                      display: flex;
-                      gap: 8px;
-                    "
-                  >
-                    <span>✓</span> Personal counsellor
+                    <span>âœ“</span> Document support
                   </li>
                   <li
                     style="
@@ -3340,7 +3039,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Premium group access
+                    <span>âœ“</span> Personal counsellor
                   </li>
                   <li
                     style="
@@ -3352,7 +3051,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cyber café support
+                    <span>âœ“</span> Premium group access
                   </li>
                   <li
                     style="
@@ -3364,7 +3063,19 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Full form filling + choice filling
+                    <span>âœ“</span> Cyber cafÃ© support
+                  </li>
+                  <li
+                    style="
+                      font-size: 13px;
+                      margin-bottom: 8px;
+                      color: #fff;
+                      font-weight: 600;
+                      display: flex;
+                      gap: 8px;
+                    "
+                  >
+                    <span>âœ“</span> Full form filling + choice filling
                   </li>
                 </ul>
                 <div
@@ -3377,6 +3088,7 @@
                     font-weight: 600;
                     cursor: pointer;
                   "
+                  onclick="window.openCounsellingBooking('ayush_gold')"
                 >
                   Book Now
                 </div>
@@ -3419,7 +3131,7 @@
                     color: #111;
                   "
                 >
-                  ₹9,999
+                  â‚¹9,999
                 </div>
                 <ul
                   style="
@@ -3439,7 +3151,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> All features of Gold Plan
+                    <span>âœ“</span> All features of Gold Plan
                   </li>
                   <li
                     style="
@@ -3450,7 +3162,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Private college guidance
+                    <span>âœ“</span> Private college guidance
                   </li>
                   <li
                     style="
@@ -3461,7 +3173,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Budget + seat planning
+                    <span>âœ“</span> Budget + seat planning
                   </li>
                 </ul>
                 <div
@@ -3475,6 +3187,7 @@
                     cursor: pointer;
                     margin-top: auto;
                   "
+                  onclick="window.openCounsellingBooking('ayush_platinum')"
                 >
                   Book Now
                 </div>
@@ -3501,7 +3214,7 @@
               onclick="window.navigate('counselling')"
               style="margin-bottom: 20px; color: #4b5563; font-weight: 600"
             >
-              ← Back to Options
+              â† Back to Options
             </button>
             <h2
               style="
@@ -3561,7 +3274,7 @@
                     color: #111;
                   "
                 >
-                  ₹4,999
+                  â‚¹4,999
                 </div>
                 <ul
                   style="
@@ -3580,7 +3293,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete counselling support till admission
+                    <span>âœ“</span> Complete counselling support till admission
                   </li>
                   <li
                     style="
@@ -3591,7 +3304,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Calling + WhatsApp support
+                    <span>âœ“</span> Calling + WhatsApp support
                   </li>
                   <li
                     style="
@@ -3602,7 +3315,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cutoff data + PDFs
+                    <span>âœ“</span> Cutoff data + PDFs
                   </li>
                   <li
                     style="
@@ -3613,7 +3326,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Strategy planning
+                    <span>âœ“</span> Strategy planning
                   </li>
                   <li
                     style="
@@ -3624,7 +3337,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Fees & college details
+                    <span>âœ“</span> Fees & college details
                   </li>
                   <li
                     style="
@@ -3635,7 +3348,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Preference list
+                    <span>âœ“</span> Preference list
                   </li>
                   <li
                     style="
@@ -3646,7 +3359,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Document support
+                    <span>âœ“</span> Document support
                   </li>
                 </ul>
                 <div
@@ -3659,6 +3372,7 @@
                     font-weight: 600;
                     cursor: pointer;
                   "
+                  onclick="window.openCounsellingBooking('vet_basic')"
                 >
                   Book Now
                 </div>
@@ -3702,7 +3416,7 @@
                     color: #fff;
                   "
                 >
-                  ₹8,999
+                  â‚¹8,999
                 </div>
                 <ul
                   style="
@@ -3721,7 +3435,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete counselling support till admission
+                    <span>âœ“</span> Complete counselling support till admission
                   </li>
                   <li
                     style="
@@ -3732,7 +3446,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Calling + WhatsApp support
+                    <span>âœ“</span> Calling + WhatsApp support
                   </li>
                   <li
                     style="
@@ -3743,7 +3457,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cutoff data + PDFs
+                    <span>âœ“</span> Cutoff data + PDFs
                   </li>
                   <li
                     style="
@@ -3754,7 +3468,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Strategy planning
+                    <span>âœ“</span> Strategy planning
                   </li>
                   <li
                     style="
@@ -3765,7 +3479,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Fees & college details
+                    <span>âœ“</span> Fees & college details
                   </li>
                   <li
                     style="
@@ -3776,7 +3490,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Preference list
+                    <span>âœ“</span> Preference list
                   </li>
                   <li
                     style="
@@ -3787,19 +3501,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Document support
-                  </li>
-                  <li
-                    style="
-                      font-size: 13px;
-                      margin-bottom: 8px;
-                      color: #fff;
-                      font-weight: 600;
-                      display: flex;
-                      gap: 8px;
-                    "
-                  >
-                    <span>✓</span> Personal counsellor
+                    <span>âœ“</span> Document support
                   </li>
                   <li
                     style="
@@ -3811,7 +3513,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Premium group access
+                    <span>âœ“</span> Personal counsellor
                   </li>
                   <li
                     style="
@@ -3823,7 +3525,19 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Full form filling support
+                    <span>âœ“</span> Premium group access
+                  </li>
+                  <li
+                    style="
+                      font-size: 13px;
+                      margin-bottom: 8px;
+                      color: #fff;
+                      font-weight: 600;
+                      display: flex;
+                      gap: 8px;
+                    "
+                  >
+                    <span>âœ“</span> Full form filling support
                   </li>
                 </ul>
                 <div
@@ -3836,6 +3550,7 @@
                     font-weight: 600;
                     cursor: pointer;
                   "
+                  onclick="window.openCounsellingBooking('vet_gold')"
                 >
                   Book Now
                 </div>
@@ -3878,7 +3593,7 @@
                     color: #111;
                   "
                 >
-                  ₹9,999
+                  â‚¹9,999
                 </div>
                 <ul
                   style="
@@ -3898,7 +3613,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> All features of Gold Plan
+                    <span>âœ“</span> All features of Gold Plan
                   </li>
                   <li
                     style="
@@ -3909,7 +3624,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Private veterinary college guidance
+                    <span>âœ“</span> Private veterinary college guidance
                   </li>
                 </ul>
                 <div
@@ -3923,6 +3638,7 @@
                     cursor: pointer;
                     margin-top: auto;
                   "
+                  onclick="window.openCounsellingBooking('vet_platinum')"
                 >
                   Book Now
                 </div>
@@ -3951,7 +3667,7 @@
               onclick="window.navigate('counselling')"
               style="margin-bottom: 20px; color: #4b5563; font-weight: 600"
             >
-              ← Back to Options
+              â† Back to Options
             </button>
             <h2
               style="
@@ -4011,7 +3727,7 @@
                     color: #111;
                   "
                 >
-                  ₹5,999
+                  â‚¹5,999
                 </div>
                 <ul
                   style="
@@ -4030,7 +3746,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete counselling support till college
+                    <span>âœ“</span> Complete counselling support till college
                     admission
                   </li>
                   <li
@@ -4042,7 +3758,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Calling + WhatsApp support
+                    <span>âœ“</span> Calling + WhatsApp support
                   </li>
                   <li
                     style="
@@ -4053,7 +3769,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cutoff data + premium PDFs
+                    <span>âœ“</span> Cutoff data + premium PDFs
                   </li>
                   <li
                     style="
@@ -4064,7 +3780,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Rank-based counselling strategy
+                    <span>âœ“</span> Rank-based counselling strategy
                   </li>
                   <li
                     style="
@@ -4075,7 +3791,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Fees, bond & stipend details
+                    <span>âœ“</span> Fees, bond & stipend details
                   </li>
                   <li
                     style="
@@ -4086,7 +3802,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Premium discussion group access
+                    <span>âœ“</span> Premium discussion group access
                   </li>
                   <li
                     style="
@@ -4097,7 +3813,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Personal counsellor guidance
+                    <span>âœ“</span> Personal counsellor guidance
                   </li>
                   <li
                     style="
@@ -4108,7 +3824,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Preference list based on score
+                    <span>âœ“</span> Preference list based on score
                   </li>
                   <li
                     style="
@@ -4119,7 +3835,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Document support guidance
+                    <span>âœ“</span> Document support guidance
                   </li>
                   <li
                     style="
@@ -4131,7 +3847,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✕</span> Form filling not included (self filling)
+                    <span>âœ•</span> Form filling not included (self filling)
                   </li>
                 </ul>
                 <div
@@ -4145,6 +3861,7 @@
                     letter-spacing: 0.5px;
                     cursor: pointer;
                   "
+                  onclick="window.openCounsellingBooking('combo_basic')"
                 >
                   Book Combo Plan
                 </div>
@@ -4188,7 +3905,7 @@
                     color: #fff;
                   "
                 >
-                  ₹14,999
+                  â‚¹14,999
                 </div>
                 <ul
                   style="
@@ -4207,7 +3924,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete counselling support till college
+                    <span>âœ“</span> Complete counselling support till college
                     admission
                   </li>
                   <li
@@ -4219,7 +3936,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Calling + WhatsApp support
+                    <span>âœ“</span> Calling + WhatsApp support
                   </li>
                   <li
                     style="
@@ -4230,7 +3947,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Cutoff data + premium PDFs
+                    <span>âœ“</span> Cutoff data + premium PDFs
                   </li>
                   <li
                     style="
@@ -4241,7 +3958,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Rank-based counselling strategy
+                    <span>âœ“</span> Rank-based counselling strategy
                   </li>
                   <li
                     style="
@@ -4252,7 +3969,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Fees, bond & stipend details
+                    <span>âœ“</span> Fees, bond & stipend details
                   </li>
                   <li
                     style="
@@ -4263,7 +3980,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Premium discussion group access
+                    <span>âœ“</span> Premium discussion group access
                   </li>
                   <li
                     style="
@@ -4274,7 +3991,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Personal counsellor guidance
+                    <span>âœ“</span> Personal counsellor guidance
                   </li>
                   <li
                     style="
@@ -4285,7 +4002,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Preference list based on score
+                    <span>âœ“</span> Preference list based on score
                   </li>
                   <li
                     style="
@@ -4296,19 +4013,7 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Document support guidance
-                  </li>
-                  <li
-                    style="
-                      font-size: 13px;
-                      margin-bottom: 6px;
-                      color: #fff;
-                      font-weight: 600;
-                      display: flex;
-                      gap: 8px;
-                    "
-                  >
-                    <span>✓</span> Cyber café support included
+                    <span>âœ“</span> Document support guidance
                   </li>
                   <li
                     style="
@@ -4320,7 +4025,19 @@
                       gap: 8px;
                     "
                   >
-                    <span>✓</span> Complete form filling + choice filling by
+                    <span>âœ“</span> Cyber cafÃ© support included
+                  </li>
+                  <li
+                    style="
+                      font-size: 13px;
+                      margin-bottom: 6px;
+                      color: #fff;
+                      font-weight: 600;
+                      display: flex;
+                      gap: 8px;
+                    "
+                  >
+                    <span>âœ“</span> Complete form filling + choice filling by
                     counsellor
                   </li>
                 </ul>
@@ -4335,6 +4052,7 @@
                     letter-spacing: 0.5px;
                     cursor: pointer;
                   "
+                  onclick="window.openCounsellingBooking('combo_platinum')"
                 >
                   Book Combo Plan
                 </div>
@@ -4840,6 +4558,9 @@
 
       <!-- Dynamic Dashboard Section -->
       <div id="section-dashboard" class="page-section"></div>
+      
+      <!-- Orders Section -->
+      <div id="section-orders" class="page-section"></div>
 
       <!-- eBooks Section -->
       <div
@@ -5040,7 +4761,7 @@
               <h3 class="ec-title">Medical</h3>
               <p class="ec-courses">MBBS, BDS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from â‚¹1
               </div>
               <button class="ec-btn" style="background: #2563eb;" onclick="event.stopPropagation(); window.navigate('medical-options')">
                 Buy eBooks
@@ -5057,7 +4778,7 @@
               <h3 class="ec-title">Dental</h3>
               <p class="ec-courses">BDS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from â‚¹1
               </div>
               <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 1, 'Dental Cutoff eBooks')">
                 Buy eBooks
@@ -5074,7 +4795,7 @@
               <h3 class="ec-title">AYUSH</h3>
               <p class="ec-courses">BAMS, BHMS, BSMS, BUMS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from â‚¹1
               </div>
               <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 1, 'AYUSH Cutoff eBooks')">
                 Buy eBooks
@@ -5091,7 +4812,7 @@
               <h3 class="ec-title">Veterinary</h3>
               <p class="ec-courses">BVSc</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from â‚¹1
               </div>
               <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 1, 'Veterinary Cutoff eBooks')">
                 Buy eBooks
@@ -5211,7 +4932,7 @@
           <div class="mo-grid">
             
             <!-- AIQ Card -->
-            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 1, 'Medical AIQ eBooks')">
+            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 149, 'Medical AIQ eBooks')">
               <div class="mo-icon" style="color: #2563eb;">
                 <i class="fas fa-globe"></i>
               </div>
@@ -5221,7 +4942,7 @@
                 Top Colleges Included
               </div>
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from â‚¹1
               </div>
               <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 1, 'Medical AIQ eBooks')">
                 Buy AIQ eBooks
@@ -5229,7 +4950,7 @@
             </div>
 
             <!-- State Quota Card -->
-            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'State Quota', 1, 'Medical State Quota eBooks')">
+            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
               <div class="mo-icon" style="color: #16a34a;">
                 <i class="fas fa-map"></i>
               </div>
@@ -5239,7 +4960,7 @@
                 State-wise Detailed Data
               </div>
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from â‚¹1
               </div>
               <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 1, 'Medical State Quota eBooks')">
                 Buy State eBooks
@@ -5266,7 +4987,7 @@
         <div style="max-width: 1100px; margin: 0 auto; padding-top: 80px; padding-bottom: 60px;">
           <!-- Header -->
           <div style="margin-bottom: 30px;">
-            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Your Cart 🛒</h2>
+            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Your Cart ðŸ›’</h2>
             <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Review your selected eBooks</p>
           </div>
 
@@ -5348,7 +5069,7 @@
               <div class="cart-summary-card">
                 <p class="cart-summary-title">Order Summary</p>
                 <div class="cart-summary-row"><span>Items</span><span id="cartTotalItems">0</span></div>
-                <div class="cart-summary-total"><span>Total</span><span id="cartTotalPrice">₹0</span></div>
+                <div class="cart-summary-total"><span>Total</span><span id="cartTotalPrice">â‚¹0</span></div>
                 <button class="cart-checkout-btn" onclick="cartCheckout()"><i class="fas fa-lock" style="margin-right:6px;"></i>Proceed to Checkout</button>
               </div>
             </div>
@@ -5377,7 +5098,7 @@
           "
         >
           <div style="margin-bottom: 40px;">
-            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">My Wishlist ❤️</h2>
+            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">My Wishlist â¤ï¸</h2>
             <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Your saved ebooks</p>
           </div>
 
@@ -5388,7 +5109,7 @@
           <div id="wishlistEmpty" style="display: none; padding: 40px 20px; text-align: center;">
             <div style="font-size: 48px; color: #cbd5f5; margin-bottom: 16px;"><i class="fas fa-heart"></i></div>
             <h3 style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 8px 0;">Your Wishlist is Empty</h3>
-            <p style="font-size: 13px; color: #64748b; margin: 0 0 24px 0;">Save ebooks you like by tapping ❤️</p>
+            <p style="font-size: 13px; color: #64748b; margin: 0 0 24px 0;">Save ebooks you like by tapping â¤ï¸</p>
             <button onclick="window.navigate('ebooks')" style="background: #2563eb; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;">Browse eBooks</button>
           </div>
         </div>
@@ -5430,7 +5151,7 @@
             <div>
               <h2 style="font-size: 15px; font-weight: 600; margin-bottom: 6px; color: #111;">3. Data Protection</h2>
               <ul style="color: #444; padding-left: 20px; margin: 0;">
-                <li>Your data is सुरक्षित (secure) and not sold to third parties.</li>
+                <li>Your data is à¤¸à¥à¤°à¤•à¥à¤·à¤¿à¤¤ (secure) and not sold to third parties.</li>
                 <li>Shared only when necessary for counselling purposes.</li>
               </ul>
             </div>
@@ -5486,7 +5207,7 @@
               <h2 style="font-size: 15px; font-weight: 600; margin-bottom: 6px; color: #111;">4. Refund Process</h2>
               <ul style="color: #444; padding-left: 20px; margin: 0;">
                 <li>Contact via WhatsApp with payment proof</li>
-                <li>Refund processed within 5–7 working days</li>
+                <li>Refund processed within 5â€“7 working days</li>
                 <li>Amount credited to original payment method</li>
               </ul>
             </div>
@@ -5495,9 +5216,9 @@
 
             <div>
               <h2 style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #111;">CONTACT DETAILS</h2>
-              <p style="color: #444; margin: 4px 0;">📞 Phone/WhatsApp: <strong>8000258339</strong></p>
-              <p style="color: #444; margin: 4px 0;">🌐 Website: <strong>dcneetcounselling.com</strong></p>
-              <p style="color: #444; margin: 4px 0;">📧 Email: <strong>support@dcneetcounselling.com</strong></p>
+              <p style="color: #444; margin: 4px 0;">ðŸ“ž Phone/WhatsApp: <strong>8000258339</strong></p>
+              <p style="color: #444; margin: 4px 0;">ðŸŒ Website: <strong>dcneetcounselling.com</strong></p>
+              <p style="color: #444; margin: 4px 0;">ðŸ“§ Email: <strong>support@dcneetcounselling.com</strong></p>
             </div>
 
             <hr style="border: none; border-top: 1px solid #eee; margin: 4px 0;">
@@ -5577,6 +5298,23 @@
             </div>
 
           </div>
+        </div>
+      </div>
+
+      <!-- Thank You Page Section -->
+      <div id="section-thank-you" class="page-section" style="padding: 20px; text-align: center; display: none; min-height: 100vh;">
+        <div class="fade-up" style="max-width: 600px; margin: 100px auto; background: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+          <div style="font-size: 60px; color: #16a34a; margin-bottom: 20px;">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <h1 style="font-size: 28px; font-weight: 700; color: #111; margin-bottom: 12px;">Payment Successful âœ…</h1>
+          <p style="color: #444; font-size: 16px; line-height: 1.6; margin-bottom: 30px;">
+            We have received your payment successfully.<br/>
+            Your eBook will be sent to your WhatsApp and Email within 12 hours.
+          </p>
+          <button onclick="window.navigate('dashboard')" style="background: #2563eb; color: #fff; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 600; font-size: 16px; cursor: pointer; transition: background 0.3s; font-family: var(--font-main);">
+            Go to Profile
+          </button>
         </div>
       </div>
     </main>
@@ -5813,64 +5551,6 @@
       </button>
     </div>
 
-    <!-- Order History Section -->
-    <div id="section-orders" class="page-section" style="display:none; background:#f8fafc; min-height:80vh; padding:60px 20px;">
-      <div class="container" style="max-width:800px; margin:0 auto;">
-        <h2 style="font-size:28px; font-weight:700; color:#1e293b; margin-bottom:10px;"><i class="fas fa-box-open" style="color:#2563eb;"></i> Order History</h2>
-        <p style="color:#64748b; margin-bottom:30px;">View your past eBook purchases and counselling bookings.</p>
-        
-        <div id="ordersList" style="display:flex; flex-direction:column; gap:16px;">
-          <div style="text-align:center; padding:40px; color:#9ca3af;">Loading orders <i class="fas fa-spinner fa-spin"></i></div>
-        </div>
-      </div>
-    </div>
-    
-    <script>
-      window.renderOrdersPage = async function() {
-        var ordersList = document.getElementById('ordersList');
-        if (!ordersList) return;
-        if (!window._authUser) {
-          ordersList.innerHTML = '<div style="text-align:center; padding:40px; color:#b91c1c;">Please login to view your orders.</div>';
-          return;
-        }
-        ordersList.innerHTML = '<div style="text-align:center; padding:40px; color:#9ca3af;">Loading orders <i class="fas fa-spinner fa-spin"></i></div>';
-        
-        // Natively fetch from Supabase if Express backend isn't mounted (Hostinger Fallback Strategy)
-        if (window.supabaseClient) {
-            try {
-                var { data: fbData, error } = await window.supabaseClient.from('orders').select('*').eq('user_id', window._authUser.id).order('created_at', { ascending: false });
-                if(error) throw error;
-                if(!fbData || fbData.length === 0) {
-                    ordersList.innerHTML = '<div style="text-align:center; padding:40px; background:#fff; border-radius:12px; border:1px solid #e2e8f0; color:#64748b;"><i class="fas fa-box-open" style="font-size:32px; color:#cbd5e1; margin-bottom:12px; display:block;"></i>No orders found.</div>';
-                    return;
-                }
-                let html = '';
-                fbData.forEach(function(o) {
-                    const d = new Date(o.created_at).toLocaleDateString() + ' ' + new Date(o.created_at).toLocaleTimeString();
-                    const statusColor = o.payment_status === 'success' ? '#16a34a' : '#f59e0b';
-                    const statusBg = o.payment_status === 'success' ? '#dcfce7' : '#fef3c7';
-                    const statusIcon = o.payment_status === 'success' ? 'fa-check-circle' : 'fa-clock';
-                    html += '<div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05); border:1px solid #e2e8f0; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:16px;">' +
-                              '<div style="display:flex; flex-direction:column; gap:4px;">' +
-                                '<h4 style="margin:0; font-size:16px; font-weight:600; color:#0f172a;">' + (o.product_name || 'Purchase') + '</h4>' +
-                                '<p style="margin:0; font-size:12px; color:#64748b;"><i class="far fa-clock"></i> ' + d + '</p>' +
-                                '<p style="margin:0; font-size:11px; color:#94a3b8; font-family:monospace;">ID: ' + (o.razorpay_payment_id || o.id.split('-')[0]) + '</p>' +
-                              '</div>' +
-                              '<div style="text-align:right;">' +
-                                '<div style="font-weight:700; color:#1e293b; font-size:18px; margin-bottom:6px;">₹' + o.amount_paid + '</div>' +
-                                '<span style="background:'+statusBg+'; color:'+statusColor+'; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; text-transform:capitalize;"><i class="fas '+statusIcon+'"></i> '+o.payment_status+'</span>' +
-                              '</div>' +
-                            '</div>';
-                });
-                ordersList.innerHTML = html;
-            } catch(e) {
-                console.error(e);
-                ordersList.innerHTML = '<div style="text-align:center; padding:40px; background:#fee2e2; border-radius:12px; color:#b91c1c;">Could not load orders. ' + (e.message || "Database unreachable.") + '</div>';
-            }
-        }
-      };
-    </script>
-    
     <!-- Footer -->
     <footer class="footer">
       <div class="container footer-content">
@@ -5938,9 +5618,9 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="./js/supabase.js?v=2026.04.18.8"></script>
-    <script src="./js/supabaseClient.js?v=2026.04.18.8"></script>
-    <script src="./js/app_v2.js?v=2026.04.18.8"></script>
+    <script src="js/supabase.js?v=2026.04.19.2"></script>
+    <script src="js/supabaseClient.js?v=2026.04.19.2"></script>
+    <script src="js/app_v2.js?v=2026.04.19.2"></script>
 
     <!-- Auth Popup Modal -->
     <div
@@ -5985,7 +5665,7 @@
       <button class="close-eb-btn" onclick="closeAuthModal()" style="top: 16px; right: 16px;"><i class="fas fa-times"></i></button>
 
       <div style="text-align: center; margin-bottom: 24px;">
-        <h3 id="authModalTitle" style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">Welcome Back 👋</h3>
+        <h3 id="authModalTitle" style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">Welcome Back ðŸ‘‹</h3>
         <p id="authModalSubtitle" style="font-size: 14px; color: #64748b; margin: 0;">Login to continue</p>
       </div>
 
@@ -6137,7 +5817,7 @@
         <p style="font-size: 14px; color: #64748b; margin: 0;">Get personalized cutoff insights</p>
       </div>
 
-      <form onsubmit="event.preventDefault(); submitEbookPurchase();">
+      <form id="ebookPurchaseForm" onsubmit="event.preventDefault(); window.submitEbookPurchase();">
         <div class="eb-input-group">
           <label class="eb-label">Full Name</label>
           <input type="text" class="eb-input" id="eb_full_name" placeholder="Enter your name" required />
@@ -6146,7 +5826,7 @@
         <div style="display: flex; gap: 12px;">
           <div class="eb-input-group" style="flex: 1;">
             <label class="eb-label">Category</label>
-            <input type="text" id="eb_category" class="eb-input" placeholder="e.g. Open (UR), SC, ST..." required />
+            <input type="text" class="eb-input" id="eb_category" placeholder="Enter your category (e.g., General, OBC, SC, ST)" required />
           </div>
           <div class="eb-input-group" style="flex: 1;">
             <label class="eb-label">NEET Score</label>
@@ -6211,26 +5891,25 @@
           <input type="tel" class="eb-input" id="eb_mobile" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
         </div>
 
-        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 15px; margin-top: 15px; margin-bottom: 15px; text-align: left;">
-          <h4 style="margin: 0 0 10px 0; font-size: 13px; color: #b91c1c; font-weight: 700;"><i class="fas fa-exclamation-circle"></i> Important Notes for Ebook Purchase</h4>
-          <ul style="margin: 0; padding-left: 20px; font-size: 11.5px; color: #334155; line-height: 1.5;">
-            <li style="margin-bottom: 6px;">Please ensure that your mail ID and mobile number are correct while placing the order. All details and delivery will be shared on these.</li>
-            <li style="margin-bottom: 6px;">You will receive cutoff data strictly based on your selected category.<br><span style="color:#64748b; font-style:italic;">(Example: If your category is OBC, you will receive only OBC cutoff data.)</span></li>
-            <li style="margin-bottom: 6px;">If you need cutoff data for other categories, you can contact our manager. They will assist you with additional data.</li>
-            <li>Your ebook will be delivered within 12 working hours after payment</li>
-          </ul>
-          
-          <label style="display: flex; align-items: flex-start; margin-top: 12px; gap: 8px; cursor: pointer; padding-top: 12px; border-top: 1px solid #e2e8f0;">
-            <input type="checkbox" required style="margin-top: 2px; accent-color: #2563eb; width: 16px; height: 16px; cursor: pointer;" />
-            <span style="font-size: 12.5px; font-weight: 600; color: #1e293b;">I have read and accept these terms.</span>
+        <!-- Important Notes Inline -->
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px; margin: 15px 0; font-size: 12px; color: #000000; line-height: 1.5;">
+          <h4 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 700; color: red;">Important Notes for Ebook Purchase</h4>
+          <p style="margin: 0 0 8px 0;">Please ensure that your mail ID and mobile number are correct while placing the order. All details and delivery will be shared on these.</p>
+          <p style="margin: 0 0 8px 0;">You will receive cutoff data strictly based on your selected category.<br><span style="font-weight: 600;">(Example: If your category is OBC, you will receive only OBC cutoff data.)</span></p>
+          <p style="margin: 0 0 8px 0;">If you need cutoff data for other categories, you can contact our manager. They will assist you with additional data.</p>
+          <p style="margin: 0 0 12px 0; font-weight: 700;">Your ebook will be delivered within 12 working hours after payment.</p>
+          <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: #0f172a; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+            <input type="checkbox" required style="margin-top: 2px; width: 16px; height: 16px; cursor: pointer;" />
+            <span>I have read and agree to the above important notes.</span>
           </label>
         </div>
+
         <button type="submit" class="eb-btn">Continue to Payment</button>
       </form>
 
       <div style="text-align: center; margin-top: 16px;">
         <p style="font-size: 11px; color: #94a3b8; margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px;">
-          <i class="fas fa-shield-alt"></i> Your data is सुरक्षित and used only for cutoff analysis.
+          <i class="fas fa-shield-alt"></i> Your data is à¤¸à¥à¤°à¤•à¥à¤·à¤¿à¤¤ and used only for cutoff analysis.
         </p>
       </div>
     </div>
@@ -6248,7 +5927,7 @@
         width: 90%;
         max-width: 440px;
         background: #fff;
-        z-index: 10001;
+        z-index: 10000002;
         padding: 32px;
         border-radius: 24px;
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -6263,97 +5942,79 @@
         <p style="font-size: 14px; color: #64748b; margin: 0;">Fill details to confirm your slot</p>
       </div>
 
-      <form onsubmit="event.preventDefault(); window.submitCounsellingBooking();">
+      <form id="bookingForm" onsubmit="event.preventDefault(); window.submitCounsellingBooking(this);">
         <div class="eb-input-group">
           <label class="eb-label">Full Name</label>
-          <input type="text" class="eb-input" id="cb_full_name" placeholder="Enter your name" required />
+          <input type="text" class="eb-input" name="full_name" placeholder="Enter your full name" required />
         </div>
         
-        <div style="display: flex; gap: 12px;">
-          <div class="eb-input-group" style="flex: 1;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+          <div>
             <label class="eb-label">Category</label>
-            <input type="text" id="cb_category" class="eb-input" placeholder="e.g. Open (UR), SC, ST..." required />
+            <input type="text" class="eb-input" name="category" placeholder="Enter your category (e.g. OBC)" required />
           </div>
-          <div class="eb-input-group" style="flex: 1;">
+          <div>
             <label class="eb-label">NEET Score</label>
-            <input type="number" class="eb-input" id="cb_neet_score" placeholder="e.g. 550" required />
+            <input type="number" class="eb-input" name="neet_score" placeholder="e.g. 550" required />
           </div>
         </div>
 
         <div class="eb-input-group">
           <label class="eb-label">Domicile State</label>
-          <select id="cb_domicile_state" class="eb-select" required>
+          <select name="domicile_state" class="eb-select" required>
             <option value="" disabled selected>Search/Select State</option>
-            <option>Andhra Pradesh</option>
-            <option>Arunachal Pradesh</option>
-            <option>Assam</option>
-            <option>Bihar</option>
-            <option>Chhattisgarh</option>
-            <option>Goa</option>
-            <option>Gujarat</option>
-            <option>Haryana</option>
-            <option>Himachal Pradesh</option>
-            <option>Jharkhand</option>
-            <option>Karnataka</option>
-            <option>Kerala</option>
-            <option>Madhya Pradesh</option>
-            <option>Maharashtra</option>
-            <option>Manipur</option>
-            <option>Meghalaya</option>
-            <option>Mizoram</option>
-            <option>Nagaland</option>
-            <option>Odisha</option>
-            <option>Punjab</option>
-            <option>Rajasthan</option>
-            <option>Sikkim</option>
-            <option>Tamil Nadu</option>
-            <option>Telangana</option>
-            <option>Tripura</option>
-            <option>Uttar Pradesh</option>
-            <option>Uttarakhand</option>
-            <option>West Bengal</option>
-            <option>Delhi</option>
-            <option>Jammu & Kashmir</option>
-            <option>Ladakh</option>
-            <option>Chandigarh</option>
-            <option>Puducherry</option>
-            <option>Andaman & Nicobar</option>
-            <option>Dadra & Nagar Haveli</option>
+            <option value="Andhra Pradesh">Andhra Pradesh</option>
+            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+            <option value="Assam">Assam</option>
+            <option value="Bihar">Bihar</option>
+            <option value="Chhattisgarh">Chhattisgarh</option>
+            <option value="Goa">Goa</option>
+            <option value="Gujarat">Gujarat</option>
+            <option value="Haryana">Haryana</option>
+            <option value="Himachal Pradesh">Himachal Pradesh</option>
+            <option value="Jharkhand">Jharkhand</option>
+            <option value="Karnataka">Karnataka</option>
+            <option value="Kerala">Kerala</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Manipur">Manipur</option>
+            <option value="Meghalaya">Meghalaya</option>
+            <option value="Mizoram">Mizoram</option>
+            <option value="Nagaland">Nagaland</option>
+            <option value="Odisha">Odisha</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Rajasthan">Rajasthan</option>
+            <option value="Sikkim">Sikkim</option>
+            <option value="Tamil Nadu">Tamil Nadu</option>
+            <option value="Telangana">Telangana</option>
+            <option value="Tripura">Tripura</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Uttarakhand">Uttarakhand</option>
+            <option value="West Bengal">West Bengal</option>
           </select>
         </div>
 
         <div class="eb-input-group">
           <label class="eb-label">All India Rank</label>
-          <input type="number" class="eb-input" id="cb_rank" placeholder="e.g. 75000" required />
+          <input type="number" class="eb-input" name="all_india_rank" placeholder="e.g. 75000" required />
         </div>
 
         <div class="eb-input-group">
           <label class="eb-label">Email Address</label>
-          <input type="email" class="eb-input" id="cb_email" placeholder="Enter your email" required />
+          <input type="email" class="eb-input" name="email" placeholder="Enter your email" required />
         </div>
 
         <div class="eb-input-group">
           <label class="eb-label">Mobile Number</label>
-          <input type="tel" class="eb-input" id="eb_mobile" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
+          <input type="tel" class="eb-input" name="mobile_number" placeholder="Enter mobile number" required pattern="[0-9]{10}" />
         </div>
 
-        <!-- Coupon Section -->
-        <div class="eb-input-group" style="margin-top: 15px; background: rgba(37, 99, 235, 0.05); padding: 15px; border-radius: 12px; border: 1px dashed rgba(37, 99, 235, 0.2);">
-          <label class="eb-label" style="color: #2563eb; font-weight: 600;">Have a Coupon?</label>
-          <div style="display: flex; gap: 8px;">
-            <input type="text" class="eb-input" id="cb_coupon_code" placeholder="Enter code" style="margin-bottom: 0;" />
-            <button type="button" class="eb-btn" style="width: auto; margin-top: 0; padding: 0 15px; font-size: 13px;" onclick="validateCoupon('cb')">Apply</button>
-          </div>
-          <div id="cb_coupon_msg" style="font-size: 11px; margin-top: 5px; display: none;"></div>
-          <div id="cb_price_display" style="margin-top: 10px; font-weight: 700; color: #1e293b; display: none;">
-            New Total: <span style="text-decoration: line-through; color: #94a3b8; font-weight: 400; font-size: 13px;" id="cb_old_price"></span> <span id="cb_new_price" style="color: #16a34a;"></span>
-          </div>
+        <div class="eb-input-group">
+          <label class="eb-label">Coupon Code (Optional)</label>
+          <input type="text" class="eb-input" name="coupon_code" placeholder="Enter coupon code" />
         </div>
 
-        <div style="font-size: 12px; color: #b91c1c; background: #fee2e2; padding: 10px; border-radius: 8px; margin-top: 15px; margin-bottom: 12px; font-weight: 500; text-align: center; border: 1px solid #fca5a5;">
-          Note: Please ensure your category is entered correctly before proceeding. Fees are non-refundable.
-        </div>
-        <button type="submit" class="eb-btn">Continue to Payment</button>
+        <button type="submit" class="eb-btn" name="submit_button">Book Counseling Session</button>
       </form>
 
       <div style="text-align: center; margin-top: 16px;">
@@ -6542,10 +6203,10 @@ window.closeEbookPurchaseModal = function() {
    ctx.appliedCoupon = data;
 
    msgBox.style.color = '#16a34a';
-   msgBox.innerText = "Coupon applied! ₹" + discount + " off.";
+   msgBox.innerText = "Coupon applied! â‚¹" + discount + " off.";
    
-   oldPriceEl.innerText = "₹" + ctx.originalPrice;
-   newPriceEl.innerText = "₹" + ctx.price;
+   oldPriceEl.innerText = "â‚¹" + ctx.originalPrice;
+   newPriceEl.innerText = "â‚¹" + ctx.price;
    priceDisplay.style.display = 'block';
  }
 
@@ -6559,19 +6220,29 @@ window.submitEbookPurchase = async function() {
       var fullName = document.getElementById('eb_full_name').value;
       var category = document.getElementById('eb_category').value;
       var domicile = document.getElementById('eb_domicile_state').value;
-      var neetScore = parseInt(document.getElementById('eb_neet_score').value);
-      var rank = parseInt(document.getElementById('eb_rank').value);
+      var neetScoreVal = document.getElementById('eb_neet_score').value;
+      var neetScore = neetScoreVal ? parseInt(neetScoreVal) : null;
+      var rankVal = document.getElementById('eb_rank').value;
+      var rank = rankVal ? parseInt(rankVal) : null;
       var email = document.getElementById('eb_email').value;
       var mobile = document.getElementById('eb_mobile').value;
+
+      if (!fullName || !email || !mobile || !category) {
+          alert('Please fill all fields');
+          submitBtn.innerText = "Proceed to Payment";
+          submitBtn.disabled = false;
+          return;
+      }
 
       var ctx = window.activeEbookContext;
       
       var recordData = {
+          user_id: window._authUser ? window._authUser.id : null,
           full_name: fullName,
           category: category,
-          domicile_state: domicile,
-          neet_score: neetScore,
-          rank: rank,
+          domicile_state: domicile, // optional
+          neet_score: neetScore, // optional
+          rank: rank, // optional
           email: email,
           mobile: mobile,
           course: ctx.course,
@@ -6579,137 +6250,115 @@ window.submitEbookPurchase = async function() {
           amount_paid: ctx.price,
           ebook_id: ctx.is_cart ? ctx.ebook_id : (ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_')),
           payment_status: 'initiated',
-          user_id: window._authUser ? window._authUser.id : null
+          created_at: new Date()
       };
 
-      // 1.5. Save Lead unconditionally to ebook_users
       if (window.supabaseClient) {
-          try {
-              const { error } = await window.supabaseClient.from('ebook_users').upsert(recordData, { onConflict: 'user_id,course,quota' });
-              if (error) throw error;
-          } catch(e) {
-              console.error("Form Logging Error:", e);
-              alert("Unable to save form data. Please verify your details or network connection. Error: " + e.message);
-              submitBtn.innerText = "Continue to Payment";
-              submitBtn.disabled = false;
-              return; // Halt payment
+          // Check if user is logged in
+          if (window._authUser) {
+              // Update user profile with phone number
+              const { error: profileError } = await window.supabaseClient.from('users')
+                .update({ phone: mobile, mobile_number: mobile })
+                .eq('id', window._authUser.id);
+                
+              if (profileError) {
+                  console.error('Failed to update profile:', profileError);
+              } else {
+                  console.log('Phone number updated successfully in profile');
+              }
           }
-          
-          // 1.6. Sync Mobile Number to Profile 
-          if (window._authUser && mobile) {
-              try {
-                  const { data: profile } = await window.supabaseClient.from('users')
-                      .select('mobile_number').eq('id', window._authUser.id).maybeSingle();
-                      
-                  if (!profile || !profile.mobile_number || profile.mobile_number !== mobile) {
-                      await window.supabaseClient.from('users')
-                          .update({ mobile_number: mobile })
-                          .eq('id', window._authUser.id);
-                  }
-              } catch(e) { console.warn("Could not sync mobile number:", e); }
+
+          const { error } = await window.supabaseClient.from('ebook_users').insert([recordData]);
+          if (error) {
+              console.error('Insert error:', error);
+          } else {
+              console.log('Form saved successfully to ebook_users');
           }
       }
 
-      // 2. Optional: Request Razorpay Order ID from backend (if backend is active)
-      let order_id = undefined;
-      try {
-          const orderRes = await fetch("/api/create-order", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ amount: ctx.price })
-          });
-          if (orderRes.ok) {
-              const orderData = await orderRes.json();
-              if (orderData.success) order_id = orderData.order_id;
-          }
-      } catch(e) {
-          console.warn("Backend /api/create-order unreachable, falling back to frontend-only mode.");
-      }
+      var insertRes = null;
 
       // 3. Initiate Razorpay Checkout window
       var options = {
-          "key": "rzp_live_SebrDtxMirg67M", // Live Key
+          "key": "rzp_live_SebrDtxMirg67M", // Live Key Passed In
           "amount": ctx.price * 100, // Razorpay amount in paise
           "currency": "INR",
           "name": "DC Neet Counselling",
           "description": ctx.title,
-          ...(order_id && { "order_id": order_id }), // Inject secure order_id if backend responded
           "handler": async function (response){
               try {
-                  submitBtn.innerText = "Verifying Payment...";
-                  
-                  // Attempt Backend signature Verification if order_id exists
-                  if (order_id) {
-                      const verifyRes = await fetch("/api/verify-payment", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({
-                              razorpay_payment_id: response.razorpay_payment_id,
-                              razorpay_order_id: response.razorpay_order_id,
-                              razorpay_signature: response.razorpay_signature
-                          })
-                      });
-                      const verifyData = await verifyRes.json();
-                      if (!verifyRes.ok || !verifyData.success) {
-                          throw new Error(verifyData.error || "Signature validation failed. Payment blocked for security.");
-                      }
-                  }
-
-                  // Verification successful! Now securely SAVE ORDER into the DB.
+                  // Verify Payment and update DB
                   if (window.supabaseClient) {
-                      // Prevent duplicate check (upsert or simple select check)
-                      const { data: existing } = await window.supabaseClient.from('orders')
-                          .select('id').eq('razorpay_payment_id', response.razorpay_payment_id).maybeSingle();
+
+                      // â”€â”€â”€ Record Coupon Usage â”€â”€â”€
+                      if (ctx.appliedCoupon) {
+                          const finalAmount = ctx.price;
+                          const commission = finalAmount * 0.20;
+                          await window.supabaseClient.from('coupon_usages').insert({
+                              coupon_id: ctx.appliedCoupon.id,
+                              user_email: email,
+                              amount_before: ctx.originalPrice,
+                              discount_applied: ctx.originalPrice - ctx.price,
+                              final_amount: finalAmount,
+                              commission: commission
+                          });
+                      }
+
+                      // If it was a cart purchase, clear the cart
+                      if (ctx.is_cart) {
+                        await window.supabaseClient.from('cart').delete().eq('user_id', window._authUser.id);
+                        if (window.updateCartBadge) window.updateCartBadge();
+                        if (window.renderCartPage) window.renderCartPage();
+                      }
                       
-                      if(!existing) {
-                          const orderEntry = {
-                              user_id: window._authUser ? window._authUser.id : null,
+                      // Save order to orders table securely
+                      var userId = (window._authUser && window._authUser.id) ? window._authUser.id : null;
+                      if (!userId) {
+                          const { data } = await window.supabaseClient.auth.getUser();
+                          if (data && data.user) userId = data.user.id;
+                      }
+
+                      if (userId) {
+                          const { error } = await window.supabaseClient.from('orders').insert({
+                              user_id: userId,
                               full_name: fullName,
                               email: email,
                               mobile: mobile,
-                              product_name: ctx.title,
+                              product_name: ctx.course + ' (' + ctx.quota + ')',
                               amount_paid: ctx.price,
+                              payment_status: 'success',
                               razorpay_payment_id: response.razorpay_payment_id,
-                              razorpay_order_id: response.razorpay_order_id || order_id || null,
-                              payment_status: 'success'
-                          };
-                          
-                          const { error: insertErr } = await window.supabaseClient.from('orders').insert(orderEntry);
-                          if(insertErr) throw new Error("Could not save order to database: " + insertErr.message);
+                              razorpay_order_id: response.razorpay_order_id || null,
+                              created_at: new Date()
+                          });
+                          if (error) {
+                              console.error("Order save failed:", error);
+                          }
+                      } else {
+                          console.error("Order save failed: Missing user ID");
                       }
-                      
-                      // Also sync the payment_status to 'success' in ebook_users
-                      if (window._authUser) {
-                          const { error: updateErr } = await window.supabaseClient.from('ebook_users')
-                              .update({ 
-                                  payment_status: 'success',
-                                  razorpay_payment_id: response.razorpay_payment_id,
-                                  razorpay_order_id: response.razorpay_order_id || order_id || null
-                              })
-                              .eq('user_id', window._authUser.id)
-                              .eq('payment_status', 'initiated');
-                          if (updateErr) console.warn("Could not sync ebook_users table status:", updateErr);
+
+                      // Update ebook_users record status and payment ID
+                      const { error: ebUpdateError } = await window.supabaseClient.from('ebook_users')
+                          .update({
+                              payment_status: 'success',
+                              razorpay_payment_id: response.razorpay_payment_id,
+                              razorpay_order_id: response.razorpay_order_id || null
+                          })
+                          .eq('email', email)
+                          .eq('course', ctx.course)
+                          .eq('payment_status', 'initiated');
+
+                      if (ebUpdateError) {
+                          console.error("ebook_users update failed:", ebUpdateError);
                       }
                   }
-                  
-                  // If it was a cart purchase, clear the cart
-                  if (ctx.is_cart && window.supabaseClient && window._authUser) {
-                      await window.supabaseClient.from('cart').delete().eq('user_id', window._authUser.id);
-                      if (window.updateCartBadge) window.updateCartBadge();
-                      if (window.renderCartPage) window.renderCartPage();
-                  }
-                  
-                  // Success Redirect (Native SPA)
-                  window.lastPurchase = { product: ctx.title, amount: ctx.price, order_id: response.razorpay_payment_id };
-                  if (typeof closeEbookPurchaseModal === 'function') closeEbookPurchaseModal();
-                  submitBtn.innerText = "Continue to Payment";
-                  submitBtn.disabled = false;
+              } catch (err) {
+                  console.error('Unexpected error in payment handler:', err);
+              } finally {
+                  // ALWAYS redirect to thank you page
+                  closeEbookPurchaseModal();
                   window.navigate('thank-you');
-              } catch (veriErr) {
-                  console.error(veriErr);
-                  alert(veriErr.message);
-                  submitBtn.innerText = "Continue to Payment";
-                  submitBtn.disabled = false;
               }
           },
           "prefill": {
@@ -6723,10 +6372,13 @@ window.submitEbookPurchase = async function() {
       };
 
       var rzp1 = new Razorpay(options);
-      rzp1.on('payment.failed', function (response) {
-          alert("Payment failed. Please try again or contact support.");
-          submitBtn.innerText = "Continue to Payment";
-          submitBtn.disabled = false;
+      rzp1.on('payment.failed', async function (response) {
+          if (window.supabaseClient && insertRes && insertRes.id) {
+              await window.supabaseClient.from('ebook_users').update({
+                  payment_status: 'failed'
+              }).eq('id', insertRes.id);
+          }
+          alert("Payment failed. Please try again.");
       });
       
       rzp1.open();
@@ -6743,12 +6395,12 @@ window.submitEbookPurchase = async function() {
 
 
 
-// ─── Wishlist Logic ──────────────────────────────────
+// â”€â”€â”€ Wishlist Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 var EBOOK_META = {
-  'medical': { title: 'Medical', icon: 'fa-stethoscope', color: '#2563eb', price: 1, courses: 'MBBS, BDS', course: 'Medical', quota: 'All India Quota' },
-  'dental': { title: 'Dental', icon: 'fa-tooth', color: '#06b6d4', price: 1, courses: 'BDS', course: 'Dental', quota: 'All Courses' },
-  'ayush': { title: 'AYUSH', icon: 'fa-leaf', color: '#16a34a', price: 1, courses: 'BAMS, BHMS, BSMS, BUMS', course: 'AYUSH', quota: 'All Courses' },
-  'veterinary': { title: 'Veterinary', icon: 'fa-paw', color: '#f59e0b', price: 1, courses: 'BVSc', course: 'Veterinary', quota: 'All Courses' }
+  'medical': { title: 'Medical', icon: 'fa-stethoscope', color: '#2563eb', price: 99, courses: 'MBBS, BDS', course: 'Medical', quota: 'All India Quota' },
+  'dental': { title: 'Dental', icon: 'fa-tooth', color: '#06b6d4', price: 149, courses: 'BDS', course: 'Dental', quota: 'All Courses' },
+  'ayush': { title: 'AYUSH', icon: 'fa-leaf', color: '#16a34a', price: 149, courses: 'BAMS, BHMS, BSMS, BUMS', course: 'AYUSH', quota: 'All Courses' },
+  'veterinary': { title: 'Veterinary', icon: 'fa-paw', color: '#f59e0b', price: 149, courses: 'BVSc', course: 'Veterinary', quota: 'All Courses' }
 };
 
 window.toggleWishlist = async function(btn, ebookId) {
@@ -6838,7 +6490,7 @@ window.renderWishlistPage = async function() {
       '<div style="width:50px; height:50px; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:12px; color:' + meta.color + ';"><i class="fas ' + meta.icon + '"></i></div>' +
       '<h3 style="font-size:15px; font-weight:600; color:#0f172a; margin:0 0 4px;">' + meta.title + '</h3>' +
       '<p style="font-size:12px; color:#64748b; margin:0 0 8px;">' + meta.courses + '</p>' +
-      '<div style="font-size:11px; font-weight:500; color:#16a34a; margin:0 0 14px; display:flex; align-items:center; gap:4px;"><i class="fas fa-tag"></i> ₹' + meta.price + '</div>' +
+      '<div style="font-size:11px; font-weight:500; color:#16a34a; margin:0 0 14px; display:flex; align-items:center; gap:4px;"><i class="fas fa-tag"></i> â‚¹' + meta.price + '</div>' +
       '<button onclick="openEbookPurchaseModal(\'' + meta.course + '\', \'' + meta.quota + '\', ' + meta.price + ', \'' + meta.title + ' eBooks\')" style="width:100%; padding:8px; border-radius:8px; font-weight:600; font-size:13px; border:none; color:#ffffff; background:#2563eb; cursor:pointer;">Buy Now</button>' +
     '</div>';
   });
@@ -6861,7 +6513,7 @@ window.removeFromWishlist = async function(btn, ebookId) {
 
 
 
-// ─── Cart Logic ──────────────────────────────────────
+// â”€â”€â”€ Cart Logic â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 window.showToast = function(msg) {
   var t = document.getElementById('cartToast');
   if (!t) return;
@@ -6881,14 +6533,14 @@ window.addToCart = async function(btn, ebookId) {
   var { data } = await window.supabaseClient.from('cart').select('id').eq('user_id', window._authUser.id).eq('ebook_id', ebookId).maybeSingle();
 
   if (data) {
-    showToast('Already in cart 🛒');
+    showToast('Already in cart ðŸ›’');
     btn.classList.add('in-cart');
     btn.innerHTML = '<i class="fas fa-check"></i> In Cart';
   } else {
     await window.supabaseClient.from('cart').insert({ user_id: window._authUser.id, ebook_id: ebookId });
     btn.classList.add('in-cart');
     btn.innerHTML = '<i class="fas fa-check"></i> In Cart';
-    showToast('Added to cart 🛒');
+    showToast('Added to cart ðŸ›’');
     updateCartBadge();
   }
 };
@@ -6956,14 +6608,14 @@ window.renderCartPage = async function() {
         '<p class="cart-item-title">' + meta.title + '</p>' +
         '<p class="cart-item-sub">' + meta.courses + ' &bull; ' + meta.quota + '</p>' +
       '</div>' +
-      '<span class="cart-item-price">₹' + meta.price + '</span>' +
+      '<span class="cart-item-price">â‚¹' + meta.price + '</span>' +
       '<button class="cart-item-remove" onclick="removeFromCart(this, \'' + item.ebook_id + '\')" title="Remove"><i class="fas fa-trash"></i></button>' +
     '</div>';
   });
 
   itemsList.innerHTML = cardsHTML;
   document.getElementById('cartTotalItems').textContent = data.length;
-  document.getElementById('cartTotalPrice').textContent = '₹' + totalPrice;
+  document.getElementById('cartTotalPrice').textContent = 'â‚¹' + totalPrice;
 };
 
 window.removeFromCart = async function(btn, ebookId) {
@@ -7016,5 +6668,4 @@ window.cartCheckout = async function() {
     <div id="cartToast"></div>
 </body>
 </html>
-
 

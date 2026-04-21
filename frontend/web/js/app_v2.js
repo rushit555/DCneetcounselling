@@ -8,7 +8,14 @@ const COUNSELLING_META = {
     'med_gold': { title: 'Medical - Gold Plan', price: 9999, type: 'Medical' },
     'med_platinum': { title: 'Medical - Private MBBS/BDS', price: 14999, type: 'Medical' },
     'ayush_basic': { title: 'AYUSH - Basic Plan', price: 4999, type: 'AYUSH' },
-    'ayush_gold': { title: 'AYUSH - Gold Plan', price: 8999, type: 'AYUSH' }
+    'ayush_gold': { title: 'AYUSH - Gold Plan', price: 8999, type: 'AYUSH' },
+    'ayush_platinum': { title: 'AYUSH - Private Plan', price: 9999, type: 'AYUSH' },
+    'vet_basic': { title: 'Veterinary - Basic Plan', price: 4999, type: 'Veterinary' },
+    'vet_gold': { title: 'Veterinary - Gold Plan', price: 8999, type: 'Veterinary' },
+    'vet_platinum': { title: 'Veterinary - Premium Plan', price: 10999, type: 'Veterinary' },
+    'combo_basic': { title: 'Combo - Basic Plan', price: 6999, type: 'Combo' },
+    'combo_gold': { title: 'Combo - Gold Plan', price: 11999, type: 'Combo' },
+    'combo_platinum': { title: 'Combo - Premium Plan', price: 15999, type: 'Combo' }
 };
 
 
@@ -97,16 +104,6 @@ window.navigate = function(route) {
             }).catch(err => {
                 dashEl.innerHTML = '<div style="padding:120px 20px;text-align:center;color:#ef4444;">Failed to load dashboard. Please refresh.</div>';
             });
-        }
-    }
-    
-    if (route === 'thank-you') {
-        var tpProduct = document.getElementById('il-summary-product');
-        if (tpProduct && window.lastPurchase) {
-            tpProduct.innerText = window.lastPurchase.product;
-            document.getElementById('il-summary-amount').innerText = window.lastPurchase.amount;
-            document.getElementById('il-summary-id').innerText = window.lastPurchase.order_id || 'N/A';
-            document.getElementById('inline-order-summary').style.display = 'block';
         }
     }
     
@@ -418,47 +415,19 @@ async function renderDashboard() {
     email = window.sanitizeHTML(email);
     mobileDisplay = window.sanitizeHTML(mobileDisplay);
 
-    // ─── Fetch Paid eBooks ───
-    var paidEbooks = [];
-    if (user && user.id && window.supabaseClient) {
-        var { data: ebookData } = await window.supabaseClient
-            .from('orders')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false });
-        if (ebookData) paidEbooks = ebookData;
-    }
-
     var localStyles = '<style>' +
         '.dashboard-wrapper { display: flex !important; gap: 24px; padding: 120px 20px 60px; max-width: 1200px; margin: 0 auto; min-height: 80vh; }' +
         '.dashboard-sidebar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }' +
         '.dashboard-content { flex: 1; display: flex; flex-direction: column; gap: 32px; }' +
-        '.ebook-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }' +
-        '.ebook-card { background: #fff; border-radius: 16px; padding: 20px; border: 1px solid #eee; display: flex; flex-direction: column; gap: 12px; transition: 0.3s; }' +
-        '.ebook-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.05); }' +
         '@media (max-width: 900px) { .dashboard-wrapper { flex-direction: column !important; padding-top: 100px; } .dashboard-sidebar { width: 100%; } }' +
     '</style>';
 
-    var ebooksHtml = '';
-    if (paidEbooks.length > 0) {
-        ebooksHtml = '<div class="ebook-grid">';
-        paidEbooks.forEach(function(eb) {
-            ebooksHtml += '<div class="ebook-card">' +
-                '<div style="font-size: 24px;">📦</div>' +
-                '<h3 style="font-size: 16px; font-weight: 700;">' + eb.product + '</h3>' +
-                '<p style="font-size: 13px; color: #666;">Purchased on ' + new Date(eb.created_at).toLocaleDateString() + ' for ₹' + eb.amount + '</p>' +
-                '<button class="btn btn-primary" style="margin-top:10px; font-size: 12px; padding: 10px;" onclick="window.navigate(\'orders\')">View Order Details</button>' +
-            '</div>';
-        });
-        ebooksHtml += '</div>';
-    } else {
-        ebooksHtml = '<div class="placeholder-section">' +
-            '<div class="placeholder-icon">🚀</div>' +
-            '<h3>Your journey starts here</h3>' +
-            '<p style="color:var(--color-text-muted);margin:10px 0 20px;">Complete your profile or book a session to get started.</p>' +
-            '<button class="btn btn-primary" onclick="window.navigate(\'ebooks\')">Browse eBooks</button>' +
-        '</div>';
-    }
+    var placeholderHtml = '<div class="placeholder-section">' +
+        '<div class="placeholder-icon">🚀</div>' +
+        '<h3>Your journey starts here</h3>' +
+        '<p style="color:var(--color-text-muted);margin:10px 0 20px;">Complete your profile or book a session to get started.</p>' +
+        '<button class="btn btn-primary" onclick="window.navigate(\'ebooks\')">Browse eBooks</button>' +
+    '</div>';
 
     return localStyles + 
     '<div class="dashboard-wrapper">' +
@@ -485,8 +454,8 @@ async function renderDashboard() {
                 '<p style="color:var(--color-text-muted);margin-top:4px;">Manage your counselling journey and active orders here.</p>' +
             '</div>' +
             '<div class="content-body">' +
-                '<h3 style="margin-bottom:10px;">' + (paidEbooks.length > 0 ? 'My Purchased Items' : 'Active Items') + '</h3>' +
-                ebooksHtml +
+                '<h3 style="margin-bottom:10px;">Active Items</h3>' +
+                placeholderHtml +
             '</div>' +
         '</div>' +
     '</div>';
@@ -531,7 +500,7 @@ async function renderOrders() {
             '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap: wrap; gap: 15px;">' +
                 '<div>' +
                     '<h2 style="font-size: 28px; font-weight: 800; color: #1e40af;">Order History</h2>' +
-                    '<p style="color:#666; font-size: 14px;">Review all your eBook purchases and payment attempts.</p>' +
+                    '<p style="color:#666; font-size: 14px;">Review all your eBook purchases and transactions here.</p>' +
                 '</div>' +
                 '<button class="btn btn-ghost" style="border: 1px solid #ddd;" onclick="window.navigate(\'dashboard\')">← Back to Dashboard</button>' +
             '</div>';
@@ -539,44 +508,62 @@ async function renderOrders() {
     if (orders.length === 0) {
         html += '<div style="text-align:center; padding:80px 20px; background: rgba(0,0,0,0.02); border-radius: 16px; border: 2px dashed #ddd;">' +
             '<div style="font-size: 48px; margin-bottom: 20px;">📦</div>' +
-            '<h3 style="font-weight: 600;">No transactions found</h3>' +
-            '<p style="color:#666; margin-top: 5px;">You haven\'t made any eBook purchase attempts yet.</p>' +
+            '<h3 style="font-weight: 600;">No orders yet</h3>' +
+            '<p style="color:#666; margin-top: 5px;">You haven\'t made any eBook purchases yet.</p>' +
             '<button class="btn btn-primary" style="margin-top:20px;" onclick="window.navigate(\'ebooks\')">Browse eBooks</button>' +
         '</div>';
     } else {
-        html += '<div style="overflow-x:auto; margin-top: 20px;">' +
-            '<table style="width:100%; border-collapse:separate; border-spacing: 0 8px; font-size:14px;">' +
-            '<thead>' +
-                '<tr style="color: #666; font-weight: 600;">' +
-                    '<th style="text-align:left; padding:12px;">Date</th>' +
-                    '<th style="text-align:left; padding:12px;">eBook Details</th>' +
-                    '<th style="text-align:left; padding:12px;">Amount</th>' +
-                    '<th style="text-align:left; padding:12px;">Status</th>' +
-                    '<th style="text-align:left; padding:12px;">Payment ID</th>' +
-                '</tr>' +
-            '</thead>' +
-            '<tbody>';
+        html += '<div style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">';
 
         orders.forEach(function(order) {
             var badgeBg = '#666';
-            if (order.payment_status === 'success' || order.payment_status === 'paid') badgeBg = '#22c55e';
-            else if (order.payment_status === 'failed') badgeBg = '#ef4444';
-            else if (order.payment_status === 'cancelled') badgeBg = '#f59e0b';
-            else if (order.payment_status === 'initiated') badgeBg = '#3b82f6';
+            if (order.payment_status === 'success' || order.payment_status === 'paid') badgeBg = '#22c55e'; // Green
+            else if (order.payment_status === 'failed') badgeBg = '#ef4444'; // Red
+            else if (order.payment_status === 'cancelled') badgeBg = '#f59e0b'; // Yellow
+            else if (order.payment_status === 'initiated') badgeBg = '#3b82f6'; // Blue
 
-            html += '<tr style="background: rgba(255,255,255,0.5);">' +
-                '<td style="padding:16px 12px; border-radius: 12px 0 0 12px; color: #666;">' + new Date(order.created_at).toLocaleDateString() + '</td>' +
-                '<td style="padding:16px 12px;">' +
-                    '<div style="font-weight:700; color: #1e293b;">' + (order.product || order.course) + '</div>' +
-                    '<div style="font-size: 12px; color: #666;">Payment ID: ' + (order.payment_id || order.razorpay_payment_id || 'N/A') + '</div>' +
-                '</td>' +
-                '<td style="padding:16px 12px; font-weight: 600;">₹' + (order.amount || order.amount_paid) + '</td>' +
-                '<td style="padding:16px 12px;"><span style="padding:4px 8px; border-radius:6px; background:' + badgeBg + '; color:#fff; font-weight:700; font-size:10px; text-transform:uppercase;">' + order.payment_status + '</span></td>' +
-                '<td style="padding:16px 12px; border-radius: 0 12px 12px 0; font-family:monospace; font-size:12px; color:#94a3b8;">' + (order.order_id || '—') + '</td>' +
-            '</tr>';
+            // Formatting Date to DD/MM/YYYY
+            var d = new Date(order.created_at);
+            var dateStr = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+
+            html += '<div style="background: rgba(255,255,255,0.8); border: 1px solid #eee; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">' +
+                        
+                        '<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">' +
+                            '<div>' +
+                                '<div style="font-size: 12px; color: #94a3b8; font-family: monospace; margin-bottom: 4px; font-weight: 600;">ORDER ID: ' + (order.id || 'N/A').split('-')[0].toUpperCase() + '</div>' +
+                                '<h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0;">' + (order.product_name || 'Ebook') + '</h3>' +
+                            '</div>' +
+                            '<div style="text-align: right;">' +
+                                '<span style="display: inline-block; padding: 6px 12px; border-radius: 8px; background:' + badgeBg + '; color:#fff; font-weight:700; font-size:12px; text-transform:uppercase;">' + order.payment_status + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        
+                        '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px; padding-top: 15px; border-top: 1px dashed #e2e8f0;">' +
+                            '<div>' +
+                                '<div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Date</div>' +
+                                '<div style="font-size: 14px; color: #334155; font-weight: 500; margin-top: 4px;">' + dateStr + '</div>' +
+                            '</div>' +
+                            '<div>' +
+                                '<div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Amount</div>' +
+                                '<div style="font-size: 14px; color: #334155; font-weight: 700; margin-top: 4px;">₹' + (order.amount_paid || 0) + '</div>' +
+                            '</div>' +
+                            '<div style="display: flex; align-items: flex-end; gap: 8px;">' +
+                                '<div style="flex: 1;">' +
+                                    '<div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Payment ID</div>' +
+                                    '<div style="font-size: 13px; color: #475569; font-family: monospace; font-weight: 500; margin-top: 4px;">' + (order.razorpay_payment_id || '—') + '</div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+
+                        ((order.payment_status === 'success' || order.payment_status === 'paid') ? 
+                        '<div style="margin-top: 5px; text-align: left; border-top: 1px dashed #e2e8f0; padding-top: 15px; font-size: 13.5px; color: #0284c7; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
+                            '<span style="font-size: 16px;">📩</span> Check your WhatsApp / Email for your PDF.' +
+                        '</div>' : '') +
+
+                    '</div>';
         });
 
-        html += '</tbody></table></div>';
+        html += '</div>';
     }
 
     html += '</div></div>';
@@ -945,8 +932,10 @@ window.openCounsellingBooking = function(planId) {
     // Fill user data
     if (window._authUser) {
         const userMeta = window._authUser.user_metadata || {};
-        document.getElementById('cb_full_name').value = userMeta.full_name || userMeta.name || '';
-        document.getElementById('cb_email').value = window._authUser.email || '';
+        const fullNameInput = document.querySelector('input[name="full_name"]') || document.getElementById('cb_full_name');
+        const emailInput = document.querySelector('input[name="email"]') || document.getElementById('cb_email');
+        if (fullNameInput) fullNameInput.value = userMeta.full_name || userMeta.name || '';
+        if (emailInput) emailInput.value = window._authUser.email || '';
     }
 
     // Modal Display
@@ -963,34 +952,67 @@ window.closeCounsellingBookingModal = function() {
     document.getElementById('counsellingBookingModal').style.display = 'none';
 };
 
-window.submitCounsellingBooking = async function() {
-    const submitBtn = document.querySelector('#counsellingBookingModal .eb-btn');
+window.submitCounsellingBooking = async function(form) {
+    let submitBtn = document.querySelector('#counsellingBookingModal .eb-btn');
+    if (form) submitBtn = form.querySelector('[name=submit_button]');
     const originalText = submitBtn.innerText;
     submitBtn.innerText = "Processing...";
     submitBtn.disabled = true;
 
     try {
-        const fullName = document.getElementById('cb_full_name').value;
-        const category = document.getElementById('cb_category').value;
-        const domicile = document.getElementById('cb_domicile_state').value;
-        const neetScore = parseInt(document.getElementById('cb_neet_score').value);
-        const rank = parseInt(document.getElementById('cb_rank').value);
-        const email = document.getElementById('cb_email').value;
-        const mobile = document.getElementById('cb_mobile').value;
+        const formData = form ? new FormData(form) : new FormData(document.getElementById('bookingForm'));
+        const obj = Object.fromEntries(formData.entries());
 
         const ctx = window.activeCounsellingContext;
         
+        let finalAmount = ctx.price;
+        let appliedCoupon = null;
+
+        if (obj.coupon_code && obj.coupon_code.trim() !== '') {
+            if (window.supabaseClient) {
+                const { data: coupon, error } = await window.supabaseClient
+                    .from('coupons')
+                    .select('*')
+                    .eq('code', obj.coupon_code.trim().toUpperCase())
+                    .eq('is_active', true)
+                    .single();
+                
+                if (error || !coupon) {
+                    alert("Invalid or inactive coupon code.");
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
+                    return;
+                }
+                
+                appliedCoupon = coupon;
+                let discount = 0;
+                if (coupon.discount_type === 'percentage') {
+                    // Safe parsing just in case it is stored as string
+                    discount = Math.round(ctx.price * (parseFloat(coupon.discount_value) / 100));
+                } else {
+                    discount = parseFloat(coupon.discount_value);
+                }
+                finalAmount = ctx.price - discount;
+                if (finalAmount < 0) finalAmount = 0;
+            }
+        }
+        
         const recordData = {
             user_id: window._authUser ? window._authUser.id : null,
-            full_name: fullName,
-            email: email,
-            mobile: mobile,
-            category: category,
-            domicile_state: domicile,
-            neet_score: neetScore,
-            rank: rank,
+            full_name: obj.full_name,
+            email: obj.email,
+            mobile: obj.mobile_number,
+            category: obj.category,
+            domicile_state: obj.domicile_state,
+            neet_score: parseInt(obj.neet_score) || null,
+            rank: parseInt(obj.all_india_rank) || null,
             plan_type: ctx.planId,
-            amount_paid: ctx.price,
+            plan_name: ctx.title,
+            plan_price: ctx.price,
+            counselling_type: ctx.type,
+            coupon_code: obj.coupon_code ? obj.coupon_code.toUpperCase() : null,
+            discounted_price: finalAmount !== ctx.price ? finalAmount : null,
+            amount_paid: finalAmount,
             payment_status: 'initiated'
         };
 
@@ -1000,6 +1022,8 @@ window.submitCounsellingBooking = async function() {
             if (error) {
                 console.error("Booking Table Error:", error);
                 alert("Server busy. Please try again in a moment.");
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
                 return;
             }
             insertRes = data;
@@ -1008,7 +1032,7 @@ window.submitCounsellingBooking = async function() {
         // Razorpay Integration
         const options = {
             "key": "rzp_live_SebrDtxMirg67M",
-            "amount": Math.round(ctx.price * 100), // paisa
+            "amount": Math.round(finalAmount * 100), // paisa
             "currency": "INR",
             "name": "DC Neet Counselling",
             "description": ctx.title,
@@ -1020,14 +1044,13 @@ window.submitCounsellingBooking = async function() {
                     }).eq('id', insertRes.id);
 
                     // ─── Record Coupon Usage (Counselling) ───
-                    if (ctx.appliedCoupon) {
-                        const finalAmount = ctx.price;
+                    if (appliedCoupon) {
                         const commission = finalAmount * 0.20;
                         await window.supabaseClient.from('coupon_usages').insert({
-                            coupon_id: ctx.appliedCoupon.id,
-                            user_email: email,
-                            amount_before: ctx.originalPrice,
-                            discount_applied: ctx.originalPrice - ctx.price,
+                            coupon_id: appliedCoupon.id,
+                            user_email: obj.email,
+                            amount_before: ctx.price,
+                            discount_applied: ctx.price - finalAmount,
                             final_amount: finalAmount,
                             commission: commission
                         });
@@ -1037,9 +1060,9 @@ window.submitCounsellingBooking = async function() {
                 window.closeCounsellingBookingModal();
             },
             "prefill": {
-                "name": fullName,
-                "email": email,
-                "contact": mobile
+                "name": obj.full_name,
+                "email": obj.email,
+                "contact": obj.mobile_number
             },
             "theme": { "color": "#2563eb" }
         };
@@ -1061,5 +1084,44 @@ window.submitCounsellingBooking = async function() {
     } finally {
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;
+    }
+};
+
+window.submitNewCounsellingForm = async function(form) {
+    const btn = form.querySelector('[name=submit_button]');
+    const originalText = btn.innerText;
+    btn.innerText = "Processing...";
+    btn.disabled = true;
+
+    try {
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+        if (window.activeCounsellingContext) {
+            data.selected_plan = window.activeCounsellingContext.planId;
+            data.plan_name = window.activeCounsellingContext.title;
+            data.plan_price = window.activeCounsellingContext.price;
+            data.counselling_type = window.activeCounsellingContext.type;
+        }
+
+        const response = await fetch('http://localhost:3000/submit-counseling-booking', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (response.ok && result.success) {
+            alert("Counseling session booked successfully!");
+            form.reset();
+            window.closeCounsellingBookingModal();
+        } else {
+            alert(result.error || "Failed to book counseling session.");
+        }
+    } catch (error) {
+        console.error("Form Submit Error:", error);
+        alert("Unexpected error submitting form.");
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
     }
 };

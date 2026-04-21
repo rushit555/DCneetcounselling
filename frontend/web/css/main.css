@@ -30,6 +30,7 @@
 
 /* Background Blobs Layer */
 .blobs-bg {
+    display: none;
     position: fixed;
     top: 0;
     left: 0;

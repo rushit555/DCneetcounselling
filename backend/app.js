@@ -12,8 +12,11 @@ app.use(express.json());
 // Routes
 const paymentRoutes = require('./src/routes/payment');
 const ordersRoutes = require('./src/routes/orders');
+const counselingRoutes = require('./src/routes/counseling');
+
 app.use('/api', paymentRoutes);
 app.use('/api/orders', ordersRoutes);
+app.use('/submit-counseling-booking', counselingRoutes);
 
 // Basic health check route
 app.get('/health', (req, res) => {
