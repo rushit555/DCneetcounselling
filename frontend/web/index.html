@@ -475,11 +475,12 @@
                       // Duration 1300ms total for 15 chars = ~86ms per char, or 60ms as per request
                       setTimeout(typeChar, 60);
                     } else {
-                      // Hide cursor after complete
+                      // Repeat animation every 6 seconds
                       setTimeout(() => {
-                        clearInterval(cursorBlink);
-                        cursor.style.display = "none";
-                      }, 1000);
+                        typedText.textContent = "";
+                        charIndex = 0;
+                        typeChar();
+                      }, 6000);
                     }
                   }
 
