@@ -513,39 +513,6 @@
                 <div class="popular-view-all">View All <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: 2px;"></i></div>
               </div>
 
-              <div class="trust-indicators">
-                <div class="trust-item" style="animation-delay: 0ms">
-                  <i class="fa-solid fa-shield trust-icon"></i>
-                  <div class="trust-text">
-                    <div class="trust-title">100%</div>
-                    <div class="trust-subtitle">Verified Data</div>
-                  </div>
-                </div>
-                <div class="trust-divider"></div>
-                <div class="trust-item" style="animation-delay: 120ms">
-                  <i class="fa-solid fa-clock trust-icon"></i>
-                  <div class="trust-text">
-                    <div class="trust-title">Updated</div>
-                    <div class="trust-subtitle">Every 24 Hours</div>
-                  </div>
-                </div>
-                <div class="trust-divider"></div>
-                <div class="trust-item" style="animation-delay: 240ms">
-                  <i class="fa-solid fa-users trust-icon"></i>
-                  <div class="trust-text">
-                    <div class="trust-title">Trusted by</div>
-                    <div class="trust-subtitle">Lakhs of Students</div>
-                  </div>
-                </div>
-                <div class="trust-divider"></div>
-                <div class="trust-item" style="animation-delay: 360ms">
-                  <i class="fa-solid fa-shield-heart trust-icon"></i>
-                  <div class="trust-text">
-                    <div class="trust-title">Expert</div>
-                    <div class="trust-subtitle">Counseling Support</div>
-                  </div>
-                </div>
-              </div>
 
             </div>
 
@@ -558,346 +525,260 @@
           </div>
         </section>
 
-        <!-- Animated Feature Section -->
-        <section
-          class="animated-feature-section"
-          id="how-it-works"
-          style="
-            width: 100%;
-            padding: 80px 20px 50px;
-            display: flex;
-            justify-content: center;
-            background: transparent;
-            font-family: &quot;Poppins&quot;, var(--font-main);
-          "
-        >
+        <!-- ═══════════════════════════════════════════════════ -->
+        <!-- WHY CHOOSE US — Premium Redesign                    -->
+        <!-- ═══════════════════════════════════════════════════ -->
+        <section id="how-it-works" style="width:100%; background:#fff; padding:80px 20px 60px; font-family:'Poppins',sans-serif;">
           <style>
-            .feature-container-xl {
-              flex-direction: row;
+            /* ── WCU v2 Layout ── */
+            .wcu2-wrap {
+              max-width: 1200px;
+              margin: 0 auto;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 60px;
             }
-            @media (max-width: 768px) {
-              .feature-container-xl {
-                flex-direction: column;
-                padding: 30px 20px !important;
-              }
-              .feature-img-box img {
-                width: 100% !important;
-                max-width: 300px;
-              }
+            .wcu2-left  { width: 52%; padding-right: 0; }
+            .wcu2-right { width: 48%; display: flex; justify-content: center; align-items: center; }
 
-              /* Mobile animation overrides */
-              @keyframes wcu-mobile-slide-right {
-                from {
-                  opacity: 0;
-                  transform: translateX(-60px);
-                }
-                to {
-                  opacity: 1;
-                  transform: translateX(0);
-                }
-              }
-              @keyframes wcu-mobile-slide-left {
-                from {
-                  opacity: 0;
-                  transform: translateX(80px);
-                }
-                to {
-                  opacity: 1;
-                  transform: translateX(0);
-                }
-              }
-              .wcu-text-card.wcu-animate {
-                animation: wcu-mobile-slide-right 0.6s ease-out forwards !important;
-              }
-              .wcu-heading.wcu-animate {
-                animation: wcu-mobile-slide-right 0.6s ease-out forwards !important;
-              }
-              .wcu-img-box.wcu-animate {
-                animation: wcu-mobile-slide-left 0.8s ease-out forwards !important;
-              }
+            /* Right image */
+            .wcu2-dd-img {
+              width: 100%;
+              max-width: 480px;
+              height: auto;
+              border-radius: 24px;
+              object-fit: contain;
+              filter: none;
+              animation: wcu2-float 4s ease-in-out infinite alternate;
+            }
+            @keyframes wcu2-float {
+              from { transform: translateY(0); }
+              to   { transform: translateY(-10px); }
             }
 
-            /* â”€â”€ Why Choose Us Animations â”€â”€ */
-            @keyframes wcu-slide-left {
-              from {
-                opacity: 0;
-                transform: translateX(60px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
-            }
-            @keyframes wcu-slide-right {
-              from {
-                opacity: 0;
-                transform: translateX(-60px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
-            }
-            @keyframes wcu-fade-up {
-              from {
-                opacity: 0;
-                transform: translateY(24px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
+            /* Badge */
+            .wcu2-badge {
+              display: inline-block;
+              background: #FFF3D6;
+              color: #F4A300;
+              padding: 6px 14px;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: 600;
+              letter-spacing: 0.5px;
+              margin-bottom: 20px;
             }
 
-            .wcu-img-box {
-              opacity: 0;
+            /* Heading */
+            .wcu2-heading {
+              font-size: 48px;
+              font-weight: 800;
+              line-height: 1.2;
+              color: #1A1A1A;
+              margin: 0 0 30px 0;
             }
-            .wcu-heading {
-              opacity: 0;
+            .wcu2-heading .gold { color: #F4A300; }
+
+            /* Feature rows */
+            .wcu2-features { display: flex; flex-direction: column; gap: 16px; }
+            .wcu2-feat {
+              display: flex;
+              align-items: center;
+              gap: 16px;
+              padding: 14px 18px;
+              border-radius: 16px;
+              background: #FAFAFA;
+              border: 1px solid #F0F0F0;
+              transition: transform 0.2s ease, box-shadow 0.2s ease;
+              cursor: default;
             }
-            .wcu-text-card {
-              opacity: 0;
+            .wcu2-feat:hover {
+              transform: translateX(6px);
+              box-shadow: 0 4px 16px rgba(244,163,0,0.12);
+            }
+            .wcu2-feat-icon {
+              width: 44px;
+              height: 44px;
+              min-width: 44px;
+              background: #FFE082;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 18px;
+            }
+            .wcu2-feat-text h4 {
+              font-size: 15px;
+              font-weight: 700;
+              color: #111;
+              margin: 0 0 2px 0;
+            }
+            .wcu2-feat-text p {
+              font-size: 13px;
+              color: #666;
+              margin: 0;
             }
 
-            .wcu-img-box.wcu-animate {
-              animation: wcu-slide-left 0.8s cubic-bezier(0.22, 1, 0.36, 1)
-                forwards;
+
+
+            /* ── Bottom Stats Bar ── */
+            .wcu2-stats {
+              max-width: 1200px;
+              margin: 50px auto 0;
+              background: #F9F9F9;
+              border-radius: 50px;
+              padding: 22px 40px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 10px;
             }
-            .wcu-heading.wcu-animate {
-              animation: wcu-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1)
-                forwards;
+            .wcu2-stat {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              flex: 1;
+              justify-content: center;
             }
-            .wcu-text-card.wcu-animate {
-              animation: wcu-slide-right 0.6s cubic-bezier(0.22, 1, 0.36, 1)
-                forwards;
+            .wcu2-stat-icon {
+              width: 38px;
+              height: 38px;
+              min-width: 38px;
+              background: #FFE082;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 16px;
+            }
+            .wcu2-stat-txt h4 {
+              font-size: 16px;
+              font-weight: 800;
+              color: #111;
+              margin: 0 0 1px 0;
+            }
+            .wcu2-stat-txt p {
+              font-size: 12px;
+              color: #666;
+              margin: 0;
+            }
+            .wcu2-stat-divider {
+              width: 1px;
+              height: 36px;
+              background: #E0E0E0;
+              flex-shrink: 0;
             }
 
-            /* hover on text cards */
-            .wcu-text-card:hover {
-              transform: translateX(5px) !important;
-            }
-
-            /* hover on image box */
-            .wcu-img-inner:hover {
-              transform: scale(1.02) !important;
+            /* ── Responsive ── */
+            @media (max-width: 900px) {
+              .wcu2-wrap { flex-direction: column; gap: 40px; }
+              .wcu2-left  { width: 100%; }
+              .wcu2-right { width: 100%; }
+              .wcu2-heading { font-size: 32px; }
+              .wcu2-dd-img { max-width: 340px; }
+              .wcu2-stats { flex-wrap: wrap; border-radius: 24px; padding: 20px; gap: 14px; }
+              .wcu2-stat { flex: 1 1 40%; justify-content: flex-start; }
+              .wcu2-stat-divider { display: none; }
             }
           </style>
 
-          <div
-            class="container feature-container-xl"
-            style="
-              max-width: 1100px;
-              width: 100%;
-              display: flex;
-              align-items: center;
-              gap: 40px;
-              padding: 50px;
-              border-radius: 24px;
-              background: #ffdf7e;
-              overflow: hidden;
-            "
-          >
-            <!-- Left Column -->
-            <div style="flex: 1">
-              <div
-                class="wcu-heading"
-                style="
-                  font-size: 14px;
-                  font-weight: 600;
-                  color: #b45309;
-                  margin-bottom: 10px;
-                  letter-spacing: 1px;
-                  text-transform: uppercase;
-                "
-              >
-                Why Choose Us
-              </div>
-              <h2
-                class="wcu-heading"
-                style="
-                  font-size: 34px;
-                  font-weight: 800;
-                  color: #111827;
-                  margin-bottom: 25px;
-                  line-height: 1.2;
-                  animation-delay: 0.1s;
-                "
-              >
-                Turn Your Rank Into the Right College
+          <!-- Two-column content -->
+          <div class="wcu2-wrap">
+
+            <!-- LEFT -->
+            <div class="wcu2-left">
+              <div class="wcu2-badge">WHY CHOOSE US</div>
+
+              <h2 class="wcu2-heading">
+                Your Rank is Just<br>
+                <span class="gold">the Beginning.</span><br>
+                <span class="gold">The Right College is</span><br>
+                the Destination!
               </h2>
 
-              <!-- Text Cards -->
-              <div style="display: flex; flex-direction: column; gap: 16px">
-                <div
-                  class="wcu-text-card"
-                  style="
-                    display: flex;
-                    gap: 12px;
-                    align-items: center;
-                    padding: 14px;
-                    border-radius: 14px;
-                    background: rgba(255, 255, 255, 0.7);
-                    transition: transform 0.2s ease;
-                    cursor: default;
-                  "
-                >
-                  <span style="font-size: 20px; flex-shrink: 0">ðŸŽ¯</span>
-                  <span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >Personalized counselling based on your NEET rank</span
-                  >
+              <div class="wcu2-features">
+
+                <div class="wcu2-feat">
+                  <div class="wcu2-feat-icon">🎯</div>
+                  <div class="wcu2-feat-text">
+                    <h4>Personalized Counseling</h4>
+                    <p>Step-by-step guidance for your NEET journey</p>
+                  </div>
                 </div>
-                <div
-                  class="wcu-text-card"
-                  style="
-                    display: flex;
-                    gap: 12px;
-                    align-items: center;
-                    padding: 14px;
-                    border-radius: 14px;
-                    background: rgba(255, 255, 255, 0.7);
-                    transition: transform 0.2s ease;
-                    cursor: default;
-                    animation-delay: 0.2s;
-                  "
-                >
-                  <span style="font-size: 20px; flex-shrink: 0">ðŸ“Š</span>
-                  <span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >Accurate college prediction using smart tools</span
-                  >
+
+                <div class="wcu2-feat">
+                  <div class="wcu2-feat-icon">📊</div>
+                  <div class="wcu2-feat-text">
+                    <h4>Accurate College Prediction</h4>
+                    <p>Advanced tools for accurate results</p>
+                  </div>
                 </div>
-                <div
-                  class="wcu-text-card"
-                  style="
-                    display: flex;
-                    gap: 12px;
-                    align-items: center;
-                    padding: 14px;
-                    border-radius: 14px;
-                    background: rgba(255, 255, 255, 0.7);
-                    transition: transform 0.2s ease;
-                    cursor: default;
-                    animation-delay: 0.4s;
-                  "
-                >
-                  <span style="font-size: 20px; flex-shrink: 0">ðŸ“˜</span>
-                  <span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >Guides and eBooks to simplify your decisions</span
-                  >
+
+                <div class="wcu2-feat">
+                  <div class="wcu2-feat-icon">📘</div>
+                  <div class="wcu2-feat-text">
+                    <h4>Guides &amp; eBooks</h4>
+                    <p>Curated study &amp; admission resources</p>
+                  </div>
                 </div>
-                <div
-                  class="wcu-text-card"
-                  style="
-                    display: flex;
-                    gap: 12px;
-                    align-items: center;
-                    padding: 14px;
-                    border-radius: 14px;
-                    background: rgba(255, 255, 255, 0.7);
-                    transition: transform 0.2s ease;
-                    cursor: default;
-                    animation-delay: 0.6s;
-                  "
-                >
-                  <span style="font-size: 20px; flex-shrink: 0">ðŸ¥</span>
-                  <span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >Real insights from students in top colleges</span
-                  >
+
+                <div class="wcu2-feat">
+                  <div class="wcu2-feat-icon">👥</div>
+                  <div class="wcu2-feat-text">
+                    <h4>Real Student Insights</h4>
+                    <p>Learn from students who've been there</p>
+                  </div>
                 </div>
+
               </div>
             </div>
 
-            <!-- Right Column (Image) -->
-            <div
-              class="feature-img-box wcu-img-box"
-              style="
-                flex-shrink: 0;
-                display: flex;
-                justify-content: center;
-                align-items: flex-end;
-                width: 420px;
-                max-width: 100%;
-              "
-            >
-              <div
-                class="wcu-img-inner"
-                style="
-                  background: #fae8a0;
-                  border-radius: 20px;
-                  overflow: hidden;
-                  width: 100%;
-                  max-width: 100%;
-                  transition: transform 0.3s ease;
-                  position: relative;
-                  display: flex;
-                  align-items: flex-end;
-                  justify-content: center;
-                  height: 100%;
-                "
-              >
-                <img
-                  src="assets/doctor-no-bg.png?v=anim1"
-                  alt="Doctor"
-                  style="
-                    display: block;
-                    max-width: 100%;
-                    height: auto;
-                    margin-top: auto;
-                  "
-                />
+            <!-- RIGHT -->
+            <div class="wcu2-right">
+              <img src="assets/dd.png" alt="Why Choose DC NEET Counselling" class="wcu2-dd-img" />
+            </div>
+
+          </div><!-- /wcu2-wrap -->
+
+          <!-- Bottom Stats Bar -->
+          <div class="wcu2-stats">
+            <div class="wcu2-stat">
+              <div class="wcu2-stat-icon">&#x1F6E1;</div>
+              <div class="wcu2-stat-txt">
+                <h4>10K+</h4>
+                <p>Students Helped</p>
               </div>
             </div>
-          </div>
+            <div class="wcu2-stat-divider"></div>
+            <div class="wcu2-stat">
+              <div class="wcu2-stat-icon">&#x23F0;</div>
+              <div class="wcu2-stat-txt">
+                <h4>98%</h4>
+                <p>Success Rate</p>
+              </div>
+            </div>
+            <div class="wcu2-stat-divider"></div>
+            <div class="wcu2-stat">
+              <div class="wcu2-stat-icon">&#x1F465;</div>
+              <div class="wcu2-stat-txt">
+                <h4>24/7</h4>
+                <p>Expert Support</p>
+              </div>
+            </div>
+            <div class="wcu2-stat-divider"></div>
+            <div class="wcu2-stat">
+              <div class="wcu2-stat-icon">&#x1F3C5;</div>
+              <div class="wcu2-stat-txt">
+                <h4>100%</h4>
+                <p>Guidance You Can Trust</p>
+              </div>
+            </div>
+          </div><!-- /wcu2-stats -->
 
-          <!-- IntersectionObserver trigger -->
-          <script>
-            (function () {
-              var section = document.getElementById("how-it-works");
-              if (!section) return;
-              var io = new IntersectionObserver(
-                function (entries) {
-                  entries.forEach(function (entry) {
-                    if (!entry.isIntersecting) return;
-                    // Headings
-                    section
-                      .querySelectorAll(".wcu-heading")
-                      .forEach(function (el, i) {
-                        setTimeout(function () {
-                          el.classList.add("wcu-animate");
-                        }, i * 100);
-                      });
-                    // Text cards â€” 150ms stagger on mobile, 200ms on desktop
-                    var cardStagger = window.innerWidth <= 768 ? 150 : 200;
-                    section
-                      .querySelectorAll(".wcu-text-card")
-                      .forEach(function (el, i) {
-                        setTimeout(
-                          function () {
-                            el.classList.add("wcu-animate");
-                          },
-                          200 + i * cardStagger,
-                        );
-                      });
-                    // Image slides from right
-                    setTimeout(function () {
-                      section
-                        .querySelectorAll(".wcu-img-box")
-                        .forEach(function (el) {
-                          el.classList.add("wcu-animate");
-                        });
-                    }, 100);
-                    io.disconnect();
-                  });
-                },
-                { threshold: 0.15 },
-              );
-              io.observe(section);
-            })();
-          </script>
+
         </section>
+
 
         <!-- Advanced Counselling Services Section -->
         <section
