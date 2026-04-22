@@ -551,11 +551,13 @@
                   const wcuHeading = document.getElementById("wcu-premium-heading");
                   const wcuLines = wcuHeading.querySelectorAll(".hl-line-inner");
                   const wcuUnderline = document.getElementById("wcu-underline");
+                  const wcuImg = document.querySelector(".wcu2-dd-img");
 
                   const wcuObserver = new IntersectionObserver((entries) => {
                     if(entries[0].isIntersecting) {
                       wcuLines.forEach(l => l.classList.add("is-revealed"));
-                      setTimeout(() => wcuUnderline.classList.add("is-drawn"), 600);
+                      if(wcuUnderline) setTimeout(() => wcuUnderline.classList.add("is-drawn"), 600);
+                      if(wcuImg) wcuImg.classList.add("is-revealed");
                       wcuObserver.disconnect();
                     }
                   }, { threshold: 0.2 });
@@ -609,6 +611,7 @@
               max-width: 1200px;
               margin: 0 auto;
               display: flex;
+              flex-direction: row-reverse;
               align-items: center;
               justify-content: space-between;
               gap: 60px;
@@ -624,7 +627,20 @@
               border-radius: 24px;
               object-fit: contain;
               filter: none;
-              animation: wcu2-float 4s ease-in-out infinite alternate;
+              opacity: 0;
+            }
+            .wcu2-dd-img.is-revealed {
+              animation: wcu2-enter 0.8s ease-out forwards, wcu2-float 4s ease-in-out infinite alternate 0.8s;
+            }
+            @keyframes wcu2-enter {
+              from {
+                opacity: 0;
+                transform: translateX(-100px) scale(0.9) rotate(-2deg);
+              }
+              to {
+                opacity: 1;
+                transform: translateX(0) scale(1) rotate(0deg);
+              }
             }
             @keyframes wcu2-float {
               from { transform: translateY(0); }
