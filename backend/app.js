@@ -24,6 +24,6 @@ app.get('/health', (req, res) => {
 });
 
 // Start Server
-app.listen(PORT, () => {
-    console.log(`Backend server is running on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Backend server is running on port ${PORT} (exposed to network)`);
 });

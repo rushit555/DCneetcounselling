@@ -1103,7 +1103,7 @@ window.submitNewCounsellingForm = async function(form) {
             data.counselling_type = window.activeCounsellingContext.type;
         }
 
-        const response = await fetch('http://localhost:3000/submit-counseling-booking', {
+        const response = await fetch(`http://${window.location.hostname}:3000/submit-counseling-booking`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
