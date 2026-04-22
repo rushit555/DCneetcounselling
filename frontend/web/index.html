@@ -1731,202 +1731,229 @@
           </div>
         </section>
 
-        <!-- Student Shorts Section -->
-        <style>
-          #shorts-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            max-width: 900px;
-            margin: 0 auto;
-          }
-          @media (max-width: 900px) {
-            #shorts-grid {
-              grid-template-columns: repeat(2, 1fr);
+        <!-- Reviews Section -->
+        <section class="reviews-premium-section" style="background: #ffffff; padding: 60px 20px;">
+          <style>
+            .rev-p-container {
+              max-width: 1100px;
+              margin: 0 auto;
+              text-align: center;
             }
-          }
-          @media (max-width: 600px) {
-            #shorts-grid {
-              grid-template-columns: 1fr;
-              max-width: 320px;
+            .rev-p-label {
+              display: inline-block;
+              background: #fff3cc;
+              padding: 6px 14px;
+              border-radius: 30px;
+              font-size: 12px;
+              font-weight: 600;
+              margin-bottom: 12px;
+              color: #111; /* Wait #111 usually, or yellow? I'll use #f4b400 for contrast. Oh, default black or #d49500 */
+              color: #f4b400;
             }
-          }
-          .short-card {
-            border-radius: 20px;
-            overflow: hidden;
-            background: #000;
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-            position: relative;
-            cursor: pointer;
-          }
-          .short-card img {
-            width: 100%;
-            aspect-ratio: 9/16;
-            object-fit: cover;
-            display: block;
-          }
-          .short-card .short-play {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition:
-              background 0.2s,
-              transform 0.2s;
-          }
-          .short-card:hover .short-play {
-            background: rgba(255, 204, 0, 0.9);
-            transform: translate(-50%, -50%) scale(1.1);
-          }
-          .short-card .short-play::after {
-            content: "";
-            width: 0;
-            height: 0;
-            border-top: 12px solid transparent;
-            border-bottom: 12px solid transparent;
-            border-left: 18px solid #fff;
-            margin-left: 4px;
-          }
-          .short-card:hover .short-play::after {
-            border-left-color: #000;
-          }
-        </style>
+            .rev-p-heading {
+              font-size: 34px;
+              font-weight: 700;
+              color: #111;
+              margin-bottom: 8px;
+            }
+            .rev-p-heading-highlight {
+              color: #f4b400;
+            }
+            .rev-p-subtext {
+              font-size: 14px;
+              color: #666;
+              margin-bottom: 30px;
+            }
+            .rev-p-grid {
+              display: grid;
+              grid-template-columns: repeat(3, 1fr);
+              gap: 20px;
+            }
+            .rev-p-card {
+              border-radius: 20px;
+              overflow: hidden;
+              background: #ffffff;
+              box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+              text-align: left;
+              opacity: 0;
+              transform: translateY(20px);
+              transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+              cursor: pointer;
+            }
+            .rev-p-card.is-revealed {
+              opacity: 1;
+              transform: translateY(0);
+            }
+            .rev-p-card:hover {
+              transform: translateY(-6px) scale(1.01);
+              box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+            }
+            .rev-p-img-wrap {
+              position: relative;
+            }
+            .rev-p-img {
+              width: 100%;
+              height: 280px;
+              object-fit: cover;
+              display: block;
+            }
+            .rev-p-play {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              width: 50px;
+              height: 50px;
+              background: rgba(0,0,0,0.5);
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: background 0.3s ease, transform 0.3s ease;
+            }
+            .rev-p-card:hover .rev-p-play {
+              background: rgba(244,180,0,0.9);
+              transform: translate(-50%, -50%) scale(1.1);
+              animation: rev-p-pulse 1.5s infinite;
+            }
+            .rev-p-play::after {
+              content: "";
+              border-top: 10px solid transparent;
+              border-bottom: 10px solid transparent;
+              border-left: 15px solid #fff;
+              margin-left: 5px;
+            }
+            .rev-p-info {
+              padding: 14px;
+              background: #ffffff;
+            }
+            .rev-p-name {
+              font-weight: 600;
+              font-size: 16px;
+              color: #111;
+            }
+            .rev-p-tag {
+              display: inline-block;
+              background: #f4b400;
+              color: #000;
+              padding: 4px 10px;
+              border-radius: 20px;
+              font-size: 12px;
+              font-weight: 600;
+              margin-top: 6px;
+            }
+            .rev-p-college {
+              font-size: 12px;
+              color: #666;
+              margin-top: 6px;
+            }
+            .rev-p-btn {
+              margin-top: 30px;
+              background: linear-gradient(135deg, #f4b400, #ffcc33);
+              color: #000;
+              padding: 14px 26px;
+              border-radius: 30px;
+              font-weight: 600;
+              border: none;
+              cursor: pointer;
+              display: inline-block;
+              text-decoration: none;
+              transition: transform 0.2s ease, box-shadow 0.2s ease;
+            }
+            .rev-p-btn:hover {
+              transform: scale(1.04);
+              box-shadow: 0 8px 20px rgba(244,180,0,0.3);
+            }
+            .rev-p-footer-note {
+              margin-top: 10px;
+              font-size: 13px;
+              color: #666;
+            }
+            
+            @keyframes rev-p-pulse {
+              0% { box-shadow: 0 0 0 0 rgba(244, 180, 0, 0.7); }
+              70% { box-shadow: 0 0 0 10px rgba(244, 180, 0, 0); }
+              100% { box-shadow: 0 0 0 0 rgba(244, 180, 0, 0); }
+            }
 
-        <section
-          id="dcneet-student-shorts"
-          style="
-            padding: 90px 20px;
-            background: linear-gradient(135deg, #fff8cc, #ffe082);
-            border-radius: 26px;
-            margin: 60px 0;
-            font-family: &quot;Poppins&quot;, var(--font-main);
-          "
-        >
-          <div class="container" style="max-width: 1100px; margin: 0 auto">
-            <div style="text-align: center; margin-bottom: 45px">
-              <h2
-                style="
-                  font-size: 34px;
-                  font-weight: 800;
-                  color: #1f2937;
-                  margin-bottom: 10px;
-                "
-              >
-                Real Student Stories &#127919;
-              </h2>
-              <p style="color: #555; margin-top: 10px; font-size: 15px">
-                Watch real counselling results in action
-              </p>
-            </div>
-
-            <div id="shorts-grid">
-              <!-- Short 1 -->
-              <div
-                class="short-card"
-                onclick="
-                  openVideoModal(
-                    'https://www.youtube.com/embed/gg9jktcWyD4?autoplay=1',
-                  )
-                "
-              >
-                <img
-                  src="https://img.youtube.com/vi/gg9jktcWyD4/maxresdefault.jpg"
-                  alt="Video Review"
-                  onerror="
-                    this.src =
-                      'https://via.placeholder.com/270x480?text=Video+Review'
-                  "
-                />
-                <div class="short-play"></div>
-              </div>
-
-              <!-- Short 2 -->
-              <div
-                class="short-card"
-                onclick="
-                  openVideoModal(
-                    'https://www.youtube.com/embed/rtYtKhuwZWs?autoplay=1',
-                  )
-                "
-              >
-                <img
-                  src="https://img.youtube.com/vi/rtYtKhuwZWs/maxresdefault.jpg"
-                  alt="Video Review"
-                  onerror="
-                    this.src =
-                      'https://via.placeholder.com/270x480?text=Video+Review'
-                  "
-                />
-                <div class="short-play"></div>
-              </div>
-
-              <!-- Short 3 -->
-              <div
-                class="short-card"
-                onclick="
-                  openVideoModal(
-                    'https://www.youtube.com/embed/IL0JsOlMDQg?autoplay=1',
-                  )
-                "
-              >
-                <img
-                  src="https://img.youtube.com/vi/IL0JsOlMDQg/maxresdefault.jpg"
-                  alt="Video Review"
-                  onerror="
-                    this.src =
-                      'https://via.placeholder.com/270x480?text=Video+Review'
-                  "
-                />
-                <div class="short-play"></div>
-              </div>
-            </div>
-
-            <!-- CTA -->
-            <div
-              style="
-                text-align: center;
-                margin-top: 40px;
+            @media (max-width: 900px) {
+              .rev-p-grid {
                 display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 12px;
-              "
-            >
-              <p
-                style="
-                  font-size: 16px;
-                  font-weight: 600;
-                  color: #1f2937;
-                  margin: 0;
-                "
-              >
-                Your rank can also get better results
-              </p>
-              <button
-                onclick="window.navigate('counselling')"
-                style="
-                  background: #000;
-                  color: #fff;
-                  padding: 12px 28px;
-                  border-radius: 30px;
-                  border: none;
-                  font-weight: 600;
-                  font-size: 15px;
-                  cursor: pointer;
-                  margin-top: 5px;
-                "
-              >
-                Start Counselling Now
-              </button>
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                padding-bottom: 20px;
+              }
+              .rev-p-card {
+                flex: 0 0 85%;
+                scroll-snap-align: center;
+              }
+              .rev-p-heading {
+                font-size: 28px;
+              }
+            }
+          </style>
+
+          <div class="rev-p-container" id="rev-p-container">
+            <div class="rev-p-label">REAL EXPERIENCES, REAL RESULTS</div>
+            <div class="rev-p-heading">Real Student <span class="rev-p-heading-highlight">Stories</span></div>
+            <div class="rev-p-subtext">Watch real counselling results in action</div>
+
+            <div class="rev-p-grid">
+              <!-- Card 1 -->
+              <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/gg9jktcWyD4?autoplay=1')">
+                <div class="rev-p-img-wrap">
+                  <img src="https://img.youtube.com/vi/gg9jktcWyD4/maxresdefault.jpg" alt="Pooja Singh" class="rev-p-img" />
+                  <div class="rev-p-play"></div>
+                </div>
+                <div class="rev-p-info">
+                  <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Pooja Singh</div>
+                </div>
+              </div>
+
+              <!-- Card 2 -->
+              <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/rtYtKhuwZWs?autoplay=1')">
+                <div class="rev-p-img-wrap">
+                  <img src="https://img.youtube.com/vi/rtYtKhuwZWs/maxresdefault.jpg" alt="Sumit Pahadiya" class="rev-p-img" />
+                  <div class="rev-p-play"></div>
+                </div>
+                <div class="rev-p-info">
+                  <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Sumit Pahadiya</div>
+                </div>
+              </div>
+
+              <!-- Card 3 -->
+              <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/IL0JsOlMDQg?autoplay=1')">
+                <div class="rev-p-img-wrap">
+                  <img src="https://img.youtube.com/vi/IL0JsOlMDQg/maxresdefault.jpg" alt="Jivida" class="rev-p-img" />
+                  <div class="rev-p-play"></div>
+                </div>
+                <div class="rev-p-info">
+                  <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Jivida</div>
+                </div>
+              </div>
             </div>
+
+            <a href="#" class="rev-p-btn" onclick="window.navigate('counselling')">Start Your Counselling Now</a>
+            <div class="rev-p-footer-note">Your rank can also get better results</div>
           </div>
+
+          <script>
+            document.addEventListener('DOMContentLoaded', () => {
+              const rContainer = document.getElementById('rev-p-container');
+              if(!rContainer) return;
+              const rObserver = new IntersectionObserver((entries) => {
+                if(entries[0].isIntersecting) {
+                  const cards = rContainer.querySelectorAll('.rev-p-card');
+                  cards.forEach((card, index) => {
+                    card.style.transitionDelay = (index * 0.1) + 's';
+                    card.classList.add('is-revealed');
+                  });
+                  rObserver.disconnect();
+                }
+              }, { threshold: 0.1 });
+              rObserver.observe(rContainer);
+            });
+          </script>
         </section>
 
         <section class="cta-section">
