@@ -1764,12 +1764,23 @@
               color: #666;
               margin-bottom: 30px;
             }
+            .rev-p-carousel-wrapper {
+              position: relative;
+              max-width: 1100px;
+              margin: 0 auto;
+            }
             .rev-p-grid {
-              display: grid;
-              grid-template-columns: repeat(3, 1fr);
+              display: flex;
               gap: 20px;
+              overflow-x: auto;
+              scroll-behavior: smooth;
+              padding: 10px 0 30px;
+            }
+            .rev-p-grid::-webkit-scrollbar {
+              display: none;
             }
             .rev-p-card {
+              flex: 0 0 300px;
               border-radius: 20px;
               overflow: hidden;
               background: #ffffff;
@@ -1787,6 +1798,34 @@
             .rev-p-card:hover {
               transform: translateY(-6px) scale(1.01);
               box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+            }
+            .rev-p-arrow {
+              position: absolute;
+              top: 50%;
+              transform: translateY(-50%);
+              width: 40px;
+              height: 40px;
+              background: #f4b400;
+              color: #000;
+              border: none;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              z-index: 10;
+              transition: transform 0.2s ease, box-shadow 0.2s ease;
+              box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            }
+            .rev-p-arrow:hover {
+              transform: translateY(-50%) scale(1.1);
+              box-shadow: 0 6px 15px rgba(244,180,0,0.3);
+            }
+            .rev-p-arrow.left-arrow {
+              left: -50px;
+            }
+            .rev-p-arrow.right-arrow {
+              right: -50px;
             }
             .rev-p-img-wrap {
               position: relative;
@@ -1848,7 +1887,7 @@
               margin-top: 6px;
             }
             .rev-p-btn {
-              margin-top: 30px;
+              margin-top: 10px;
               background: linear-gradient(135deg, #f4b400, #ffcc33);
               color: #000;
               padding: 14px 26px;
@@ -1876,12 +1915,14 @@
               100% { box-shadow: 0 0 0 0 rgba(244, 180, 0, 0); }
             }
 
+            @media (max-width: 1200px) {
+              .rev-p-arrow.left-arrow { left: 0px; }
+              .rev-p-arrow.right-arrow { right: 0px; }
+            }
+
             @media (max-width: 900px) {
               .rev-p-grid {
-                display: flex;
-                overflow-x: auto;
                 scroll-snap-type: x mandatory;
-                padding-bottom: 20px;
               }
               .rev-p-card {
                 flex: 0 0 85%;
@@ -1889,6 +1930,9 @@
               }
               .rev-p-heading {
                 font-size: 28px;
+              }
+              .rev-p-arrow {
+                display: none;
               }
             }
           </style>
@@ -1898,39 +1942,60 @@
             <div class="rev-p-heading">Real Student <span class="rev-p-heading-highlight">Stories</span></div>
             <div class="rev-p-subtext">Watch real counselling results in action</div>
 
-            <div class="rev-p-grid">
-              <!-- Card 1 -->
-              <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/gg9jktcWyD4?autoplay=1')">
-                <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/gg9jktcWyD4/maxresdefault.jpg" alt="Pooja Singh" class="rev-p-img" />
-                  <div class="rev-p-play"></div>
+            <div class="rev-p-carousel-wrapper">
+              <button class="rev-p-arrow left-arrow" aria-label="Scroll left" onclick="document.getElementById('rev-p-grid-inner').scrollBy({left: -320, behavior: 'smooth'})">
+                <i class="fa-solid fa-arrow-left"></i>
+              </button>
+              
+              <div class="rev-p-grid" id="rev-p-grid-inner">
+                <!-- Card 1 -->
+                <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/gg9jktcWyD4?autoplay=1')">
+                  <div class="rev-p-img-wrap">
+                    <img src="https://img.youtube.com/vi/gg9jktcWyD4/maxresdefault.jpg" alt="Pooja Singh" class="rev-p-img" />
+                    <div class="rev-p-play"></div>
+                  </div>
+                  <div class="rev-p-info">
+                    <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Pooja Singh</div>
+                  </div>
                 </div>
-                <div class="rev-p-info">
-                  <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Pooja Singh</div>
+
+                <!-- Card 2 -->
+                <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/rtYtKhuwZWs?autoplay=1')">
+                  <div class="rev-p-img-wrap">
+                    <img src="https://img.youtube.com/vi/rtYtKhuwZWs/maxresdefault.jpg" alt="Sumit Pahadiya" class="rev-p-img" />
+                    <div class="rev-p-play"></div>
+                  </div>
+                  <div class="rev-p-info">
+                    <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Sumit Pahadiya</div>
+                  </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/IL0JsOlMDQg?autoplay=1')">
+                  <div class="rev-p-img-wrap">
+                    <img src="https://img.youtube.com/vi/IL0JsOlMDQg/maxresdefault.jpg" alt="Jivida" class="rev-p-img" />
+                    <div class="rev-p-play"></div>
+                  </div>
+                  <div class="rev-p-info">
+                    <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Jivida</div>
+                  </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/O2LEjloy1xQ?autoplay=1')">
+                  <div class="rev-p-img-wrap">
+                    <img src="https://img.youtube.com/vi/O2LEjloy1xQ/maxresdefault.jpg" alt="Student Story" class="rev-p-img" />
+                    <div class="rev-p-play"></div>
+                  </div>
+                  <div class="rev-p-info">
+                    <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Student Story</div>
+                  </div>
                 </div>
               </div>
 
-              <!-- Card 2 -->
-              <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/rtYtKhuwZWs?autoplay=1')">
-                <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/rtYtKhuwZWs/maxresdefault.jpg" alt="Sumit Pahadiya" class="rev-p-img" />
-                  <div class="rev-p-play"></div>
-                </div>
-                <div class="rev-p-info">
-                  <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Sumit Pahadiya</div>
-                </div>
-              </div>
-
-              <!-- Card 3 -->
-              <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/IL0JsOlMDQg?autoplay=1')">
-                <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/IL0JsOlMDQg/maxresdefault.jpg" alt="Jivida" class="rev-p-img" />
-                  <div class="rev-p-play"></div>
-                </div>
-                <div class="rev-p-info">
-                  <div class="rev-p-name" style="text-align: center; padding-bottom: 5px;">Jivida</div>
-                </div>
-              </div>
+              <button class="rev-p-arrow right-arrow" aria-label="Scroll right" onclick="document.getElementById('rev-p-grid-inner').scrollBy({left: 320, behavior: 'smooth'})">
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
             </div>
 
             <a href="#" class="rev-p-btn" onclick="window.navigate('counselling')">Start Your Counselling Now</a>
