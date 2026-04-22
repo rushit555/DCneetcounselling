@@ -617,6 +617,188 @@
                 </a>
               </div>
             </div>
+
+            <!-- Premium College Search Bar -->
+            <div class="news-search-block">
+              <style>
+                .news-search-block {
+                  margin-top: 24px;
+                }
+                .news-search-heading {
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  margin-bottom: 5px;
+                }
+                .news-search-heading-icon {
+                  width: 34px;
+                  height: 34px;
+                  border-radius: 50%;
+                  background: #e8f5e9;
+                  color: #2e7d32;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  font-size: 15px;
+                  flex-shrink: 0;
+                }
+                .news-search-heading h4 {
+                  font-size: 24px;
+                  font-weight: 600;
+                  color: #1a1a1a;
+                  margin: 0;
+                }
+                .news-search-subtext {
+                  font-size: 13px;
+                  color: #666;
+                  margin: 0 0 14px 44px;
+                }
+                .news-search-bar {
+                  background: linear-gradient(135deg, #fff9e6, #fff3cc);
+                  border-radius: 16px;
+                  padding: 12px;
+                  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+                  border: 1.5px solid #f0c030;
+                }
+                .news-search-row {
+                  display: flex;
+                  gap: 10px;
+                  align-items: center;
+                }
+                .news-search-field {
+                  flex: 1;
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                  background: #fff;
+                  border-radius: 10px;
+                  padding: 10px 12px;
+                  border: 1px solid rgba(0,0,0,0.12);
+                }
+                .news-search-field i {
+                  color: #b0b0b0;
+                  font-size: 14px;
+                  flex-shrink: 0;
+                }
+                .news-search-field input,
+                .news-search-field select {
+                  border: none;
+                  outline: none;
+                  background: transparent;
+                  font-size: 14px;
+                  color: #333;
+                  width: 100%;
+                  font-family: inherit;
+                }
+                .news-search-field input::placeholder {
+                  color: #aaa;
+                }
+                .news-search-field select {
+                  color: #aaa;
+                  cursor: pointer;
+                  -webkit-appearance: none;
+                  -moz-appearance: none;
+                  appearance: none;
+                }
+                .news-search-field select option {
+                  color: #333;
+                }
+                .news-search-submit {
+                  background: #ffc107;
+                  color: #1a1a1a;
+                  border: none;
+                  border-radius: 10px;
+                  padding: 12px 24px;
+                  font-size: 14px;
+                  font-weight: 700;
+                  cursor: pointer;
+                  white-space: nowrap;
+                  transition: all 0.2s ease;
+                  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+                  flex-shrink: 0;
+                }
+                .news-search-submit:hover {
+                  background: #ffb300;
+                  box-shadow: 0 4px 14px rgba(255, 193, 7, 0.45);
+                  transform: translateY(-1px);
+                }
+
+                @media(max-width: 768px) {
+                  .news-search-block {
+                    margin-top: 18px;
+                  }
+                  .news-search-heading h4 {
+                    font-size: 20px;
+                  }
+                  .news-search-heading-icon {
+                    width: 30px;
+                    height: 30px;
+                    font-size: 13px;
+                  }
+                  .news-search-subtext {
+                    font-size: 12px;
+                    margin-left: 40px;
+                    margin-bottom: 10px;
+                  }
+                  .news-search-bar {
+                    padding: 10px;
+                    border-radius: 14px;
+                  }
+                  .news-search-row {
+                    flex-direction: column;
+                    gap: 8px;
+                  }
+                  .news-search-field {
+                    width: 100%;
+                    padding: 10px 12px;
+                    box-sizing: border-box;
+                  }
+                  .news-search-submit {
+                    width: 100%;
+                    padding: 12px;
+                    text-align: center;
+                  }
+                }
+              </style>
+
+              <div class="news-search-heading">
+                <div class="news-search-heading-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h4>Find Your Dream Medical College</h4>
+              </div>
+              <p class="news-search-subtext">Search, compare and choose the best college for your future</p>
+
+              <div class="news-search-bar">
+                <div class="news-search-row">
+                <div class="news-search-field">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input type="text" placeholder="Search College Name..." />
+                </div>
+                <div class="news-search-field">
+                  <i class="fa-solid fa-graduation-cap"></i>
+                  <select>
+                    <option value="" disabled selected>Select Course</option>
+                    <option value="mbbs">MBBS</option>
+                    <option value="bds">BDS</option>
+                    <option value="ayush">AYUSH</option>
+                    <option value="bvsc">BVSc</option>
+                  </select>
+                </div>
+                <div class="news-search-field">
+                  <i class="fa-solid fa-location-dot"></i>
+                  <select>
+                    <option value="" disabled selected>Select State</option>
+                    <option value="maharashtra">Maharashtra</option>
+                    <option value="karnataka">Karnataka</option>
+                    <option value="tamil-nadu">Tamil Nadu</option>
+                    <option value="delhi">Delhi</option>
+                    <option value="uttar-pradesh">Uttar Pradesh</option>
+                    <option value="rajasthan">Rajasthan</option>
+                  </select>
+                </div>
+                <button class="news-search-submit">Search Now &rarr;</button>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- JavaScript for Smooth Infinite Auto-Scroll -->
