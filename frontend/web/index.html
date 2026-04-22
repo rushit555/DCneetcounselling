@@ -932,8 +932,9 @@
               padding: 14px 18px;
               border-radius: 16px;
               background: #FAFAFA;
-              border: 1px solid #F0F0F0;
-              transition: transform 0.2s ease, box-shadow 0.2s ease;
+              border: 1.5px solid rgba(255, 215, 0, 0.5);
+              box-shadow: 0 4px 15px rgba(255, 215, 0, 0.12);
+              transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
               cursor: default;
             }
             .wcu2-feat:hover {
@@ -1260,522 +1261,281 @@
           </script>
 
 
+
         </section>
 
-
-        <!-- Advanced Counselling Services Section -->
-        <section
-          class="advanced-counselling-section"
-          id="premium-services"
-          style="
-            width: 100%;
-            padding: 80px 20px 40px 20px;
-            display: flex;
-            justify-content: center;
-            background: transparent;
-            font-family: &quot;Poppins&quot;, var(--font-main);
-          "
-        >
+        <!-- Premium Services Section (JSON Layout) -->
+        <section class="premium-services-json" id="premium-services" style="background: linear-gradient(to bottom, #ffffff, #fafafa); padding: 60px 20px; position: relative; overflow: hidden;">
+          <!-- Subtle Background Pattern -->
+          <div style="position: absolute; top: 10%; left: 5%; width: 200px; height: 200px; background: radial-gradient(circle, #f4b400 10%, transparent 20%); background-size: 20px 20px; opacity: 0.06; z-index: 0;"></div>
+          <div style="position: absolute; bottom: 10%; right: 5%; width: 250px; height: 250px; background: radial-gradient(circle, #f4b400 10%, transparent 20%); background-size: 25px 25px; opacity: 0.05; z-index: 0;"></div>
+          
           <style>
-            .counselling-container-xl {
-              flex-direction: row;
-              text-align: left;
+            .ps-json-container {
+              max-width: 1200px;
+              margin: 0 auto;
+              position: relative;
+              z-index: 1;
             }
-            .services-grid-new {
-              grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            .ps-json-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 40px;
+              align-items: center;
             }
-
-            /* Ã¢â€â‚¬Ã¢â€â‚¬ Counselling Section Animations Ã¢â€â‚¬Ã¢â€â‚¬ */
-            @keyframes cs-slide-right {
-              from {
-                opacity: 0;
-                transform: translateX(-60px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
+            .ps-json-label {
+              font-size: 13px;
+              letter-spacing: 1.5px;
+              color: #f4b400;
+              font-weight: 700;
+              margin-bottom: 12px;
+              text-transform: uppercase;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
             }
-            @keyframes cs-slide-left {
-              from {
-                opacity: 0;
-                transform: translateX(60px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
+            .ps-json-label::before, .ps-json-label::after {
+              content: '';
+              display: inline-block;
+              width: 24px;
+              height: 2px;
+              background: #f4b400;
+              border-radius: 2px;
             }
-            @keyframes cs-slide-right-big {
-              from {
-                opacity: 0;
-                transform: translateX(-200px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
+            .ps-json-heading {
+              font-size: 40px;
+              font-weight: 800;
+              color: #111;
+              margin-bottom: 24px;
+              line-height: 1.2;
             }
-            @keyframes cs-fade-up {
-              from {
-                opacity: 0;
-                transform: translateY(30px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
+            .ps-json-heading span {
+              background: linear-gradient(135deg, #f4b400, #ffcc33);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
             }
-
-            .cs-img-box {
+            .ps-json-list {
+              display: flex;
+              flex-direction: column;
+              gap: 14px;
+            }
+            .ps-json-card {
+              display: flex;
+              align-items: center;
+              gap: 14px;
+              padding: 18px;
+              border-radius: 18px;
+              background: #ffffff;
+              border: 1.5px solid rgba(255, 215, 0, 0.5);
+              box-shadow: 0 6px 18px rgba(0,0,0,0.06), 0 4px 15px rgba(255, 215, 0, 0.12);
+              transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+              cursor: pointer;
               opacity: 0;
+              transform: translateY(20px);
             }
-            .cs-text-wrap {
+            .ps-json-card.is-revealed {
+              animation: psFadeUp 0.6s ease-out forwards;
+            }
+            @keyframes psFadeUp {
+              to { opacity: 1; transform: translateY(0); }
+            }
+            .ps-json-card:hover {
+              transform: translateY(-6px);
+              box-shadow: 0 12px 24px rgba(0,0,0,0.08), 0 6px 20px rgba(255, 215, 0, 0.15);
+            }
+            .ps-json-icon {
+              background: linear-gradient(135deg, #fff3cc, #ffe08a);
+              color: #d49500;
+              border-radius: 12px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              width: 44px;
+              height: 44px;
+              min-width: 44px;
+              font-size: 18px;
+              transition: transform 0.3s ease;
+              box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 4px 10px rgba(244,180,0,0.15);
+            }
+            .ps-json-card:hover .ps-json-icon {
+              transform: scale(1.05);
+            }
+            .ps-json-cbody {
+              flex: 1;
+            }
+            .ps-json-ctitle {
+              font-weight: 600;
+              font-size: 15px;
+              color: #111;
+              margin: 0;
+            }
+            .ps-json-cdesc {
+              font-size: 13px;
+              color: #666;
+              margin: 4px 0 0 0;
+            }
+            .ps-json-arrow {
+              width: 30px;
+              height: 30px;
+              min-width: 30px;
+              background: #f5f5f5;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: #aaa;
+              font-size: 12px;
+              transition: all 0.3s ease;
+            }
+            .ps-json-card:hover .ps-json-arrow {
+              background: #f4b400;
+              color: #fff;
+              box-shadow: 0 4px 8px rgba(244,180,0,0.3);
+            }
+            .ps-json-btn {
+              margin-top: 24px;
+              background: linear-gradient(135deg, #f4b400, #ffcc33);
+              padding: 14px 24px;
+              border-radius: 30px;
+              font-weight: 600;
+              box-shadow: 0 8px 20px rgba(244,180,0,0.35);
+              border: none;
+              color: #000;
+              cursor: pointer;
+              font-size: 15px;
+              transition: all 0.3s ease;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              text-decoration: none;
+              text-align: center;
               opacity: 0;
+              transform: translateY(20px);
             }
-            .cs-grid-item {
+            .ps-json-btn.is-revealed {
+              animation: psFadeUp 0.6s ease-out forwards;
+              animation-delay: 0.6s;
+            }
+            .ps-json-btn:hover {
+              box-shadow: 0 12px 25px rgba(244,180,0,0.45);
+              transform: scale(1.03) translateY(-2px);
+            }
+            .ps-json-img {
+              width: 100%;
+              border-radius: 20px;
+              box-shadow: none;
               opacity: 0;
+              transform: translateX(40px);
             }
-
-            .cs-img-box.cs-animate {
-              animation: cs-slide-right-big 1.2s cubic-bezier(0.16, 1, 0.3, 1)
-                forwards;
+            .ps-json-img.is-revealed {
+              animation: psSlideLeft 0.8s ease-out forwards;
             }
-            .cs-text-wrap.cs-animate {
-              animation: cs-slide-left 0.7s cubic-bezier(0.22, 1, 0.36, 1)
-                forwards;
+            @keyframes psSlideLeft {
+              to { opacity: 1; transform: translateX(0); }
             }
-            .cs-grid-item.cs-animate {
-              animation: cs-slide-right 0.6s ease-out forwards;
-            }
-
-            @media (max-width: 900px) {
-              .counselling-container-xl {
-                flex-direction: column !important;
-                text-align: center !important;
-                gap: 40px !important;
-                padding: 40px 20px !important;
-              }
-              .services-grid-new {
+            
+            @media(max-width: 900px) {
+              .ps-json-grid {
                 grid-template-columns: 1fr;
               }
-              .cs-img-box img {
-                width: 100% !important;
-                max-width: 400px;
+              .ps-json-heading {
+                font-size: 32px;
+              }
+              .ps-json-img {
+                grid-row: 1;
+              }
+              .ps-json-text {
+                grid-row: 2;
+                text-align: center;
+              }
+              .ps-json-label {
+                justify-content: center;
+              }
+              .ps-json-card {
+                text-align: left;
+              }
+              .ps-json-btn {
+                justify-content: center;
               }
             }
           </style>
 
-          <div
-            class="container counselling-container-xl"
-            style="
-              max-width: 1100px;
-              width: 100%;
-              display: flex;
-              align-items: center;
-              gap: 60px;
-              padding: 60px;
-              border-radius: 30px;
-              background: #ffdf7e;
-              box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
-            "
-          >
-            <!-- Left Column (Image) -->
-            <div
-              class="counselling-img-box cs-img-box"
-              style="
-                flex: 1;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              "
-            >
-              <img
-                src="assets/counselling-illustration.png?v=fixed"
-                alt="Counselling Illustration"
-                style="
-                  width: 100%;
-                  max-width: 450px;
-                  border-radius: 20px;
-                  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.1));
-                  transition: all 0.4s ease;
-                "
-                onmouseover="
-                  this.style.transform = 'translateY(-10px) scale(1.02)'
-                "
-                onmouseout="this.style.transform = 'translateY(0) scale(1)'"
-              />
-            </div>
-
-            <!-- Right Column -->
-            <div class="cs-text-wrap" style="flex: 1.2">
-              <div
-                style="
-                  font-size: 14px;
-                  font-weight: 600;
-                  color: #d97706;
-                  margin-bottom: 12px;
-                  letter-spacing: 1px;
-                  text-transform: uppercase;
-                "
-              >
-                Our Premium Services
+          <div class="ps-json-container" id="ps-json-container">
+            <div class="ps-json-grid">
+              <!-- LEFT SIDE: TEXT -->
+              <div class="ps-json-text">
+                <div class="ps-json-label">OUR PREMIUM SERVICES</div>
+                <div class="ps-json-heading">Smart Counselling <br/><span>That Actually Works</span></div>
+                
+                <div class="ps-json-list">
+                  <div class="ps-json-card">
+                    <div class="ps-json-icon"><i class="fa-solid fa-user"></i></div>
+                    <div class="ps-json-cbody">
+                      <p class="ps-json-ctitle">Personalized One-on-One Expert Counselling</p>
+                      <p class="ps-json-cdesc">Get expert guidance tailored to your goals.</p>
+                    </div>
+                    <div class="ps-json-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                  </div>
+                  
+                  <div class="ps-json-card">
+                    <div class="ps-json-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    <div class="ps-json-cbody">
+                      <p class="ps-json-ctitle">Affordable &amp; Transparent Pricing</p>
+                      <p class="ps-json-cdesc">No hidden charges.</p>
+                    </div>
+                    <div class="ps-json-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                  </div>
+                  
+                  <div class="ps-json-card">
+                    <div class="ps-json-icon"><i class="fa-solid fa-file-signature"></i></div>
+                    <div class="ps-json-cbody">
+                      <p class="ps-json-ctitle">Registration &amp; Form Support</p>
+                      <p class="ps-json-cdesc">Zero errors in documentation.</p>
+                    </div>
+                    <div class="ps-json-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                  </div>
+                  
+                  <div class="ps-json-card">
+                    <div class="ps-json-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="ps-json-cbody">
+                      <p class="ps-json-ctitle">Cutoff &amp; Seat Matrix Analysis</p>
+                      <p class="ps-json-cdesc">Decisions backed by real-time AI data.</p>
+                    </div>
+                    <div class="ps-json-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                  </div>
+                </div>
+                
+                <a href="#" class="ps-json-btn" onclick="window.navigate('counselling')">Explore Plans &amp; Get Started <i class="fa-solid fa-arrow-right"></i></a>
               </div>
-              <h2
-                style="
-                  font-size: 38px;
-                  font-weight: 800;
-                  color: #111827;
-                  margin-bottom: 25px;
-                  line-height: 1.2;
-                "
-              >
-                Smart Counselling
-                <span style="color: purple">That Actually Works</span>
-              </h2>
-
-              <!-- Grid Section -->
-              <div
-                id="feature_cards_section"
-                class="services-grid-new"
-                style="
-                  display: grid;
-                  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                  gap: 16px;
-                "
-              >
-                <div
-                  class="cs-grid-item premium-feature-entry premium-feature-card premium-stagger-1"
-                  style="
-                    padding: 16px 20px;
-                    border-radius: 18px;
-                    background: #ffffff;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-                    display: flex;
-                    align-items: center;
-                    gap: 14px;
-                  "
-                >
-                  <div class="premium-feature-idle premium-idle-stagger-1" style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <span
-                      class="premium-feature-icon"
-                      style="
-                        font-size: 24px;
-                        background: #fff9c4;
-                        width: 45px;
-                        height: 45px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 12px;
-                      "
-                      >Ã°Å¸Å½Â¯</span
-                    >
-                    <div
-                      style="
-                        color: #1f2937;
-                        font-weight: 600;
-                        font-size: 14px;
-                        line-height: 1.4;
-                      "
-                    >
-                      Personalized One-on-One expert counselling
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="cs-grid-item premium-feature-entry premium-feature-card premium-stagger-2"
-                  style="
-                    padding: 16px 20px;
-                    border-radius: 18px;
-                    background: #ffffff;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-                    display: flex;
-                    align-items: center;
-                    gap: 14px;
-                  "
-                >
-                  <div class="premium-feature-idle premium-idle-stagger-2" style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <span
-                      class="premium-feature-icon"
-                      style="
-                        font-size: 24px;
-                        background: #fff9c4;
-                        width: 45px;
-                        height: 45px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 12px;
-                      "
-                      >Ã°Å¸â€™Â°</span
-                    >
-                    <div
-                      style="
-                        color: #1f2937;
-                        font-weight: 600;
-                        font-size: 14px;
-                        line-height: 1.4;
-                      "
-                    >
-                      Affordable & Transparent Pricing
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="cs-grid-item premium-feature-entry premium-feature-card premium-stagger-3"
-                  style="
-                    padding: 16px 20px;
-                    border-radius: 18px;
-                    background: #ffffff;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-                    display: flex;
-                    align-items: center;
-                    gap: 14px;
-                  "
-                >
-                  <div class="premium-feature-idle premium-idle-stagger-3" style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <span
-                      class="premium-feature-icon"
-                      style="
-                        font-size: 24px;
-                        background: #fff9c4;
-                        width: 45px;
-                        height: 45px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 12px;
-                      "
-                      >Ã°Å¸â€œ </span
-                    >
-                    <div
-                      style="
-                        color: #1f2937;
-                        font-weight: 600;
-                        font-size: 14px;
-                        line-height: 1.4;
-                      "
-                    >
-                      Registration & Form Filling Support
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="cs-grid-item premium-feature-entry premium-feature-card premium-feature-idle premium-stagger-4 premium-idle-stagger-4"
-                  style="
-                    padding: 16px 20px;
-                    border-radius: 18px;
-                    background: #ffffff;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-                    display: flex;
-                    align-items: center;
-                    gap: 14px;
-                  "
-                >
-                  <span
-                    class="premium-feature-icon"
-                    style="
-                      font-size: 24px;
-                      background: #fff9c4;
-                      width: 45px;
-                      height: 45px;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      border-radius: 12px;
-                    "
-                    >Ã°Å¸Å’ </span
-                  >
-                  onmouseover="this.style.transform = 'translateY(-5px)'"
-                  onmouseout="this.style.transform = 'translateY(0)'"
-                >
-                  <span
-                    style="
-                      font-size: 24px;
-                      background: #fff9c4;
-                      width: 45px;
-                      height: 45px;
-                      display: flex;
-                      align-items: center;
-                      justify-content: center;
-                      border-radius: 12px;
-                    "
-                    >Ã°Å¸Å’Â</span
-                  >
-                  <div
-                    style="
-                      color: #1f2937;
-                      font-weight: 600;
-                      font-size: 14px;
-                      line-height: 1.4;
-                    "
-                  >
-                    Assistance in both AIQ + State Counselling
-                  </div>
-                </div>
-
-                <div
-                  class="cs-grid-item premium-feature-entry premium-feature-card premium-stagger-5"
-                  style="
-                    padding: 16px 20px;
-                    border-radius: 18px;
-                    background: #ffffff;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-                    display: flex;
-                    align-items: center;
-                    gap: 14px;
-                  "
-                >
-                  <div class="premium-feature-idle premium-idle-stagger-6" style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <span
-                      class="premium-feature-icon"
-                      style="
-                        font-size: 24px;
-                        background: #fff9c4;
-                        width: 45px;
-                        height: 45px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 12px;
-                      "
-                      >Ã°Å¸â€œËœ</span
-                    >
-                    <div
-                      style="
-                        color: #1f2937;
-                        font-weight: 600;
-                        font-size: 14px;
-                        line-height: 1.4;
-                      "
-                    >
-                      Documentation & Scholarship Guidance
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  class="cs-grid-item premium-feature-entry premium-feature-card premium-stagger-6"
-                  style="
-                    padding: 16px 20px;
-                    border-radius: 18px;
-                    background: #ffffff;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-                    display: flex;
-                    align-items: center;
-                    gap: 14px;
-                  "
-                >
-                  <div class="premium-feature-idle premium-idle-stagger-7" style="display: flex; align-items: center; gap: 14px; width: 100%;">
-                    <span
-                      class="premium-feature-icon"
-                      style="
-                        font-size: 24px;
-                        background: #fff9c4;
-                        width: 45px;
-                        height: 45px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 12px;
-                      "
-                      >Ã°Å¸â€œâ€°</span
-                    >
-                    <div
-                      style="
-                        color: #1f2937;
-                        font-weight: 600;
-                        font-size: 14px;
-                        line-height: 1.4;
-                      "
-                    >
-                      Analysis of Cutoff, Seat Matrix, Bond & Fees
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- CTA Button -->
-              <div
-                style="
-                  margin-top: 35px;
-                  display: flex;
-                  gap: 20px;
-                  align-items: center;
-                "
-              >
-                <button
-                  data-route="counselling"
-                  onclick="window.navigate('counselling')"
-                  style="
-                    background: linear-gradient(135deg, #a855f7, #7e22ce);
-                    color: white;
-                    padding: 14px 32px;
-                    border-radius: 999px;
-                    font-weight: 700;
-                    font-size: 16px;
-                    border: none;
-                    cursor: pointer;
-                    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-                    transition: all 0.3s ease;
-                  "
-                  onmouseover="
-                    this.style.transform = 'translateY(-3px)';
-                    this.style.boxShadow = '0 15px 30px rgba(0,0,0,0.15)';
-                  "
-                  onmouseout="
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.1)';
-                  "
-                >
-                  Explore Plans Ã¢â€ â€™
-                </button>
-                <span style="font-size: 14px; color: #6b7280; font-weight: 500"
-                  >Trusted by 5000+ Students</span
-                >
+              
+              <!-- RIGHT SIDE: IMAGE -->
+              <div>
+                <img src="assets/DDD.png" alt="Smart Counselling Illustration" class="ps-json-img" />
               </div>
             </div>
           </div>
-
-          <!-- IntersectionObserver script -->
+          
           <script>
-            (function () {
-              var csSection = document.getElementById("premium-services");
-              if (!csSection) return;
-              var io = new IntersectionObserver(
-                function (entries) {
-                  entries.forEach(function (entry) {
-                    if (!entry.isIntersecting) return;
-                    // Trigger image slide
-                    csSection
-                      .querySelector(".cs-img-box")
-                      .classList.add("cs-animate");
-                    // Trigger text wrap slide
-                    csSection
-                      .querySelector(".cs-text-wrap")
-                      .classList.add("cs-animate");
-                    // Trigger grid items with staggered delay
-                    csSection
-                      .querySelectorAll(".cs-grid-item")
-                      .forEach(function (el, i) {
-                        setTimeout(
-                          function () {
-                            el.classList.add("cs-animate");
-                          },
-                          400 + i * 200,
-                        );
-                      });
-                    io.disconnect();
+            document.addEventListener('DOMContentLoaded', () => {
+              const container = document.getElementById('ps-json-container');
+              if (!container) return;
+              const cards = container.querySelectorAll('.ps-json-card');
+              const img = container.querySelector('.ps-json-img');
+              const btn = container.querySelector('.ps-json-btn');
+              
+              const observer = new IntersectionObserver((entries) => {
+                if(entries[0].isIntersecting) {
+                  cards.forEach((card, i) => {
+                    card.style.animationDelay = (i * 0.15) + 's';
+                    card.classList.add('is-revealed');
                   });
-                },
-                { threshold: 0.15 },
-              );
-              io.observe(csSection);
-            })();
+                  if(btn) btn.classList.add('is-revealed');
+                  if(img) img.classList.add('is-revealed');
+                  observer.disconnect();
+                }
+              }, { threshold: 0.10 });
+              observer.observe(container);
+            });
           </script>
         </section>
 
