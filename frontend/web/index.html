@@ -1265,7 +1265,7 @@
         </section>
 
         <!-- Premium Services Section (JSON Layout) -->
-        <section class="premium-services-json" id="premium-services" style="background: linear-gradient(to bottom, #ffffff, #fafafa); padding: 60px 20px; position: relative; overflow: hidden;">
+        <section class="premium-services-json" id="premium-services" style="background: #ffffff; padding: 60px 20px; position: relative; overflow: hidden;">
           <!-- Subtle Background Pattern -->
           <div style="position: absolute; top: 10%; left: 5%; width: 200px; height: 200px; background: radial-gradient(circle, #f4b400 10%, transparent 20%); background-size: 20px 20px; opacity: 0.06; z-index: 0;"></div>
           <div style="position: absolute; bottom: 10%; right: 5%; width: 250px; height: 250px; background: radial-gradient(circle, #f4b400 10%, transparent 20%); background-size: 25px 25px; opacity: 0.05; z-index: 0;"></div>
@@ -1303,16 +1303,38 @@
               border-radius: 2px;
             }
             .ps-json-heading {
-              font-size: 40px;
-              font-weight: 800;
-              color: #111;
               margin-bottom: 24px;
-              line-height: 1.2;
             }
-            .ps-json-heading span {
-              background: linear-gradient(135deg, #f4b400, #ffcc33);
+            .ps-json-hl1 {
+              font-size: 36px;
+              font-weight: 700;
+              color: #111;
+              line-height: 1.2;
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            .ps-json-hl1.is-revealed {
+              animation: psTitleFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            }
+            .ps-json-hl2 {
+              font-size: 36px;
+              font-weight: 700;
+              line-height: 1.2;
+              background: linear-gradient(90deg, #f4b400, #ffcc33, #f4b400);
+              background-size: 200% auto;
               -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;
+              color: transparent;
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            .ps-json-hl2.is-revealed {
+              animation: psTitleFadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards 0.2s, psShine 2s ease forwards 0.2s;
+            }
+            @keyframes psTitleFadeUp {
+              to { opacity: 1; transform: translateY(0); }
+            }
+            @keyframes psShine {
+              to { background-position: 200% center; }
             }
             .ps-json-list {
               display: flex;
@@ -1326,9 +1348,8 @@
               padding: 18px;
               border-radius: 18px;
               background: #ffffff;
-              border: 1.5px solid rgba(255, 215, 0, 0.5);
-              box-shadow: 0 6px 18px rgba(0,0,0,0.06), 0 4px 15px rgba(255, 215, 0, 0.12);
-              transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+              border: 1px solid rgba(244, 180, 0, 0.4);
+              transition: all 0.35s ease;
               cursor: pointer;
               opacity: 0;
               transform: translateY(20px);
@@ -1340,12 +1361,13 @@
               to { opacity: 1; transform: translateY(0); }
             }
             .ps-json-card:hover {
-              transform: translateY(-6px);
-              box-shadow: 0 12px 24px rgba(0,0,0,0.08), 0 6px 20px rgba(255, 215, 0, 0.15);
+              transform: translateY(-6px) scale(1.02);
+              box-shadow: 0 12px 24px rgba(0,0,0,0.08);
             }
             .ps-json-icon {
               background: linear-gradient(135deg, #fff3cc, #ffe08a);
               color: #d49500;
+              padding: 12px;
               border-radius: 12px;
               display: flex;
               align-items: center;
@@ -1354,11 +1376,18 @@
               height: 44px;
               min-width: 44px;
               font-size: 18px;
-              transition: transform 0.3s ease;
-              box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 4px 10px rgba(244,180,0,0.15);
+              transition: all 0.35s ease;
+              opacity: 0;
+              transform: scale(0.5);
+            }
+            .ps-json-card.is-revealed .ps-json-icon {
+              animation: psIconScaleIn 0.5s ease-out forwards 0.2s;
+            }
+            @keyframes psIconScaleIn {
+              to { opacity: 1; transform: scale(1); }
             }
             .ps-json-card:hover .ps-json-icon {
-              transform: scale(1.05);
+              transform: scale(1.1) rotate(2deg);
             }
             .ps-json-cbody {
               flex: 1;
@@ -1465,7 +1494,10 @@
               <!-- LEFT SIDE: TEXT -->
               <div class="ps-json-text">
                 <div class="ps-json-label">OUR PREMIUM SERVICES</div>
-                <div class="ps-json-heading">Smart Counselling <br/><span>That Actually Works</span></div>
+                <div class="ps-json-heading">
+                  <div class="ps-json-hl1">Smart Counselling</div>
+                  <div class="ps-json-hl2">That Actually Works</div>
+                </div>
                 
                 <div class="ps-json-list">
                   <div class="ps-json-card">
@@ -1519,14 +1551,16 @@
             document.addEventListener('DOMContentLoaded', () => {
               const container = document.getElementById('ps-json-container');
               if (!container) return;
+              const heads = container.querySelectorAll('.ps-json-hl1, .ps-json-hl2');
               const cards = container.querySelectorAll('.ps-json-card');
               const img = container.querySelector('.ps-json-img');
               const btn = container.querySelector('.ps-json-btn');
               
               const observer = new IntersectionObserver((entries) => {
                 if(entries[0].isIntersecting) {
+                  heads.forEach(h => h.classList.add('is-revealed'));
                   cards.forEach((card, i) => {
-                    card.style.animationDelay = (i * 0.15) + 's';
+                    card.style.animationDelay = ((i + 1) * 0.1) + 's';
                     card.classList.add('is-revealed');
                   });
                   if(btn) btn.classList.add('is-revealed');
@@ -1538,345 +1572,165 @@
             });
           </script>
         </section>
-
-        <!-- Premium Ebook Section -->
-        <section
-          class="premium-ebook-section"
-          style="
-            width: 100%;
-            padding: 80px 20px 40px 20px;
-            display: flex;
-            justify-content: center;
-            background: transparent;
-            font-family: &quot;Poppins&quot;, var(--font-main);
-          "
-        >
+        <!-- New Ebook Section -->
+        <section class="ebook-section-json" id="ebook-section" style="background: #ffffff; padding: 60px 16px;">
           <style>
-            .ebook-container-xl {
-              flex-direction: row;
+            .eb-json-container {
+              max-width: 1100px;
+              margin: 0 auto;
             }
-
-            /* EB Animations */
-            .eb-img-col {
-              opacity: 0;
+            .eb-json-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 30px;
+              align-items: center;
             }
-            .eb-img-col.eb-animate {
-              animation: eb-slide-left 0.8s ease-out forwards;
+            .eb-json-img {
+              width: 100%;
+              border-radius: 16px;
             }
-            .eb-img-inner {
-              animation: eb-float 3.5s ease-in-out infinite;
+            .eb-json-content {
+              max-width: 520px;
             }
-
-            .eb-heading {
-              opacity: 0;
+            .eb-json-label {
+              font-size: 13px;
+              color: #f4b400;
+              font-weight: 600;
+              margin-bottom: 10px;
             }
-            .eb-heading.eb-animate {
-              animation: eb-fade-up 0.6s ease-out forwards;
+            .eb-json-heading-1 {
+              font-size: 30px;
+              font-weight: 700;
+              color: #111;
+              line-height: 1.2;
             }
-
-            .eb-card {
-              opacity: 0;
-              transition:
-                transform 0.2s ease,
-                background 0.2s ease;
+            .eb-json-heading-2 {
+              font-size: 30px;
+              font-weight: 700;
+              color: #f4b400;
+              margin-bottom: 20px;
             }
-            .eb-card.eb-animate {
-              animation: eb-slide-right 0.5s ease-out forwards;
+            .eb-json-features {
+              display: flex;
+              flex-direction: column;
+              gap: 12px;
             }
-            .eb-card:hover {
-              transform: scale(1.02);
-              background: #fff8e1 !important;
+            .eb-json-feature-card {
+              display: flex;
+              gap: 12px;
+              padding: 14px;
+              border-radius: 14px;
+              background: #f9f9f9;
+              border: 1px solid rgba(0,0,0,0.05);
             }
-
-            .eb-btn-wrap {
-              opacity: 0;
+            .eb-json-feature-icon {
+              background: #fff3cc;
+              padding: 10px;
+              border-radius: 10px;
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              color: #d49500;
+              font-size: 16px;
+              height: max-content;
             }
-            .eb-btn-wrap.eb-animate {
-              animation: eb-fade-up 0.5s ease-out 0.6s forwards;
+            .eb-json-feature-title {
+              font-weight: 600;
+              font-size: 14px;
+              color: #111;
+              margin: 0;
             }
-            .eb-pulse-btn {
-              animation: eb-pulse 2s ease-in-out infinite;
+            .eb-json-feature-desc {
+              font-size: 12px;
+              color: #666;
+              margin: 4px 0 0 0;
             }
-
-            @keyframes eb-slide-left {
-              from {
-                opacity: 0;
-                transform: translateX(60px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
+            .eb-json-btn {
+              margin-top: 20px;
+              background: linear-gradient(135deg, #f4b400, #ffcc33);
+              color: #000;
+              padding: 14px 22px;
+              border-radius: 30px;
+              font-weight: 600;
+              border: none;
+              cursor: pointer;
+              display: inline-block;
+              text-decoration: none;
+              box-shadow: 0 8px 20px rgba(244,180,0,0.3);
+              transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
-            @keyframes eb-slide-right {
-              from {
-                opacity: 0;
-                transform: translateX(-60px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
+            .eb-json-btn:hover {
+              transform: scale(1.05);
+              box-shadow: 0 10px 25px rgba(244,180,0,0.4);
             }
-            @keyframes eb-fade-up {
-              from {
-                opacity: 0;
-                transform: translateY(30px);
-              }
-              to {
-                opacity: 1;
-                transform: translateY(0);
-              }
-            }
-            @keyframes eb-float {
-              0%,
-              100% {
-                transform: translateY(0);
-              }
-              50% {
-                transform: translateY(-6px);
-              }
-            }
-            @keyframes eb-pulse {
-              0%,
-              100% {
-                transform: scale(1);
-                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-              }
-              50% {
-                transform: scale(1.05);
-                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
-              }
-            }
-
             @media (max-width: 900px) {
-              .ebook-container-xl {
-                flex-direction: column;
-                text-align: center;
-                padding-left: 10px !important;
-                padding-right: 10px !important;
+              .eb-json-grid {
+                grid-template-columns: 1fr;
               }
-              .ebook-container-xl .ebook-features-col {
-                align-items: center;
-              }
-              .ebook-container-xl img {
-                width: 100% !important;
-                max-width: 420px;
-              }
-              .eb-card {
-                width: 100% !important;
-                max-width: 100% !important;
-                padding: 16px 14px !important;
-                border-radius: 14px !important;
-                margin-bottom: 14px !important;
+              .eb-json-img {
+                grid-row: 1; /* Keep image on top on mobile */
               }
             }
           </style>
-          <div
-            class="ebook-container-xl"
-            style="
-              max-width: 1200px;
-              width: 100%;
-              display: flex;
-              align-items: center;
-              gap: 50px;
-              padding: 50px;
-              border-radius: 24px;
-              background: #ffdf7e;
-            "
-          >
-            <!-- Left: Image -->
-            <div
-              class="eb-img-col"
-              style="
-                flex-shrink: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              "
-            >
-              <div class="eb-img-inner">
-                <img
-                  src="assets/ebook-illustration.png"
-                  alt="NEET eBook Guide"
-                  style="width: 460px; border-radius: 20px"
-                />
-              </div>
-            </div>
 
-            <!-- Right: Content -->
-            <div
-              class="ebook-features-col"
-              style="flex: 1; display: flex; flex-direction: column"
-            >
-              <div class="eb-heading">
-                <div
-                  style="
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: #b45309;
-                    margin-bottom: 10px;
-                    letter-spacing: 1px;
-                    text-transform: uppercase;
-                  "
-                >
-                  Premium eBook Guide
-                </div>
-                <h2
-                  style="
-                    font-size: 34px;
-                    font-weight: 800;
-                    margin-bottom: 25px;
-                    line-height: 1.2;
-                    color: #111;
-                  "
-                >
-                  Everything You Need for NEET Counselling
-                </h2>
+          <div class="eb-json-container">
+            <div class="eb-json-grid">
+              <!-- LEFT IMAGE -->
+              <div>
+                <img src="assets/ebook.png" alt="NEET Counselling Ebook" class="eb-json-img" />
               </div>
-
-              <!-- Feature Rows -->
-              <div style="display: flex; flex-direction: column; gap: 14px">
-                <div
-                  class="eb-card"
-                  style="
-                    display: flex;
-                    gap: 10px;
-                    align-items: center;
-                    padding: 12px 14px;
-                    border-radius: 12px;
-                    background: rgba(255, 255, 255, 0.7);
-                  "
-                >
-                  <span style="font-size: 18px">Ã°Å¸â€œËœ</span
-                  ><span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >Step-by-step counselling roadmap</span
-                  >
+              
+              <!-- RIGHT CONTENT -->
+              <!-- RIGHT CONTENT -->
+              <div class="eb-json-content">
+                <div class="eb-json-label">📖 PREMIUM EBOOK GUIDE</div>
+                <div class="eb-json-heading-1">Everything You Need</div>
+                <div class="eb-json-heading-2">for NEET Counselling</div>
+                
+                <div class="eb-json-features">
+                  <div class="eb-json-feature-card">
+                    <div class="eb-json-feature-icon"><i class="fa-solid fa-map"></i></div>
+                    <div>
+                      <p class="eb-json-feature-title">Step-by-step counselling roadmap</p>
+                      <p class="eb-json-feature-desc">Complete guidance from start to admission.</p>
+                    </div>
+                  </div>
+                  <div class="eb-json-feature-card">
+                    <div class="eb-json-feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <div>
+                      <p class="eb-json-feature-title">Updated cutoff &amp; category-wise trends</p>
+                      <p class="eb-json-feature-desc">Latest data to help you plan better.</p>
+                    </div>
+                  </div>
+                  <div class="eb-json-feature-card">
+                    <div class="eb-json-feature-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <div>
+                      <p class="eb-json-feature-title">Smart college selection strategies</p>
+                      <p class="eb-json-feature-desc">Choose the right college smartly.</p>
+                    </div>
+                  </div>
+                  <div class="eb-json-feature-card">
+                    <div class="eb-json-feature-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div>
+                      <p class="eb-json-feature-title">College insights &amp; seat matrix details</p>
+                      <p class="eb-json-feature-desc">In-depth insights &amp; detailed seat matrix.</p>
+                    </div>
+                  </div>
+                  <div class="eb-json-feature-card">
+                    <div class="eb-json-feature-icon"><i class="fa-solid fa-star"></i></div>
+                    <div>
+                      <p class="eb-json-feature-title">Pro tips to maximize your chances</p>
+                      <p class="eb-json-feature-desc">Expert tips to boost your admission chances.</p>
+                    </div>
+                  </div>
                 </div>
-                <div
-                  class="eb-card"
-                  style="
-                    display: flex;
-                    gap: 10px;
-                    align-items: center;
-                    padding: 12px 14px;
-                    border-radius: 12px;
-                    background: rgba(255, 255, 255, 0.7);
-                  "
-                >
-                  <span style="font-size: 18px">Ã°Å¸â€œÅ </span
-                  ><span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >Updated cutoff &amp; category-wise trends</span
-                  >
-                </div>
-                <div
-                  class="eb-card"
-                  style="
-                    display: flex;
-                    gap: 10px;
-                    align-items: center;
-                    padding: 12px 14px;
-                    border-radius: 12px;
-                    background: rgba(255, 255, 255, 0.7);
-                  "
-                >
-                  <span style="font-size: 18px">Ã°Å¸Å½Â¯</span
-                  ><span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >Smart college selection strategies</span
-                  >
-                </div>
-                <div
-                  class="eb-card"
-                  style="
-                    display: flex;
-                    gap: 10px;
-                    align-items: center;
-                    padding: 12px 14px;
-                    border-radius: 12px;
-                    background: rgba(255, 255, 255, 0.7);
-                  "
-                >
-                  <span style="font-size: 18px">Ã°Å¸ÂÂ«</span
-                  ><span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >College insights &amp; seat matrix details</span
-                  >
-                </div>
-                <div
-                  class="eb-card"
-                  style="
-                    display: flex;
-                    gap: 10px;
-                    align-items: center;
-                    padding: 12px 14px;
-                    border-radius: 12px;
-                    background: rgba(255, 255, 255, 0.7);
-                  "
-                >
-                  <span style="font-size: 18px">Ã°Å¸â€™Â¡</span
-                  ><span
-                    style="color: #1f2937; font-size: 15px; font-weight: 500"
-                    >Pro tips to maximize your chances</span
-                  >
-                </div>
-              </div>
-
-              <!-- CTA Button -->
-              <div class="eb-btn-wrap" style="margin-top: 30px">
-                <button
-                  class="eb-pulse-btn"
-                  data-route="ebooks"
-                  onclick="window.navigate('ebooks')"
-                  style="
-                    background: linear-gradient(135deg, #a855f7, #7e22ce);
-                    color: white;
-                    padding: 14px 30px;
-                    border-radius: 999px;
-                    font-weight: 700;
-                    font-size: 16px;
-                    border: none;
-                    cursor: pointer;
-                    transition: transform 0.2s ease;
-                  "
-                  onmouseover="this.style.transform = 'scale(1.05)'"
-                  onmouseout="this.style.transform = 'scale(1)'"
-                >
-                  Get eBook Ã¢â€ â€™
-                </button>
+                
+                <a href="#" class="eb-json-btn" onclick="window.navigate('ebooks')">📘 Get eBook Now – It’s Free!</a>
               </div>
             </div>
           </div>
-
-          <script>
-            (function () {
-              var eb = document.querySelector(".premium-ebook-section");
-              if (!eb) return;
-              var io = new IntersectionObserver(
-                function (entries) {
-                  entries.forEach(function (entry) {
-                    if (!entry.isIntersecting) return;
-                    eb.querySelector(".eb-img-col").classList.add("eb-animate");
-                    eb.querySelector(".eb-heading").classList.add("eb-animate");
-                    eb.querySelector(".eb-btn-wrap").classList.add(
-                      "eb-animate",
-                    );
-                    eb.querySelectorAll(".eb-card").forEach(function (el, i) {
-                      setTimeout(function () {
-                        el.classList.add("eb-animate");
-                      }, i * 180);
-                    });
-                    io.disconnect();
-                  });
-                },
-                { threshold: 0.15 },
-              );
-              io.observe(eb);
-            })();
-          </script>
         </section>
+
         <!-- Student Shorts Section -->
         <style>
           #shorts-grid {
