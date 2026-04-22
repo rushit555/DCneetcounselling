@@ -396,6 +396,9 @@
   object-fit: contain;
   margin-top: -30px;
   margin-right: -80px;
+  /* Mask the bottom to hide any built-in shadow and blend with background */
+  -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
   /* Add smooth float for the whole image */
   animation: float 4s ease-in-out infinite alternate;
 }
