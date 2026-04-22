@@ -404,29 +404,277 @@
     <main id="app-root" class="page-transition">
       <!-- Home Section -->
       <div id="section-home" class="page-section active">
-        <!-- Premium Hero Section Fix -->
-        <section class="hero" id="hero-main">
-          <!-- Top News Ticker Bar -->
-          <div class="top-news-bar">
-            <div class="news-left-group">
-              <div class="news-badge">
-                <i class="fa-solid fa-sparkles"></i> What's New
+        <!-- Premium Latest News Section -->
+        <section class="premium-news-section">
+          <style>
+            .premium-news-section {
+              padding: 60px 20px;
+              background: #ffffff;
+              width: 100%;
+              overflow: hidden;
+              box-sizing: border-box;
+            }
+            .premium-news-container {
+              max-width: 1200px;
+              margin: 0 auto;
+            }
+            .premium-news-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 30px;
+            }
+            .premium-news-title {
+              font-size: 28px;
+              font-weight: 700;
+              color: #111;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            }
+            .title-icon {
+              background: #fff0d4;
+              color: #F4A300;
+              width: 44px; height: 44px;
+              display: flex; justify-content: center; align-items: center;
+              border-radius: 50%;
+              font-size: 20px;
+            }
+            .premium-news-btn {
+              background: #fff;
+              border: 1px solid #ddd;
+              padding: 10px 20px;
+              border-radius: 30px;
+              font-size: 14px;
+              font-weight: 600;
+              color: #333;
+              cursor: pointer;
+              transition: all 0.3s ease;
+              text-decoration: none;
+            }
+            .premium-news-btn:hover {
+              background: #111;
+              color: #fff;
+              border-color: #111;
+            }
+            .news-track-wrapper {
+              width: 100%;
+              overflow: hidden;
+              position: relative;
+              /* Faded edges for premium feel */
+              -webkit-mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
+              mask-image: linear-gradient(to right, transparent, black 2%, black 98%, transparent);
+            }
+            .news-track {
+              display: flex;
+              gap: 20px;
+              width: max-content;
+            }
+            .premium-news-card {
+              display: flex;
+              flex-direction: column;
+              background: #ffffff;
+              width: 320px;
+              padding: 24px;
+              border-radius: 20px;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+              text-decoration: none;
+              transition: transform 0.3s ease, box-shadow 0.3s ease;
+              border: 1px solid rgba(0,0,0,0.09);
+              flex-shrink: 0;
+            }
+            .premium-news-card:hover {
+              transform: translateY(-5px);
+              box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+            .card-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 20px;
+            }
+            .card-icon {
+              width: 44px;
+              height: 44px;
+              border-radius: 50%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              font-size: 18px;
+            }
+            .icon-blue { background: #e0f2fe; color: #0284c7; }
+            .icon-green { background: #dcfce7; color: #16a34a; }
+            .icon-purple { background: #f3e8ff; color: #9333ea; }
+            .icon-orange { background: #ffedd5; color: #ea580c; }
+            
+            .card-date {
+              font-size: 12px;
+              font-weight: 600;
+              color: #666;
+              background: #f4f4f5;
+              padding: 6px 12px;
+              border-radius: 20px;
+            }
+            .card-title {
+              font-size: 16px;
+              font-weight: 600;
+              color: #1a1a1a;
+              line-height: 1.5;
+              margin-bottom: 16px;
+            }
+            .card-footer {
+              margin-top: auto;
+              font-size: 13px;
+              font-weight: 600;
+              color: #4f46e5;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+            }
+            .card-footer i {
+              font-size: 10px;
+              transition: transform 0.2s;
+            }
+            .premium-news-card:hover .card-footer i {
+              transform: translateX(4px);
+            }
+            
+            @media(max-width: 768px) {
+              .premium-news-section { padding: 20px 12px; }
+              .premium-news-header { margin-bottom: 16px; }
+              .premium-news-title { font-size: 18px; gap: 8px; }
+              .title-icon { width: 32px; height: 32px; font-size: 14px; }
+              .premium-news-btn { padding: 6px 10px; font-size: 12px; }
+              .news-track { gap: 10px; }
+              .premium-news-card { width: 180px; padding: 12px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04); }
+              .card-header { margin-bottom: 12px; }
+              .card-icon { width: 32px; height: 32px; font-size: 14px; }
+              .card-date { font-size: 11px; padding: 4px 8px; }
+              .card-title { font-size: 13px; line-height: 1.3; margin-bottom: 12px; }
+              .card-footer { font-size: 11px; }
+            }
+          </style>
+
+          <div class="premium-news-container">
+            <div class="premium-news-header">
+              <div class="premium-news-title">
+                <div class="title-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                Latest News & Updates
               </div>
-              <div class="news-slider">
-                <div class="news-slider-track">
-                  <span>NTA Announces NEET 2025 Exam Date</span>
-                  <span class="news-dot"></span>
-                  <span>Top Medical Colleges Accepting NEET Scores</span>
-                  <span class="news-dot"></span>
-                  <span>NTA Announces NEET 2025 Exam Date</span>
-                  <span class="news-dot"></span>
-                  <span>Top Medical Colleges Accepting NEET Scores</span>
-                  <span class="news-dot"></span>
-                </div>
+              <a href="#" class="premium-news-btn">View All Updates</a>
+            </div>
+
+            <div class="news-track-wrapper" id="newsTrackWrapper">
+              <div class="news-track" id="newsTrack">
+                <!-- Card 1 -->
+                <a href="#" class="premium-news-card">
+                  <div class="card-header">
+                    <div class="card-icon icon-blue"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="card-date">10 May 2025</div>
+                  </div>
+                  <div class="card-title">NEET 2025 Admit Card Released – Download Now from Portal</div>
+                  <div class="card-footer">Read Full Update <i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+                
+                <!-- Card 2 -->
+                <a href="#" class="premium-news-card">
+                  <div class="card-header">
+                    <div class="card-icon icon-green"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="card-date">09 May 2025</div>
+                  </div>
+                  <div class="card-title">NEET UG 2025 Final Exam Date Confirmed by NTA</div>
+                  <div class="card-footer">Read Full Update <i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+                
+                <!-- Card 3 -->
+                <a href="#" class="premium-news-card">
+                  <div class="card-header">
+                    <div class="card-icon icon-purple"><i class="fa-solid fa-building-columns"></i></div>
+                    <div class="card-date">05 May 2025</div>
+                  </div>
+                  <div class="card-title">Top 10 Medical Colleges Accepting NEET Scores Update</div>
+                  <div class="card-footer">Read Full Update <i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+
+                <!-- Card 4 -->
+                <a href="#" class="premium-news-card">
+                  <div class="card-header">
+                    <div class="card-icon icon-orange"><i class="fa-solid fa-clipboard-list"></i></div>
+                    <div class="card-date">02 May 2025</div>
+                  </div>
+                  <div class="card-title">NTA Releases Official Mock Test Suite for Aspirants</div>
+                  <div class="card-footer">Read Full Update <i class="fa-solid fa-chevron-right"></i></div>
+                </a>
+                 
+                <!-- Card 5 -->
+                <a href="#" class="premium-news-card">
+                  <div class="card-header">
+                    <div class="card-icon icon-blue"><i class="fa-solid fa-book-open"></i></div>
+                    <div class="card-date">28 Apr 2025</div>
+                  </div>
+                  <div class="card-title">Syllabus Revision Guidelines Published by NMC</div>
+                  <div class="card-footer">Read Full Update <i class="fa-solid fa-chevron-right"></i></div>
+                </a>
               </div>
             </div>
-            <div class="news-view-all">View All</div>
           </div>
+
+          <!-- JavaScript for Smooth Infinite Auto-Scroll -->
+          <script>
+            document.addEventListener('DOMContentLoaded', () => {
+              const track = document.getElementById('newsTrack');
+              const wrapper = document.getElementById('newsTrackWrapper');
+              
+              if (!track) return;
+
+              // Clone the cards so we can seamlessly loop them multiples times
+              // to ensure we always have enough content flowing off screen
+              const cards = Array.from(track.children);
+              
+              // We clone the cards 2 times to guarantee we have enough horizontal width 
+              for (let i = 0; i < 2; i++) {
+                cards.forEach(card => {
+                  const clone = card.cloneNode(true);
+                  track.appendChild(clone);
+                });
+              }
+              
+              let currentTranslate = 0;
+              const moveAmount = 0.5; // smooth slow auto-scroll speed
+              let isPaused = false;
+              let animId;
+
+              // Setup hover to pause
+              wrapper.addEventListener('mouseenter', () => { isPaused = true; });
+              wrapper.addEventListener('mouseleave', () => { isPaused = false; });
+
+              function animateScroll() {
+                if(!isPaused) {
+                  currentTranslate -= moveAmount;
+                  
+                  // When we've scrolled exactly one set of cards, reset
+                  // 5 cards + 20px gap each = width of one set
+                  // Actually calculating exact scrollWidth / 3 since we appended 2 sets
+                  const singleSetWidth = track.scrollWidth / 3; 
+                  
+                  if(Math.abs(currentTranslate) >= singleSetWidth) {
+                    currentTranslate = 0;
+                  }
+                  
+                  track.style.transform = `translateX(${currentTranslate}px)`;
+                }
+                animId = requestAnimationFrame(animateScroll);
+              }
+              
+              // Start animation
+              animId = requestAnimationFrame(animateScroll);
+            });
+          </script>
+        </section>
+
+        <!-- Premium Hero Section Fix -->
+        <section class="hero" id="hero-main">
+
 
           <div class="hero-container">
             <!-- LEFT -->
@@ -582,6 +830,8 @@
 
           </div>
         </section>
+
+
 
         <!-- ═══════════════════════════════════════════════════ -->
         <!-- WHY CHOOSE US — Premium Redesign                    -->
