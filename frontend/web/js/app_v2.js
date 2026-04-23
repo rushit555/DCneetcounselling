@@ -677,12 +677,95 @@ window.saveMobileNumber = async function() {
 // Functions doLogout and updateNavForAuth have been natively moved to index.html to guarantee DOM load synchronization
 
 // ─── Login Page Logic ─────────────────────────────────────────────────────────
-// Tab switching is handled by the global window.switchAuthTab() in <head>.
-function setupLoginPage() {
-    var form = document.getElementById('pageAuthForm');
-    if (form) {
-        form.addEventListener('submit', window.handleEmailLogin);
+// Auth Modal Global Handlers
+window.openAuthModal = function() {
+    var m = document.getElementById('authModal');
+    var o = document.getElementById('modalOverlay');
+    if (m) m.style.display = 'block';
+    if (o) o.style.display = 'block';
+    window.switchAuthModalTab('login');
+};
+
+window.closeAuthModal = function() {
+    var m = document.getElementById('authModal');
+    var o = document.getElementById('modalOverlay');
+    if (m) m.style.display = 'none';
+    if (o) o.style.display = 'none';
+};
+
+window.switchAuthModalTab = function(tab) {
+    var isLogin = tab === 'login';
+    var lForm = document.getElementById('authModalLoginForm');
+    var rForm = document.getElementById('authModalRegisterForm');
+    var lTab = document.getElementById('authTabLogin');
+    var rTab = document.getElementById('authTabRegister');
+    var title = document.getElementById('authModalTitle');
+    var sub = document.getElementById('authModalSubtitle');
+
+    if (lForm) lForm.style.display = isLogin ? 'block' : 'none';
+    if (rForm) rForm.style.display = isLogin ? 'none' : 'block';
+    
+    if (lTab) {
+        if (isLogin) lTab.classList.add('active');
+        else lTab.classList.remove('active');
     }
+    if (rTab) {
+        if (!isLogin) rTab.classList.add('active');
+        else rTab.classList.remove('active');
+    }
+
+    if (title) title.innerText = isLogin ? 'Welcome Back 👋' : 'Create Account 🚀';
+    if (sub) sub.innerText = isLogin ? 'Login to continue' : 'Join us today';
+};
+
+window.submitAuthModal = async function(type) {
+    var isSignUp = type === 'register';
+    var email = document.getElementById(isSignUp ? 'authRegEmail' : 'authLoginEmail').value.trim();
+    var pass = document.getElementById(isSignUp ? 'authRegPass' : 'authLoginPass').value;
+    var name = isSignUp ? document.getElementById('authRegName').value.trim() : '';
+    
+    if (!email || !pass || (isSignUp && !name)) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+
+    var btn = document.querySelector('#authModal ' + (isSignUp ? '#authModalRegisterForm' : '#authModalLoginForm') + ' button');
+    var originalText = btn.innerText;
+    btn.innerText = 'Processing...';
+    btn.disabled = true;
+
+    try {
+        var res;
+        if (isSignUp) {
+            res = await window.supabaseClient.auth.signUp({
+                email: email,
+                password: pass,
+                options: { data: { full_name: name }, emailRedirectTo: window.location.origin }
+            });
+        } else {
+            res = await window.supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+        }
+
+        if (res.error) {
+            alert(res.error.message);
+        } else {
+            if (isSignUp && !res.data.session) {
+                alert('Account created! Please check your email for a confirmation link.');
+            } else {
+                window.closeAuthModal();
+                if (window.updateNavForAuth) window.updateNavForAuth(res.data.session);
+            }
+        }
+    } catch (e) {
+        alert('An error occurred: ' + e.message);
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+};
+
+function setupLoginPage() {
+    // We handle submission via onsubmit in HTML for the main login page to avoid double listeners
     
     // Google OAuth button
     var gBtn = document.getElementById('googleLoginBtn');
@@ -699,6 +782,7 @@ function setupLoginPage() {
             var result = await window.supabaseClient.auth.signInWithOAuth({
                 provider: 'google',
                 options: { 
+                    redirectTo: window.location.origin,
                     queryParams: {
                         access_type: 'offline',
                         prompt: 'consent'
@@ -801,7 +885,8 @@ window.handleEmailLogin = async function(e) {
                 options: { 
                     data: { 
                         full_name: full 
-                    } 
+                    },
+                    emailRedirectTo: window.location.origin
                 } 
             });
 
