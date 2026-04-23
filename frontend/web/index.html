@@ -6999,10 +6999,11 @@ window.cartCheckout = async function() {
             <div class="dc-ft-card-title">Stay Updated</div>
             <div class="dc-ft-card-text">Get the latest counselling updates and important alerts.</div>
             <div class="dc-ft-input-group">
-              <input type="email" placeholder="Enter your email" class="dc-ft-input">
-              <button class="dc-ft-card-btn">Subscribe Now &rarr;</button>
+              <input type="email" id="newsletter-email-input" placeholder="Enter your email" class="dc-ft-input">
+              <button id="newsletter-subscribe-btn" class="dc-ft-card-btn">Subscribe Now &rarr;</button>
             </div>
-            <div class="dc-ft-note" style="margin-top: 8px;">No spam. Unsubscribe anytime.</div>
+            <div id="newsletter-status" style="margin-top: 8px; font-size: 13px; font-weight: 500; min-height: 18px;"></div>
+            <div class="dc-ft-note" style="margin-top: 4px;">No spam. Unsubscribe anytime.</div>
           </div>
         </div>
 
@@ -7257,6 +7258,90 @@ window.cartCheckout = async function() {
         }
       })();
     </script>
+
+    <!-- Newsletter Subscription Handler -->
+    <script>
+      (function () {
+        const btn   = document.getElementById('newsletter-subscribe-btn');
+        const input = document.getElementById('newsletter-email-input');
+        const status = document.getElementById('newsletter-status');
+
+        if (!btn || !input || !status) return;
+
+        function setStatus(msg, color) {
+          status.textContent = msg;
+          status.style.color = color || '#64748b';
+        }
+
+        btn.addEventListener('click', async function () {
+          const email = input.value.trim();
+
+          // 1. Empty check
+          if (!email) {
+            setStatus('Please enter your email address.', '#ef4444');
+            input.focus();
+            return;
+          }
+
+          // 2. Format check
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            setStatus('Please enter a valid email address.', '#ef4444');
+            input.focus();
+            return;
+          }
+
+          // 3. Disable button while processing
+          btn.disabled = true;
+          btn.textContent = 'Subscribing...';
+          setStatus('', '');
+
+          try {
+            const client = window.supabaseClient;
+            if (!client) throw new Error('Supabase not initialized');
+
+            // 4. Check duplicate first
+            const { data: existing, error: checkErr } = await client
+              .from('newsletter')
+              .select('id')
+              .eq('email', email)
+              .maybeSingle();
+
+            if (checkErr) throw checkErr;
+
+            if (existing) {
+              setStatus('\u2714 Already subscribed! Thank you.', '#f59e0b');
+              btn.disabled = false;
+              btn.textContent = 'Subscribe Now \u2192';
+              return;
+            }
+
+            // 5. Insert new subscriber
+            const { error: insertErr } = await client
+              .from('newsletter')
+              .insert([{ email }]);
+
+            if (insertErr) throw insertErr;
+
+            // 6. Success
+            input.value = '';
+            setStatus('\u2714 Subscribed successfully! Welcome aboard.', '#16a34a');
+          } catch (err) {
+            console.error('Newsletter error:', err);
+            setStatus('Something went wrong. Please try again.', '#ef4444');
+          } finally {
+            btn.disabled = false;
+            btn.textContent = 'Subscribe Now \u2192';
+          }
+        });
+
+        // Allow Enter key to trigger subscribe
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') btn.click();
+        });
+      })();
+    </script>
+
 </body>
 </html>
 
