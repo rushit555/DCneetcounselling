@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counselling Payment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --primary-color: #FFD700;
+            --primary-hover: #e6c200;
+            --text-main: #000000;
+            --text-muted: #666666;
+            --border-color: #eaeaea;
+            --card-bg: #fafafa;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .payment-container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            padding: 40px 30px;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            font-weight: 500;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .coupon-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .coupon-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .coupon-input:focus {
+            border-color: var(--text-main);
+        }
+
+        .apply-btn {
+            background: var(--text-main);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 0 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .apply-btn:hover {
+            opacity: 0.85;
+        }
+
+        .apply-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .message {
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+        .message.success { color: #16a34a; display: block; }
+        .message.error { color: #ef4444; display: block; }
+
+        .price-summary {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .final-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 700;
+            margin-top: 15px;
+            color: var(--text-main);
+        }
+
+        .pay-btn {
+            width: 100%;
+            background: var(--primary-color);
+            color: var(--text-main);
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 30px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .pay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            background: var(--primary-hover);
+        }
+
+        .pay-btn:active {
+            transform: translateY(0);
+        }
+
+        .pay-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .pay-subtext {
+            font-size: 11px;
+            font-weight: 500;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* Mobile Sticky Button */
+        @media (max-width: 600px) {
+            .payment-container {
+                border-radius: 0;
+                box-shadow: none;
+                padding: 20px 15px 100px;
+            }
+            .pay-btn {
+                position: fixed;
+                bottom: 20px;
+                left: 5%;
+                width: 90%;
+                margin-top: 0;
+                z-index: 100;
+            }
+        }
+    </style>
+    <!-- Dependencies -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <div class="payment-container">
+        <div class="header">
+            <h1>Complete Your Booking</h1>
+            <p>Secure your counselling session in seconds</p>
+        </div>
+
+        <div class="card" id="planDetailsCard">
+            <h3><i class="fas fa-clipboard-list"></i> Plan Details</h3>
+            <div class="detail-row">
+                <span class="detail-label">Plan Name</span>
+                <span class="detail-value" id="d_plan_name">...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Category</span>
+                <span class="detail-value" id="d_category">...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Mode</span>
+                <span class="detail-value">Online / Call / Video</span>
+            </div>
+        </div>
+
+        <div class="card" id="userDetailsCard">
+            <h3><i class="fas fa-user"></i> User Details</h3>
+            <div class="detail-row">
+                <span class="detail-label">Name</span>
+                <span class="detail-value" id="d_name">...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Email</span>
+                <span class="detail-value" id="d_email">...</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Phone</span>
+                <span class="detail-value" id="d_phone">...</span>
+            </div>
+        </div>
+
+        <div class="card" style="background: #ffffff;">
+            <h3><i class="fas fa-tag"></i> Have a Coupon?</h3>
+            <div class="coupon-section">
+                <input type="text" id="couponInput" class="coupon-input" placeholder="Enter coupon code" />
+                <button class="apply-btn" id="applyCouponBtn" onclick="applyCoupon()">Apply</button>
+            </div>
+            <div id="couponMessage" class="message"></div>
+
+            <div class="price-summary">
+                <div class="detail-row">
+                    <span class="detail-label">Original Price</span>
+                    <span class="detail-value">₹<span id="d_original_price">0</span></span>
+                </div>
+                <div class="detail-row" id="discountRow" style="display: none; color: #16a34a;">
+                    <span class="detail-label">Discount Applied</span>
+                    <span class="detail-value">-₹<span id="d_discount">0</span></span>
+                </div>
+                <div class="final-price">
+                    <span>Total Amount</span>
+                    <span>₹<span id="d_final_price">0</span></span>
+                </div>
+            </div>
+        </div>
+
+        <button class="pay-btn" id="payBtn" onclick="proceedToPayment()">
+            <span id="payBtnText">Proceed to Payment</span>
+            <span class="pay-subtext"><i class="fas fa-lock"></i> Secure & encrypted payment</span>
+        </button>
+    </div>
+
+    <!-- Load Supabase strictly after DOM to avoid blocking -->
+    <script src="../js/supabase.js?v=2026.04.19.2"></script>
+    <script src="../js/supabaseClient.js?v=2026.04.19.2"></script>
+    
+    <script>
+        let paymentData = null;
+        let originalPrice = 0;
+        let finalPrice = 0;
+        let appliedCoupon = null;
+        let discountAmount = 0;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const dataStr = sessionStorage.getItem('counselling_payment_data');
+            if (!dataStr) {
+                alert("No booking details found. Please submit the form again.");
+                window.location.href = "/";
+                return;
+            }
+
+            try {
+                paymentData = JSON.parse(dataStr);
+                
+                // Populate UI
+                document.getElementById('d_plan_name').textContent = paymentData.plan_name || "N/A";
+                document.getElementById('d_category').textContent = paymentData.category || "N/A";
+                document.getElementById('d_name').textContent = paymentData.full_name || "N/A";
+                document.getElementById('d_email').textContent = paymentData.email || "N/A";
+                document.getElementById('d_phone').textContent = paymentData.mobile_number || "N/A";
+                
+                originalPrice = parseFloat(paymentData.plan_price) || 0;
+                finalPrice = originalPrice;
+                
+                document.getElementById('d_original_price').textContent = originalPrice;
+                document.getElementById('d_final_price').textContent = finalPrice;
+            } catch (e) {
+                console.error("Data parse error", e);
+                window.location.href = "/";
+            }
+        });
+
+        async function applyCoupon() {
+            const codeInput = document.getElementById('couponInput').value.trim().toUpperCase();
+            const msgEl = document.getElementById('couponMessage');
+            const btn = document.getElementById('applyCouponBtn');
+            
+            if (!codeInput) return;
+
+            if (!window.supabaseClient) {
+                msgEl.textContent = "Service unavailable. Try again.";
+                msgEl.className = "message error";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Applying...";
+            msgEl.className = "message";
+            msgEl.style.display = "none";
+
+            try {
+                const { data: coupon, error } = await window.supabaseClient
+                    .from('coupons')
+                    .select('*')
+                    .eq('code', codeInput)
+                    .eq('is_active', true)
+                    .single();
+
+                if (error || !coupon) {
+                    msgEl.textContent = "Invalid or expired coupon.";
+                    msgEl.className = "message error";
+                    resetDiscount();
+                } else {
+                    appliedCoupon = coupon;
+                    if (coupon.discount_type === 'percentage') {
+                        discountAmount = Math.round(originalPrice * (parseFloat(coupon.discount_value) / 100));
+                    } else {
+                        discountAmount = parseFloat(coupon.discount_value);
+                    }
+                    
+                    finalPrice = originalPrice - discountAmount;
+                    if (finalPrice < 0) finalPrice = 0;
+
+                    document.getElementById('d_discount').textContent = discountAmount;
+                    document.getElementById('discountRow').style.display = 'flex';
+                    document.getElementById('d_final_price').textContent = finalPrice;
+
+                    msgEl.textContent = "Coupon applied successfully!";
+                    msgEl.className = "message success";
+                }
+            } catch (err) {
+                console.error(err);
+                msgEl.textContent = "Error validating coupon.";
+                msgEl.className = "message error";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Apply";
+            }
+        }
+
+        function resetDiscount() {
+            appliedCoupon = null;
+            discountAmount = 0;
+            finalPrice = originalPrice;
+            document.getElementById('discountRow').style.display = 'none';
+            document.getElementById('d_final_price').textContent = finalPrice;
+        }
+
+        async function proceedToPayment() {
+            const btn = document.getElementById('payBtn');
+            const btnText = document.getElementById('payBtnText');
+            btn.disabled = true;
+            btnText.textContent = "Processing...";
+
+            try {
+                // 1. Validate Supabase
+                if (!window.supabaseClient) throw new Error("Database connection not ready.");
+
+                // 2. Prepare DB record
+                const recordData = {
+                    user_id: paymentData.user_id,
+                    full_name: paymentData.full_name,
+                    email: paymentData.email,
+                    mobile: paymentData.mobile_number,
+                    category: paymentData.category,
+                    domicile_state: paymentData.domicile_state,
+                    neet_score: paymentData.neet_score,
+                    rank: paymentData.all_india_rank,
+                    plan_type: paymentData.plan_type,
+                    plan_name: paymentData.plan_name,
+                    plan_price: paymentData.plan_price,
+                    counselling_type: paymentData.counselling_type,
+                    coupon_code: appliedCoupon ? appliedCoupon.code : null,
+                    discounted_price: discountAmount > 0 ? finalPrice : null,
+                    amount_paid: finalPrice,
+                    payment_status: 'initiated'
+                };
+
+                // 3. Insert into DB
+                const { data: insertRes, error } = await window.supabaseClient
+                    .from('counselling_bookings')
+                    .insert(recordData)
+                    .select('id')
+                    .single();
+
+                if (error || !insertRes) {
+                    throw new Error("Failed to create booking record.");
+                }
+
+                // 4. Razorpay
+                const options = {
+                    "key": "rzp_live_SebrDtxMirg67M",
+                    "amount": Math.round(finalPrice * 100),
+                    "currency": "INR",
+                    "name": "DC Neet Counselling",
+                    "description": paymentData.plan_name,
+                    "handler": async function (response) {
+                        try {
+                            // Update booking status
+                            await window.supabaseClient.from('counselling_bookings').update({
+                                payment_status: 'completed',
+                                razorpay_payment_id: response.razorpay_payment_id
+                            }).eq('id', insertRes.id);
+
+                            // Record coupon usage
+                            if (appliedCoupon) {
+                                const commission = finalPrice * 0.20;
+                                await window.supabaseClient.from('coupon_usages').insert({
+                                    coupon_id: appliedCoupon.id,
+                                    user_email: paymentData.email,
+                                    amount_before: originalPrice,
+                                    discount_applied: discountAmount,
+                                    final_amount: finalPrice,
+                                    commission: commission
+                                });
+                            }
+
+                            // Clear session and redirect
+                            sessionStorage.removeItem('counselling_payment_data');
+                            window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}`;
+                        } catch (innerErr) {
+                            console.error("Post-payment DB error:", innerErr);
+                            alert("Payment succeeded but saving failed. Please contact support.");
+                        }
+                    },
+                    "prefill": {
+                        "name": paymentData.full_name,
+                        "email": paymentData.email,
+                        "contact": paymentData.mobile_number
+                    },
+                    "theme": { "color": "#000000" } // Accent color
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.on('payment.failed', async function (response) {
+                    await window.supabaseClient.from('counselling_bookings').update({
+                        payment_status: 'failed'
+                    }).eq('id', insertRes.id);
+                    alert("Payment failed. Please try again.");
+                });
+                rzp.open();
+
+            } catch (err) {
+                console.error(err);
+                alert(err.message || "An unexpected error occurred.");
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = "Proceed to Payment";
+            }
+        }
+    </script>
+</body>
+</html>

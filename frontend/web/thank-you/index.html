@@ -59,6 +59,7 @@
             opacity: 0.9;
         }
     </style>
+    <script type="text/javascript" src="https://api.goaffpro.com/loader.js?shop=hxrrahhsgr"></script>
 </head>
 <body>
 
@@ -93,6 +94,28 @@
                 document.getElementById('summary-amount').textContent = amount;
                 document.getElementById('summary-id').textContent = order_id || "N/A";
                 document.getElementById('order-summary').style.display = 'block';
+
+                // GoAffPro Conversion Tracking
+                let orderNumber = order_id;
+                if (product) {
+                    const prodLower = product.toLowerCase();
+                    if (prodLower.includes('ebook')) {
+                        orderNumber = 'EBK_' + order_id;
+                    } else if (prodLower.includes('counselling') || prodLower.includes('counseling')) {
+                        orderNumber = 'CNS_' + order_id;
+                    }
+                }
+
+                if (orderNumber && !sessionStorage.getItem('gaff_tracked')) {
+                    window.goaffpro_order = {
+                        number: orderNumber,
+                        total: Number(amount)
+                    };
+                    if (typeof window.goaffproTrackConversion !== "undefined") {
+                        window.goaffproTrackConversion(window.goaffpro_order);
+                        sessionStorage.setItem('gaff_tracked', 'true');
+                    }
+                }
             }
         });
     </script>

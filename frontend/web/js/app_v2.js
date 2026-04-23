@@ -1067,123 +1067,27 @@ window.submitCounsellingBooking = async function(form) {
 
         const ctx = window.activeCounsellingContext;
         
-        let finalAmount = ctx.price;
-        let appliedCoupon = null;
-
-        if (obj.coupon_code && obj.coupon_code.trim() !== '') {
-            if (window.supabaseClient) {
-                const { data: coupon, error } = await window.supabaseClient
-                    .from('coupons')
-                    .select('*')
-                    .eq('code', obj.coupon_code.trim().toUpperCase())
-                    .eq('is_active', true)
-                    .single();
-                
-                if (error || !coupon) {
-                    alert("Invalid or inactive coupon code.");
-                    submitBtn.innerText = originalText;
-                    submitBtn.disabled = false;
-                    return;
-                }
-                
-                appliedCoupon = coupon;
-                let discount = 0;
-                if (coupon.discount_type === 'percentage') {
-                    // Safe parsing just in case it is stored as string
-                    discount = Math.round(ctx.price * (parseFloat(coupon.discount_value) / 100));
-                } else {
-                    discount = parseFloat(coupon.discount_value);
-                }
-                finalAmount = ctx.price - discount;
-                if (finalAmount < 0) finalAmount = 0;
-            }
-        }
-        
         const recordData = {
             user_id: window._authUser ? window._authUser.id : null,
             full_name: obj.full_name,
             email: obj.email,
-            mobile: obj.mobile_number,
+            mobile_number: obj.mobile_number,
             category: obj.category,
             domicile_state: obj.domicile_state,
             neet_score: parseInt(obj.neet_score) || null,
-            rank: parseInt(obj.all_india_rank) || null,
+            all_india_rank: parseInt(obj.all_india_rank) || null,
             plan_type: ctx.planId,
             plan_name: ctx.title,
             plan_price: ctx.price,
-            counselling_type: ctx.type,
-            coupon_code: obj.coupon_code ? obj.coupon_code.toUpperCase() : null,
-            discounted_price: finalAmount !== ctx.price ? finalAmount : null,
-            amount_paid: finalAmount,
-            payment_status: 'initiated'
+            counselling_type: ctx.type
         };
 
-        let insertRes = null;
-        if (window.supabaseClient) {
-            const { data, error } = await window.supabaseClient.from('counselling_bookings').insert(recordData).select('id').single();
-            if (error) {
-                console.error("Booking Table Error:", error);
-                alert("Server busy. Please try again in a moment.");
-                submitBtn.innerText = originalText;
-                submitBtn.disabled = false;
-                return;
-            }
-            insertRes = data;
-        }
-
-        // Razorpay Integration
-        const options = {
-            "key": "rzp_live_SebrDtxMirg67M",
-            "amount": Math.round(finalAmount * 100), // paisa
-            "currency": "INR",
-            "name": "DC Neet Counselling",
-            "description": ctx.title,
-            "handler": async function (response) {
-                if (window.supabaseClient && insertRes && insertRes.id) {
-                    await window.supabaseClient.from('counselling_bookings').update({
-                        payment_status: 'completed',
-                        razorpay_payment_id: response.razorpay_payment_id
-                    }).eq('id', insertRes.id);
-
-                    // ─── Record Coupon Usage (Counselling) ───
-                    if (appliedCoupon) {
-                        const commission = finalAmount * 0.20;
-                        await window.supabaseClient.from('coupon_usages').insert({
-                            coupon_id: appliedCoupon.id,
-                            user_email: obj.email,
-                            amount_before: ctx.price,
-                            discount_applied: ctx.price - finalAmount,
-                            final_amount: finalAmount,
-                            commission: commission
-                        });
-                    }
-                }
-                alert("Success! Your booking for " + ctx.title + " has been confirmed. Our team will contact you shortly.");
-                window.closeCounsellingBookingModal();
-            },
-            "prefill": {
-                "name": obj.full_name,
-                "email": obj.email,
-                "contact": obj.mobile_number
-            },
-            "theme": { "color": "#2563eb" }
-        };
-
-        const rzp = new Razorpay(options);
-        rzp.on('payment.failed', async function (response) {
-            if (window.supabaseClient && insertRes && insertRes.id) {
-                await window.supabaseClient.from('counselling_bookings').update({
-                    payment_status: 'failed'
-                }).eq('id', insertRes.id);
-            }
-            alert("Payment failed. Please try again.");
-        });
-        rzp.open();
+        sessionStorage.setItem('counselling_payment_data', JSON.stringify(recordData));
+        window.location.href = '/payment/index.html';
 
     } catch (e) {
         console.error(e);
         alert("Unexpected error. Please try again.");
-    } finally {
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;
     }
