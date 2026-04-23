@@ -1348,21 +1348,22 @@
               padding: 18px;
               border-radius: 18px;
               background: #ffffff;
-              border: 1px solid rgba(244, 180, 0, 0.4);
-              transition: all 0.35s ease;
+              border: 1px solid #facc15;
+              transition: all 0.3s ease-in-out;
               cursor: pointer;
               opacity: 0;
-              transform: translateY(20px);
+              transform: translateY(30px) scale(0.98);
             }
             .ps-json-card.is-revealed {
               animation: psFadeUp 0.6s ease-out forwards;
             }
             @keyframes psFadeUp {
-              to { opacity: 1; transform: translateY(0); }
+              to { opacity: 1; transform: translateY(0) scale(1); }
             }
             .ps-json-card:hover {
-              transform: translateY(-6px) scale(1.02);
-              box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+              transform: translateY(-6px);
+              box-shadow: 0 12px 24px rgba(0,0,0,0.08), 0 0 15px rgba(234, 179, 8, 0.2);
+              border-color: #eab308;
             }
             .ps-json-icon {
               background: linear-gradient(135deg, #fff3cc, #ffe08a);
@@ -1376,18 +1377,19 @@
               height: 44px;
               min-width: 44px;
               font-size: 18px;
-              transition: all 0.35s ease;
+              transition: all 0.25s ease;
               opacity: 0;
-              transform: scale(0.5);
+              transform: scale(0.98);
             }
             .ps-json-card.is-revealed .ps-json-icon {
-              animation: psIconScaleIn 0.5s ease-out forwards 0.2s;
+              animation: psIconScaleIn 0.5s ease-out forwards 0.1s;
             }
             @keyframes psIconScaleIn {
               to { opacity: 1; transform: scale(1); }
             }
             .ps-json-card:hover .ps-json-icon {
-              transform: scale(1.1) rotate(2deg);
+              transform: scale(1.1);
+              filter: brightness(1.1);
             }
             .ps-json-cbody {
               flex: 1;
@@ -1397,29 +1399,20 @@
               font-size: 15px;
               color: #111;
               margin: 0;
+              transition: letter-spacing 0.3s ease;
+            }
+            .ps-json-card:hover .ps-json-ctitle {
+              letter-spacing: 0.3px;
             }
             .ps-json-cdesc {
               font-size: 13px;
               color: #666;
               margin: 4px 0 0 0;
+              opacity: 0.8;
+              transition: opacity 0.3s ease;
             }
-            .ps-json-arrow {
-              width: 30px;
-              height: 30px;
-              min-width: 30px;
-              background: #f5f5f5;
-              border-radius: 50%;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              color: #aaa;
-              font-size: 12px;
-              transition: all 0.3s ease;
-            }
-            .ps-json-card:hover .ps-json-arrow {
-              background: #f4b400;
-              color: #fff;
-              box-shadow: 0 4px 8px rgba(244,180,0,0.3);
+            .ps-json-card:hover .ps-json-cdesc {
+              opacity: 1;
             }
             .ps-json-btn {
               margin-top: 24px;
@@ -1503,37 +1496,33 @@
                   <div class="ps-json-card">
                     <div class="ps-json-icon"><i class="fa-solid fa-user"></i></div>
                     <div class="ps-json-cbody">
-                      <p class="ps-json-ctitle">Personalized One-on-One Expert Counselling</p>
-                      <p class="ps-json-cdesc">Get expert guidance tailored to your goals.</p>
+                      <p class="ps-json-ctitle">Personalized NEET counselling based on rank, category &amp; budget</p>
+                      <p class="ps-json-cdesc">One-to-one mentorship till final admission</p>
                     </div>
-                    <div class="ps-json-arrow"><i class="fa-solid fa-chevron-right"></i></div>
                   </div>
                   
                   <div class="ps-json-card">
                     <div class="ps-json-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
                     <div class="ps-json-cbody">
-                      <p class="ps-json-ctitle">Affordable &amp; Transparent Pricing</p>
-                      <p class="ps-json-cdesc">No hidden charges.</p>
+                      <p class="ps-json-ctitle">Transparent process with honest college recommendations</p>
+                      <p class="ps-json-cdesc">Affordable services with maximum value</p>
                     </div>
-                    <div class="ps-json-arrow"><i class="fa-solid fa-chevron-right"></i></div>
                   </div>
                   
                   <div class="ps-json-card">
                     <div class="ps-json-icon"><i class="fa-solid fa-file-signature"></i></div>
                     <div class="ps-json-cbody">
-                      <p class="ps-json-ctitle">Registration &amp; Form Support</p>
-                      <p class="ps-json-cdesc">Zero errors in documentation.</p>
+                      <p class="ps-json-ctitle">Complete guidance for MBBS, BDS, BAMS &amp; BVSc admissions</p>
+                      <p class="ps-json-cdesc">Step-by-step support in choice filling &amp; documentation</p>
                     </div>
-                    <div class="ps-json-arrow"><i class="fa-solid fa-chevron-right"></i></div>
                   </div>
                   
                   <div class="ps-json-card">
                     <div class="ps-json-icon"><i class="fa-solid fa-chart-line"></i></div>
                     <div class="ps-json-cbody">
-                      <p class="ps-json-ctitle">Cutoff &amp; Seat Matrix Analysis</p>
-                      <p class="ps-json-cdesc">Decisions backed by real-time AI data.</p>
+                      <p class="ps-json-ctitle">Deep knowledge of medical colleges, cutoff trends &amp; seat matrix</p>
+                      <p class="ps-json-cdesc">Accurate cutoff analysis using real data &amp; latest trends</p>
                     </div>
-                    <div class="ps-json-arrow"><i class="fa-solid fa-chevron-right"></i></div>
                   </div>
                 </div>
                 
@@ -1560,14 +1549,14 @@
                 if(entries[0].isIntersecting) {
                   heads.forEach(h => h.classList.add('is-revealed'));
                   cards.forEach((card, i) => {
-                    card.style.animationDelay = ((i + 1) * 0.1) + 's';
+                    card.style.animationDelay = ((i + 1) * 0.12) + 's';
                     card.classList.add('is-revealed');
                   });
                   if(btn) btn.classList.add('is-revealed');
                   if(img) img.classList.add('is-revealed');
                   observer.disconnect();
                 }
-              }, { threshold: 0.10 });
+              }, { threshold: 0.20 });
               observer.observe(container);
             });
           </script>
@@ -1588,6 +1577,13 @@
             .eb-json-img {
               width: 100%;
               border-radius: 16px;
+              opacity: 0;
+              transform: translateX(-80px);
+              transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            .eb-json-img.is-revealed {
+              opacity: 1;
+              transform: translateX(0);
             }
             .eb-json-content {
               max-width: 520px;
@@ -1729,6 +1725,21 @@
               </div>
             </div>
           </div>
+          <script>
+            document.addEventListener('DOMContentLoaded', () => {
+              const ebImg = document.querySelector('.eb-json-img');
+              if (!ebImg) return;
+              
+              const ebObserver = new IntersectionObserver((entries) => {
+                if(entries[0].isIntersecting) {
+                  ebImg.classList.add('is-revealed');
+                  ebObserver.disconnect();
+                }
+              }, { threshold: 0.15 });
+              
+              ebObserver.observe(ebImg);
+            });
+          </script>
         </section>
 
         <!-- Reviews Section -->
@@ -2021,21 +2032,29 @@
           </script>
         </section>
 
-        <section class="cta-section">
-          <div class="container fade-up">
-            <div class="cta-box glass-panel">
-              <h2>Start Your NEET Journey Today</h2>
-              <div class="cta-actions">
-                <button
-                  class="btn btn-primary glow-hover scale-up"
-                  data-route="counselling"
-                  onclick="window.navigate('counselling')"
-                >
-                  Book Counselling
-                </button>
-                <button class="btn btn-ghost scale-up" onclick="window.open('https://wa.me/919694673555', '_blank')">WhatsApp Us</button>
-              </div>
+        <section class="cta-neet-section" style="background: #ffffff; padding: 40px 16px;">
+          <div style="max-width: 1000px; margin: 0 auto; border: 2px solid #f4b400; border-radius: 20px; padding: 40px 20px; text-align: center; position: relative;">
+            
+            <!-- LEFT DECOR -->
+            <div style="position: absolute; left: 20px; top: 20px; color: #f4b400;">✨</div>
+            
+            <!-- RIGHT DECOR -->
+            <div style="position: absolute; right: 20px; top: 20px; color: #f4b400;">✨</div>
+
+            <div style="font-size: 32px; font-weight: 700; line-height: 1.3; margin-bottom: 25px;">
+              <span style="color: #111; display: inline;">Start Your </span><span style="color: #f4b400; display: inline;">NEET</span><span style="color: #111; display: inline;"> Journey Today</span>
             </div>
+
+            <div style="display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;">
+              <button onclick="window.navigate('counselling')" style="background: #f4b400; color: #000; padding: 14px 28px; border-radius: 30px; font-weight: 600; box-shadow: 0 6px 15px rgba(244,180,0,0.3); border: none; cursor: pointer; transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                Book Counselling
+              </button>
+
+              <button onclick="window.open('https://wa.me/919694673555', '_blank')" style="display: flex; align-items: center; gap: 10px; background: #25D366; color: #ffffff; padding: 14px 26px; border-radius: 30px; font-weight: 600; box-shadow: 0 6px 15px rgba(37,211,102,0.35); border: none; cursor: pointer; transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <span>WhatsApp Us</span>
+              </button>
+            </div>
+
           </div>
         </section>
       </div>
@@ -5631,71 +5650,7 @@
       </button>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container footer-content">
 
-        <div class="footer-links">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="https://nta.ac.in/" target="_blank" rel="noopener">NTA Official Website</a></li>
-            <li><a href="https://neet.nta.nic.in/" target="_blank" rel="noopener">NTA NEET Website</a></li>
-            <li><a href="https://mcc.nic.in/" target="_blank" rel="noopener">MCC Counselling for MBBS and BDS</a></li>
-            <li><a href="https://aaccc.gov.in/" target="_blank" rel="noopener">AYUSH Counselling for BAMS, BHMS, BUMS</a></li>
-            <li><a href="#" data-route="terms">Terms and Conditions</a></li>
-            <li><a href="#" data-route="privacy-policy">Privacy Policy</a></li>
-            <li><a href="#" data-route="refund-policy">Refund Policy</a></li>
-          </ul>
-        </div>
-        <div class="footer-contact" style="justify-self: center; padding: 20px 0;">
-          <h4 style="font-size: 18px; font-weight: bold; margin-bottom: 12px; color: #111;">Contact Us:</h4>
-          <div style="text-align: left; font-size: 14px; color: #333;">
-            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
-              <i class="fas fa-envelope" style="font-size: 16px; width: 20px; text-align: center; color: #111;"></i>
-              <span>support@dcneetcounselling.com</span>
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
-              <i class="fas fa-phone" style="font-size: 16px; width: 20px; text-align: center; color: #111;"></i>
-              <span>9694673555</span>
-            </div>
-            <a href="https://wa.me/919694673555" target="_blank" rel="noopener" style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px; text-decoration: none; color: inherit;">
-              <i class="fab fa-whatsapp" style="font-size: 16px; width: 20px; text-align: center; color: #111;"></i>
-              <span>9694673555</span>
-            </a>
-            <div style="display: flex; gap: 10px; align-items: flex-start;">
-              <i class="fas fa-map-marker-alt" style="font-size: 16px; width: 20px; text-align: center; color: #111; margin-top: 2px;"></i>
-              <span style="line-height: 1.4; max-width: 250px;">H-301 KESHAVPURA SECTOR-7, KOTA, RAJASTHAN 324009</span>
-            </div>
-          </div>
-        </div>
-        <div class="footer-social" style="justify-self: center; padding: 20px 0;">
-          <h4 style="font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #111;">Follow Us</h4>
-          <div style="display: flex; gap: 14px; align-items: center;">
-            <a href="#" style="color: #111; font-size: 24px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#111'">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="#" style="color: #111; font-size: 24px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#111'">
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a href="https://www.instagram.com/dcneetcounselling?igsh=NThhZXFhbHQzODJ5" target="_blank" rel="noopener" style="color: #111; font-size: 24px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#111'">
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://youtube.com/@drchetan_sen?si=iHunHyVvHKmxwuyW" target="_blank" rel="noopener" style="color: #111; font-size: 24px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#111'">
-              <i class="fab fa-youtube"></i>
-            </a>
-            <a href="https://wa.me/919694673555" target="_blank" rel="noopener" style="color: #111; font-size: 24px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#111'">
-              <i class="fab fa-whatsapp"></i>
-            </a>
-            <a href="https://t.me/DCNEETCOUNSELLING2025" target="_blank" rel="noopener" style="color: #111; font-size: 24px; text-decoration: none; transition: transform 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#111'">
-              <i class="fab fa-telegram-plane"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 DC NEET Counselling. All rights reserved.</p>
-      </div>
-    </footer>
 
     <!-- Scripts -->
     <script src="js/supabase.js?v=2026.04.19.2"></script>
@@ -6745,6 +6700,301 @@ window.cartCheckout = async function() {
 };
 
 </script>
+    <!-- Footer Section -->
+    <footer style="background: #f4b400; padding: 60px 20px 40px;">
+      <style>
+        .dc-footer {
+          max-width: 1200px;
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 30px;
+          font-family: inherit;
+        }
+        .dc-ft-col {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+        }
+        .dc-ft-title {
+          font-size: 18px;
+          font-weight: 700;
+          color: #111;
+          margin-bottom: 5px;
+        }
+        .dc-ft-text {
+          font-size: 14px;
+          color: #111;
+          line-height: 1.5;
+        }
+        /* Brand list */
+        .dc-ft-brand-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 13px;
+          font-weight: 600;
+          color: #111;
+        }
+        .dc-ft-brand-icon {
+          width: 24px;
+          height: 24px;
+          background: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #f4b400;
+          font-size: 10px;
+        }
+        /* Quick Links */
+        .dc-ft-link {
+          font-size: 14px;
+          color: #111;
+          text-decoration: none;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          transition: opacity 0.2s;
+        }
+        .dc-ft-link:hover {
+          opacity: 0.7;
+        }
+        .dc-ft-link i {
+          font-size: 10px;
+        }
+        /* Contact Items */
+        .dc-ft-contact {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 14px;
+          color: #111;
+          line-height: 1.4;
+        }
+        .dc-ft-contact-icon {
+          width: 28px;
+          height: 28px;
+          background: #ffe9a3;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #111;
+          font-size: 12px;
+          flex-shrink: 0;
+        }
+        /* Help Card */
+        .dc-ft-card {
+          background: #ffe9a3;
+          border-radius: 16px;
+          padding: 20px;
+          margin-top: 15px;
+        }
+        .dc-ft-card-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: #111;
+          margin-bottom: 5px;
+        }
+        .dc-ft-card-text {
+          font-size: 13px;
+          color: #111;
+          margin-bottom: 12px;
+        }
+        .dc-ft-card-btn {
+          background: #111;
+          color: #fff;
+          border: none;
+          border-radius: 30px;
+          padding: 8px 16px;
+          font-size: 12px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+        /* Socials */
+        .dc-ft-socials {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .dc-ft-social {
+          width: 32px;
+          height: 32px;
+          background: #fff;
+          color: #111;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          text-decoration: none;
+          transition: transform 0.2s;
+        }
+        .dc-ft-social:hover {
+          transform: scale(1.1);
+        }
+        /* Newsletter */
+        .dc-ft-input-group {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .dc-ft-input {
+          padding: 10px 12px;
+          border-radius: 8px;
+          border: none;
+          font-size: 13px;
+          width: 100%;
+          outline: none;
+        }
+        .dc-ft-note {
+          font-size: 11px;
+          color: #555;
+          text-align: center;
+        }
+        /* Bottom bar */
+        .dc-ft-bottom {
+          border-top: 1px solid rgba(0,0,0,0.1);
+          margin-top: 40px;
+          padding-top: 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 13px;
+          color: #111;
+          flex-wrap: wrap;
+          gap: 15px;
+        }
+        .dc-ft-payments {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .dc-ft-payflex {
+          display: flex;
+          gap: 6px;
+        }
+        .dc-ft-badge {
+          background: #fff;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 11px;
+          font-weight: 600;
+        }
+        
+        @media (max-width: 900px) {
+          .dc-footer {
+            grid-template-columns: 1fr;
+            padding: 40px 20px;
+            text-align: left;
+          }
+          .dc-ft-col {
+            align-items: flex-start;
+          }
+          .dc-ft-contact, .dc-ft-brand-item {
+            justify-content: flex-start;
+            text-align: left;
+          }
+          .dc-ft-socials {
+            justify-content: flex-start;
+          }
+          .dc-ft-bottom {
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+          }
+        }
+      </style>
+
+      <div class="dc-footer">
+        
+        <!-- COL 1: Brand -->
+        <div class="dc-ft-col">
+          <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; color: #111; justify-content: inherit;">
+            <img src="assets/logo.jpg" alt="Logo" style="height: 40px; border-radius: 50%;"> 
+            DC NEET COUNSELLING
+          </div>
+          <div class="dc-ft-text">Your trusted partner for NEET counselling. Expert guidance, better choices, brighter future.</div>
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+            <div class="dc-ft-brand-item"><div class="dc-ft-brand-icon"><i class="fa-solid fa-check"></i></div>Trusted Guidance</div>
+            <div class="dc-ft-brand-item"><div class="dc-ft-brand-icon"><i class="fa-solid fa-user-tie"></i></div>Expert Counsellors</div>
+            <div class="dc-ft-brand-item"><div class="dc-ft-brand-icon"><i class="fa-solid fa-shield-halved"></i></div>100% Secure</div>
+          </div>
+        </div>
+
+        <!-- COL 2: Quick Links -->
+        <div class="dc-ft-col">
+          <div class="dc-ft-title">Quick Links</div>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> NTA Official Website</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> NTA NEET Website</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> MCC Counselling (MBBS & BDS)</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> AYUSH Counselling (BAMS, BHMS, BUMS)</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Terms and Conditions</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Privacy Policy</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Refund Policy</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> FAQs</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Blogs</a>
+          <a href="#" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Sitemap</a>
+        </div>
+
+        <!-- COL 3: Contact & Help -->
+        <div class="dc-ft-col">
+          <div class="dc-ft-title">Contact Us</div>
+          <div class="dc-ft-contact">
+            <div class="dc-ft-contact-icon"><i class="fa-solid fa-envelope"></i></div>
+            <div>support@dcneetcounselling.com</div>
+          </div>
+          <div class="dc-ft-contact">
+            <div class="dc-ft-contact-icon"><i class="fa-solid fa-phone"></i></div>
+            <div>9694673555</div>
+          </div>
+          <div class="dc-ft-contact">
+            <div class="dc-ft-contact-icon"><i class="fa-brands fa-whatsapp"></i></div>
+            <div>9694673555</div>
+          </div>
+          <div class="dc-ft-contact">
+            <div class="dc-ft-contact-icon"><i class="fa-solid fa-location-dot"></i></div>
+            <div>H-301 Keshavpura Sector-7,<br>Kota, Rajasthan 324009</div>
+          </div>
+
+          <div class="dc-ft-card">
+            <div class="dc-ft-card-title">Need Help?</div>
+            <div class="dc-ft-card-text">Our expert counsellors are here to guide you.</div>
+            <button class="dc-ft-card-btn" onclick="window.navigate('counselling')">Talk to Counsellor &rarr;</button>
+          </div>
+        </div>
+
+        <!-- COL 4: Follow & Newsletter -->
+        <div class="dc-ft-col">
+          <div class="dc-ft-title">Follow Us</div>
+          <div class="dc-ft-socials">
+            <a href="#" class="dc-ft-social"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" class="dc-ft-social"><i class="fa-brands fa-twitter"></i></a>
+            <a href="#" class="dc-ft-social"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="dc-ft-social"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" class="dc-ft-social"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="#" class="dc-ft-social"><i class="fa-brands fa-telegram"></i></a>
+          </div>
+
+          <div class="dc-ft-card" style="margin-top: 25px;">
+            <div class="dc-ft-card-title">Stay Updated</div>
+            <div class="dc-ft-card-text">Get the latest counselling updates and important alerts.</div>
+            <div class="dc-ft-input-group">
+              <input type="email" placeholder="Enter your email" class="dc-ft-input">
+              <button class="dc-ft-card-btn">Subscribe Now &rarr;</button>
+            </div>
+            <div class="dc-ft-note" style="margin-top: 8px;">No spam. Unsubscribe anytime.</div>
+          </div>
+        </div>
+
+        <!-- BOTTOM BAR -->
+        <div class="dc-ft-bottom" style="grid-column: 1 / -1; justify-content: center; text-align: center;">
+          <div>&copy; 2026 DC NEET Counselling. All rights reserved.</div>
+        </div>
+
+      </div>
+    </footer>
     <div id="cartToast"></div>
     <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
     <!-- Global Scroll Fade-Up Animation                         -->
