@@ -68,6 +68,26 @@ function validatePasswordStrength(pass) {
     return null; // All passwords pass
 }
 
+// ─── Nav Active State Helper ─────────────────────────────────────────────────
+window.setNavActive = function(route) {
+    // Desktop pill nav
+    document.querySelectorAll('.nav-pill-link').forEach(function(link) {
+        if (link.getAttribute('data-route') === route) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+    // Mobile drawer links
+    document.querySelectorAll('.md-link[data-route]').forEach(function(link) {
+        if (link.getAttribute('data-route') === route) {
+            link.classList.add('highlight');
+        } else {
+            link.classList.remove('highlight');
+        }
+    });
+};
+
 // ─── Core Router (Upgraded) ──────────────────────────────────────────────────
 // Enhance the stub navigation with animations and dynamic features
 var originalStub = window.navigate;
@@ -110,12 +130,9 @@ window.navigate = function(route) {
     if (originalStub && originalStub !== window.navigate) {
         originalStub(route);
     }
-    
-    // Highlight active nav link (redundant but safe)
-    document.querySelectorAll('.nav-links a').forEach(function(link) {
-        if (link.getAttribute('data-route') === route) link.classList.add('active');
-        else link.classList.remove('active');
-    });
+
+    // Update active nav highlight for desktop + mobile
+    window.setNavActive(route);
 
     // Re-run animations after section switch
     setTimeout(function() {

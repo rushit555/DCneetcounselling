@@ -777,22 +777,65 @@
                   <i class="fa-solid fa-graduation-cap"></i>
                   <select>
                     <option value="" disabled selected>Select Course</option>
-                    <option value="mbbs">MBBS</option>
-                    <option value="bds">BDS</option>
-                    <option value="ayush">AYUSH</option>
-                    <option value="bvsc">BVSc</option>
+                    <optgroup label="Medical">
+                      <option value="mbbs">MBBS</option>
+                      <option value="bds">BDS</option>
+                    </optgroup>
+                    <optgroup label="AYUSH">
+                      <option value="bams">BAMS (Ayurveda)</option>
+                      <option value="bhms">BHMS (Homeopathy)</option>
+                      <option value="bsms">BSMS (Siddha)</option>
+                      <option value="bums">BUMS (Unani)</option>
+                    </optgroup>
+                    <optgroup label="Veterinary">
+                      <option value="bvsc">BVSc &amp; AH</option>
+                    </optgroup>
                   </select>
                 </div>
                 <div class="news-search-field">
                   <i class="fa-solid fa-location-dot"></i>
                   <select>
                     <option value="" disabled selected>Select State</option>
-                    <option value="maharashtra">Maharashtra</option>
-                    <option value="karnataka">Karnataka</option>
-                    <option value="tamil-nadu">Tamil Nadu</option>
-                    <option value="delhi">Delhi</option>
-                    <option value="uttar-pradesh">Uttar Pradesh</option>
-                    <option value="rajasthan">Rajasthan</option>
+                    <optgroup label="States">
+                      <option value="andhra-pradesh">Andhra Pradesh</option>
+                      <option value="arunachal-pradesh">Arunachal Pradesh</option>
+                      <option value="assam">Assam</option>
+                      <option value="bihar">Bihar</option>
+                      <option value="chhattisgarh">Chhattisgarh</option>
+                      <option value="goa">Goa</option>
+                      <option value="gujarat">Gujarat</option>
+                      <option value="haryana">Haryana</option>
+                      <option value="himachal-pradesh">Himachal Pradesh</option>
+                      <option value="jharkhand">Jharkhand</option>
+                      <option value="karnataka">Karnataka</option>
+                      <option value="kerala">Kerala</option>
+                      <option value="madhya-pradesh">Madhya Pradesh</option>
+                      <option value="maharashtra">Maharashtra</option>
+                      <option value="manipur">Manipur</option>
+                      <option value="meghalaya">Meghalaya</option>
+                      <option value="mizoram">Mizoram</option>
+                      <option value="nagaland">Nagaland</option>
+                      <option value="odisha">Odisha</option>
+                      <option value="punjab">Punjab</option>
+                      <option value="rajasthan">Rajasthan</option>
+                      <option value="sikkim">Sikkim</option>
+                      <option value="tamil-nadu">Tamil Nadu</option>
+                      <option value="telangana">Telangana</option>
+                      <option value="tripura">Tripura</option>
+                      <option value="uttar-pradesh">Uttar Pradesh</option>
+                      <option value="uttarakhand">Uttarakhand</option>
+                      <option value="west-bengal">West Bengal</option>
+                    </optgroup>
+                    <optgroup label="Union Territories">
+                      <option value="andaman-nicobar">Andaman &amp; Nicobar Islands</option>
+                      <option value="chandigarh">Chandigarh</option>
+                      <option value="dadra-nagar-haveli">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+                      <option value="delhi">Delhi (NCT)</option>
+                      <option value="jammu-kashmir">Jammu &amp; Kashmir</option>
+                      <option value="ladakh">Ladakh</option>
+                      <option value="lakshadweep">Lakshadweep</option>
+                      <option value="puducherry">Puducherry</option>
+                    </optgroup>
                   </select>
                 </div>
                 <button class="news-search-submit">Search Now &rarr;</button>

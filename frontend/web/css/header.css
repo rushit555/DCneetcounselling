@@ -65,7 +65,8 @@
     padding: 10px 20px;
     border-radius: 999px;
     display: block;
-    transition: all 0.25s ease-in-out;
+    transition: background 0.22s ease, color 0.22s ease, font-weight 0.1s ease;
+    will-change: background, color;
 }
 
 .nav-pill-link:hover {
@@ -77,6 +78,14 @@
     background: #FFD700;
     color: #000000;
     font-weight: 600;
+}
+
+/* Mobile drawer active link */
+.md-link.highlight {
+    background: #FFD700;
+    color: #000;
+    font-weight: 700;
+    transition: background 0.22s ease, color 0.22s ease;
 }
 
 /* Override overflow to prevent clipping of the dropdown */
