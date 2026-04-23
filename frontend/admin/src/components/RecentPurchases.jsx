@@ -14,6 +14,7 @@ export default function RecentPurchases() {
       .from('ebook_users')
       .select('*')
       .order('created_at', { ascending: false })
+      .order('id', { ascending: false })
       .limit(5);
 
     if (!error) {
