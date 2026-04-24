@@ -306,6 +306,22 @@
     <script src="../js/supabaseClient.js?v=2026.04.24.1"></script>
     
     <script>
+        function trackGoAffPro(order) {
+            if (typeof goaffpro === 'undefined') {
+                console.log('GoAffPro not loaded');
+                return;
+            }
+
+            window.goaffproOrder = {
+                id: order.id,
+                total: order.amount,
+                currency: 'INR',
+                coupon: order.coupon || ''
+            };
+
+            console.log('GoAffPro Order Sent:', window.goaffproOrder);
+        }
+
         let paymentData = null;
         let originalPrice = 0;
         let finalPrice = 0;
@@ -504,9 +520,17 @@
                                 }
                             }
 
-                            // Clear session and redirect
+                            trackGoAffPro({
+                                id: response.razorpay_payment_id,
+                                amount: finalPrice,
+                                coupon: appliedCoupon ? appliedCoupon.code : ''
+                            });
+
+                            // Clear session and redirect after tracking
                             sessionStorage.removeItem('counselling_payment_data');
-                            window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}`;
+                            setTimeout(() => {
+                                window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}`;
+                            }, 2000);
                         } catch (innerErr) {
                             console.error("Post-payment DB error:", innerErr);
                             alert("Payment succeeded but saving failed. Please contact support.");
@@ -538,8 +562,6 @@
             }
         }
     </script>
-<script async src='https://static.goaffpro.com/loader.js' data-domain='dcneetcounselling.goaffpro.com'></script>
-<script async src='https://static.goaffpro.com/loader.js' data-domain='dcneetcounselling.goaffpro.com'></script>
-<script async src='https://static.goaffpro.com/loader.js' data-domain='dcneetcounselling.goaffpro.com'></script>
+<script async src="https://static.goaffpro.com/loader.js"></script>
 </body>
 </html>
