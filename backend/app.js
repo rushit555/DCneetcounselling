@@ -67,12 +67,15 @@ app.post('/api/validate-coupon', async (req, res) => {
         }
 
         const uppercaseCode = coupon.trim().toUpperCase();
+        console.log("Input coupon:", uppercaseCode);
 
         const { data: couponData, error } = await supabase
             .from('coupons')
             .select('*')
-            .eq('code', uppercaseCode)
+            .ilike('code', uppercaseCode)
             .single();
+
+        console.log("Query result:", couponData);
 
         if (error || !couponData || !couponData.is_active) {
             return res.json({ valid: false, message: "Invalid Coupon" });

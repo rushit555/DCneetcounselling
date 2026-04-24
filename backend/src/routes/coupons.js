@@ -21,7 +21,7 @@ router.post('/apply-coupon', async (req, res) => {
         const { data: coupon, error } = await supabase
             .from('coupons')
             .select('*')
-            .eq('code', uppercaseCode)
+            .ilike('code', uppercaseCode)
             .single();
 
         if (error || !coupon || !coupon.is_active) {
@@ -86,7 +86,7 @@ router.post('/update-coupon-usage', async (req, res) => {
         const { data: coupon, error } = await supabase
             .from('coupons')
             .select('*')
-            .eq('code', uppercaseCode)
+            .ilike('code', uppercaseCode)
             .single();
 
         if (error || !coupon) {
@@ -96,7 +96,7 @@ router.post('/update-coupon-usage', async (req, res) => {
         const { error: updateError } = await supabase
             .from('coupons')
             .update({ used_count: coupon.used_count + 1 })
-            .eq('code', uppercaseCode);
+            .ilike('code', uppercaseCode);
 
         if (updateError) throw updateError;
 
