@@ -306,6 +306,18 @@
     <script src="../js/supabaseClient.js?v=2026.04.19.2"></script>
     
     <script>
+        function trackGoAffProOrder(order) {
+            setTimeout(() => {
+                window.goaffproOrder = {
+                    id: order.id,
+                    total: order.amount,
+                    currency: 'INR',
+                    coupon: order.coupon || ''
+                };
+                console.log('GoAffPro order sent:', window.goaffproOrder);
+            }, 1500);
+        }
+
         let paymentData = null;
         let originalPrice = 0;
         let finalPrice = 0;
@@ -468,9 +480,17 @@
                                 }
                             }
 
-                            // Clear session and redirect
+                            trackGoAffProOrder({
+                                id: response.razorpay_payment_id,
+                                amount: finalPrice,
+                                coupon: appliedCoupon ? appliedCoupon.code : ''
+                            });
+
+                            // Clear session and redirect after tracking
                             sessionStorage.removeItem('counselling_payment_data');
-                            window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}`;
+                            setTimeout(() => {
+                                window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}`;
+                            }, 2000);
                         } catch (innerErr) {
                             console.error("Post-payment DB error:", innerErr);
                             alert("Payment succeeded but saving failed. Please contact support.");

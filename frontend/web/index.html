@@ -6449,6 +6449,13 @@ window.submitEbookPurchase = async function() {
               } catch (err) {
                   console.error('Unexpected error in payment handler:', err);
               } finally {
+                  if (window.trackGoAffProOrder) {
+                      window.trackGoAffProOrder({
+                          id: response.razorpay_payment_id,
+                          amount: ctx.price,
+                          coupon: ''
+                      });
+                  }
                   // ALWAYS redirect to thank you page
                   closeEbookPurchaseModal();
                   window.navigate('thank-you');
