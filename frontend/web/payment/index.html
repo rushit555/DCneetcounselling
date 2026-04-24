@@ -507,7 +507,8 @@
 
                             // Server-side GoAffPro tracking
                             try {
-                                await fetch(`${BACKEND_URL}/track-order`, {
+                                console.log('Calling API URL:', 'https://api.dcneetcounselling.com/api/track-order');
+                                await fetch('https://api.dcneetcounselling.com/api/track-order', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify({
