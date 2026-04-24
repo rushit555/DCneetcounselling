@@ -6257,7 +6257,7 @@ window.closeEbookPurchaseModal = function() {
 
    const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
        ? 'http://localhost:3000/api' 
-       : 'https://dcneetcounselling.com/api';
+       : 'https://api.dcneetcounselling.com/api';
 
    try {
        const response = await fetch(`${backendUrl}/validate-coupon`, {
@@ -6265,6 +6265,10 @@ window.closeEbookPurchaseModal = function() {
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({ coupon: code })
        });
+       
+       if (!response.ok) {
+           throw new Error(`API error: ${response.status} ${response.statusText}`);
+       }
        
        const data = await response.json();
        console.log("Coupon Response:", data);
