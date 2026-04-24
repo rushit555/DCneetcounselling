@@ -59,66 +59,30 @@ const supabase = createClient(
 );
 
 app.post('/api/validate-coupon', async (req, res) => {
-    try {
-        const { coupon } = req.body;
-        
-        if (!coupon) {
-            return res.status(400).json({ valid: false, message: "Coupon code is required" });
-        }
+  try {
+    const coupon = req.body.coupon?.trim().toUpperCase();
 
-        const uppercaseCode = coupon.trim().toUpperCase();
-        console.log("Input coupon:", uppercaseCode);
+    const { data } = await supabase
+      .from('coupons')
+      .select('*')
+      .ilike('code', coupon);
 
-        // Debug: Log all coupons to ensure connection is valid
-        const { data: allCoupons, error: allErr } = await supabase.from("coupons").select("*");
-        console.log("ALL COUPONS FROM DB:", allCoupons);
-        if (allErr) console.error("Error fetching all coupons:", allErr);
-
-        const { data, error } = await supabase
-            .from('coupons')
-            .select('*')
-            .ilike('code', uppercaseCode);
-
-        console.log("Query error:", error);
-        console.log("Query result:", data);
-
-        if (error || !data || data.length === 0) {
-            return res.json({ valid: false, message: "Invalid Coupon" });
-        }
-
-        const couponData = data[0];
-
-        if (!couponData.is_active) {
-            return res.json({ valid: false, message: "Invalid Coupon" });
-        }
-
-        // Check expiry date
-        if (couponData.expiry_date) {
-            const expiry = new Date(couponData.expiry_date);
-            const now = new Date();
-            if (now > expiry) {
-                return res.json({ valid: false, message: "Invalid Coupon" });
-            }
-        }
-
-        // Check usage limit
-        if (couponData.usage_limit !== null && couponData.used_count >= couponData.usage_limit) {
-            return res.json({ valid: false, message: "Invalid Coupon" });
-        }
-
-        return res.json({
-            valid: true,
-            discount_type: couponData.discount_type,
-            discount_value: couponData.discount_value,
-            affiliate_id: couponData.affiliate_id,
-            min_order_amount: couponData.min_order_amount,
-            message: "Coupon is valid"
-        });
-
-    } catch (error) {
-        console.error("Validate Coupon Error:", error);
-        res.status(500).json({ valid: false, message: "Internal server error" });
+    if (data && data.length > 0) {
+      const c = data[0];
+      return res.json({
+        valid: true,
+        discount_type: c.discount_type,
+        discount_value: c.discount_value,
+        affiliate_id: c.affiliate_id,
+        min_order_amount: c.min_order_amount // Retained to avoid frontend breaks
+      });
     }
+
+    return res.json({ valid: false, message: 'Invalid Coupon' });
+  } catch (err) {
+    console.error("Validate Coupon Error:", err);
+    return res.status(500).json({ valid: false, message: "Internal server error" });
+  }
 });
 
 // Start Server
