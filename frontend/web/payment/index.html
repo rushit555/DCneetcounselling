@@ -361,59 +361,49 @@
             msgEl.style.display = "none";
 
             try {
-                if (!window.supabaseClient) throw new Error("Database connection not ready.");
                 const uppercaseCode = codeInput.toUpperCase();
                 
-                const { data: coupon, error } = await window.supabaseClient
-                    .from('coupons')
-                    .select('*')
-                    .eq('code', uppercaseCode)
-                    .single();
+                const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ coupon: uppercaseCode })
+                });
+                
+                const data = await response.json();
+                console.log("Coupon Response:", data);
 
-                if (error || !coupon || !coupon.is_active) {
-                    msgEl.textContent = "Invalid or expired coupon.";
+                if (!data.valid) {
+                    msgEl.textContent = "Invalid Coupon";
                     msgEl.className = "message error";
                     resetDiscount();
-                    return;
-                }
-
-                // Check expiry date
-                if (coupon.expiry_date) {
-                    const expiry = new Date(coupon.expiry_date);
-                    if (new Date() > expiry) {
-                        msgEl.textContent = "Invalid or expired coupon.";
-                        msgEl.className = "message error";
-                        resetDiscount();
-                        return;
-                    }
-                }
-
-                // Check usage limit
-                if (coupon.usage_limit !== null && coupon.used_count >= coupon.usage_limit) {
-                    msgEl.textContent = "Coupon limit reached.";
-                    msgEl.className = "message error";
-                    resetDiscount();
+                    msgEl.style.display = "block";
                     return;
                 }
 
                 // Check minimum order amount
-                if (coupon.min_order_amount !== null && originalPrice < coupon.min_order_amount) {
-                    msgEl.textContent = `Minimum order amount of ₹${coupon.min_order_amount} not met`;
+                if (data.min_order_amount !== null && originalPrice < data.min_order_amount) {
+                    msgEl.textContent = `Minimum order amount of ₹${data.min_order_amount} not met`;
                     msgEl.className = "message error";
                     resetDiscount();
+                    msgEl.style.display = "block";
                     return;
                 }
 
                 // Calculate discount
                 let discount = 0;
-                if (coupon.discount_type === 'percentage') {
-                    discount = Math.round(originalPrice * (parseFloat(coupon.discount_value) / 100));
+                if (data.discount_type === 'percentage') {
+                    discount = Math.round(originalPrice * (parseFloat(data.discount_value) / 100));
                 } else {
-                    discount = parseFloat(coupon.discount_value);
+                    discount = parseFloat(data.discount_value);
                 }
 
-                appliedCoupon = { code: uppercaseCode, affiliate_id: coupon.affiliate_id || null }; // Store for tracking
-                localStorage.setItem('appliedCoupon', uppercaseCode);
+                appliedCoupon = { code: uppercaseCode, affiliate_id: data.affiliate_id || null }; // Store for tracking
+                localStorage.setItem('applied_coupon', uppercaseCode);
+                localStorage.setItem('appliedCoupon', uppercaseCode); // keep old key for backward compatibility
+                if (data.affiliate_id) {
+                    localStorage.setItem('affiliate_id', data.affiliate_id);
+                }
+                
                 discountAmount = discount;
                 finalPrice = originalPrice - discount;
                 if (finalPrice < 0) finalPrice = 0;
@@ -424,11 +414,13 @@
 
                 msgEl.textContent = "Coupon applied successfully!";
                 msgEl.className = "message success";
+                msgEl.style.display = "block";
 
             } catch (err) {
                 console.error(err);
                 msgEl.textContent = "Error validating coupon. Please try again.";
                 msgEl.className = "message error";
+                msgEl.style.display = "block";
             } finally {
                 btn.disabled = false;
                 btn.textContent = "Apply";

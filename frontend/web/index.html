@@ -6255,14 +6255,20 @@ window.closeEbookPurchaseModal = function() {
    msgBox.style.color = '#64748b';
    msgBox.innerText = "Validating...";
 
-   if (!window.supabaseClient) return alert("Auth service unavailable");
+   const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+       ? 'http://localhost:3000/api' 
+       : 'https://dcneetcounselling.com/api';
 
-   const { data, error } = await window.supabaseClient
-     .from('coupons')
-     .select('*')
-     .eq('code', code)
-     .eq('is_active', true)
-     .maybeSingle();
+   try {
+       const response = await fetch(`${backendUrl}/validate-coupon`, {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ coupon: code })
+       });
+       
+       const data = await response.json();
+       console.log("Coupon Response:", data);
+       const error = !data.valid;
 
    if (error || !data) {
      msgBox.style.color = '#ef4444';
@@ -6293,8 +6299,18 @@ window.closeEbookPurchaseModal = function() {
    }
 
    ctx.price = Math.max(0, ctx.originalPrice - discount);
-   ctx.appliedCoupon = data;
-   localStorage.setItem('appliedCoupon', code);
+   ctx.appliedCoupon = { code: code, affiliate_id: data.affiliate_id || null };
+   localStorage.setItem('applied_coupon', code);
+   localStorage.setItem('appliedCoupon', code); // backward compatibility
+   if (data.affiliate_id) {
+       localStorage.setItem('affiliate_id', data.affiliate_id);
+   }
+   } catch (err) {
+       console.error(err);
+       msgBox.style.color = '#ef4444';
+       msgBox.innerText = "Error validating coupon.";
+       return;
+   }
 
    msgBox.style.color = '#16a34a';
    msgBox.innerText = "Coupon applied! &#x20B9;" + discount + " off.";
