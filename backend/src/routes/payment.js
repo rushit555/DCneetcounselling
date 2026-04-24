@@ -61,6 +61,13 @@ router.post('/track-order', async (req, res) => {
   try {
     const { order_id, total, coupon } = req.body;
 
+    const affiliateMap = {
+      'SAVE20': 'affiliate_123',
+      'MEDICO10': 'affiliate_456'
+    };
+    
+    const affiliate_id = affiliateMap[coupon] || null;
+
     const response = await fetch('https://api.goaffpro.com/v1/track', {
       method: 'POST',
       headers: {
@@ -71,6 +78,7 @@ router.post('/track-order', async (req, res) => {
         order_id: order_id,
         total: total,
         coupon: coupon,
+        affiliate_id: affiliate_id,
         currency: 'INR'
       })
     });
