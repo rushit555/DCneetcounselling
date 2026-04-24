@@ -147,7 +147,8 @@
             id: window.orderData?.id || new URLSearchParams(window.location.search).get('order_id') || 'ORDER_' + Date.now(),
             total: window.orderData?.amount || Number(new URLSearchParams(window.location.search).get('amount')) || 0,
             email: customerEmail,
-            coupon: coupon
+            coupon: coupon,
+            ref: affiliate_id
         };
 
         console.log('GoAffPro Order Data:', window.goaffproOrder);
