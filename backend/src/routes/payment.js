@@ -81,6 +81,11 @@ router.post('/track-order', async (req, res) => {
       }
     }
 
+    if (!affiliate_id) {
+      console.log('Skipping GoAffPro tracking: No affiliate_id found for order', order_id);
+      return res.json({ success: true, message: 'Tracking skipped (no affiliate_id)' });
+    }
+
     const response = await fetch('https://api.goaffpro.com/v1/track', {
       method: 'POST',
       headers: {
