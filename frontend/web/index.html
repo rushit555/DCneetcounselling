@@ -6394,8 +6394,10 @@ window.submitEbookPurchase = async function() {
           amount: ctx.price,
           order_id: insertRes ? insertRes.id : ('EBK_' + Date.now()),
           coupon: ctx.appliedCoupon ? ctx.appliedCoupon.code : '',
-          type: 'ebook'
+          type: 'ebook',
+          email: email
       }));
+      localStorage.setItem('customer_email', email);
 
       // 4. Initiate Razorpay Checkout window
       var options = {

@@ -481,8 +481,10 @@
                     amount: finalPrice,
                     order_id: insertRes.id,
                     coupon: appliedCoupon ? appliedCoupon.code : '',
-                    type: 'counselling'
+                    type: 'counselling',
+                    email: paymentData.email
                 }));
+                localStorage.setItem('customer_email', paymentData.email);
 
                 // 5. Open Razorpay
                 const options = {

@@ -136,7 +136,7 @@
         const applied_coupon = localStorage.getItem("applied_coupon") || coupon;
         
         // Try to retrieve email from session if possible, otherwise empty
-        let customerEmail = "";
+        let customerEmail = window.orderData?.email || localStorage.getItem('customer_email') || "";
         try {
             const pending = sessionStorage.getItem('pending_tracking');
             if (pending) {
@@ -144,6 +144,10 @@
                 if (p.email) customerEmail = p.email;
             }
         } catch(e) {}
+
+        if (!customerEmail) {
+            console.error("❌ GoAffPro Tracking Error: Customer email is missing!");
+        }
 
         // 🔥 Use REAL order data (NOT static)
         window.goaffproOrder = {
