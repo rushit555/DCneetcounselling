@@ -88,7 +88,7 @@
         const order_id = params.get('order_id') || 'ORDER_' + Date.now();
         const amount = params.get('amount') || 0;
         const product = params.get('product') || '';
-        const coupon = params.get('coupon') || localStorage.getItem('appliedCoupon') || null;
+        const coupon = localStorage.getItem('applied_coupon') || params.get('coupon') || localStorage.getItem('appliedCoupon') || null;
 
         const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
             ? 'http://localhost:3000/api' 
@@ -132,7 +132,6 @@
         });
     </script>
     <script>
-        const coupon = localStorage.getItem('applied_coupon') || new URLSearchParams(window.location.search).get('coupon') || '';
         const affiliate_id = localStorage.getItem('affiliate_id');
 
         const customerEmail =
