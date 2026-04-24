@@ -413,6 +413,7 @@
                 }
 
                 appliedCoupon = { code: uppercaseCode, affiliate_id: coupon.affiliate_id || null }; // Store for tracking
+                localStorage.setItem('appliedCoupon', uppercaseCode);
                 discountAmount = discount;
                 finalPrice = originalPrice - discount;
                 if (finalPrice < 0) finalPrice = 0;

@@ -6294,6 +6294,7 @@ window.closeEbookPurchaseModal = function() {
 
    ctx.price = Math.max(0, ctx.originalPrice - discount);
    ctx.appliedCoupon = data;
+   localStorage.setItem('appliedCoupon', code);
 
    msgBox.style.color = '#16a34a';
    msgBox.innerText = "Coupon applied! &#x20B9;" + discount + " off.";

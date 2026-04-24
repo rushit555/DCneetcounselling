@@ -82,11 +82,12 @@
     </div>
 
     <script>
+        console.log('🔥 Thank You Page Loaded');
         const params = new URLSearchParams(window.location.search);
         const product = params.get('product');
         const amount = params.get('amount');
         const order_id = params.get('order_id');
-        const couponCode = params.get('coupon') || "";
+        const couponCode = params.get('coupon') || localStorage.getItem('appliedCoupon') || "";
 
         const isAlreadyTracked = params.get('tracked') === '1';
         let trackingData = null;
