@@ -482,7 +482,16 @@
                     throw new Error("Failed to create booking record: " + (error ? error.message : "Unknown error"));
                 }
 
-                // 4. Open Razorpay
+                // 4. Store tracking data for thank-you page fallback (UPI/redirect flows)
+                sessionStorage.setItem('pending_tracking', JSON.stringify({
+                    product: paymentData.plan_name,
+                    amount: finalPrice,
+                    order_id: insertRes.id,
+                    coupon: appliedCoupon ? appliedCoupon.code : '',
+                    type: 'counselling'
+                }));
+
+                // 5. Open Razorpay
                 const options = {
                     "key": "rzp_live_SebrDtxMirg67M",
                     "amount": Math.round(finalPrice * 100),
@@ -538,10 +547,11 @@
                                 console.error("GoAffPro tracking failed:", e);
                             }
 
-                            // Clear session and redirect after tracking
+                            // Clear tracking data — handler already fired, no need for thank-you fallback
+                            sessionStorage.removeItem('pending_tracking');
                             sessionStorage.removeItem('counselling_payment_data');
                             setTimeout(() => {
-                                window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}`;
+                                window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}&tracked=1`;
                             }, 2000);
                         } catch (innerErr) {
                             console.error("Post-payment DB error:", innerErr);

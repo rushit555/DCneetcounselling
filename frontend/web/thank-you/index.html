@@ -88,28 +88,68 @@
         const order_id = params.get('order_id');
         const couponCode = params.get('coupon') || "";
 
-        if (product && amount && order_id) {
-            // Setup GoAffPro Order BEFORE loader script
-            if (!sessionStorage.getItem('gaff_tracked')) {
-                let orderNumber = order_id;
-                const prodLower = product.toLowerCase();
-                if (prodLower.includes('ebook')) {
-                    orderNumber = 'EBK_' + order_id;
-                } else if (prodLower.includes('counselling') || prodLower.includes('counseling')) {
-                    orderNumber = 'CNS_' + order_id;
+        const isAlreadyTracked = params.get('tracked') === '1';
+        let trackingData = null;
+
+        // Priority 1: Data from URL params (if not already tracked by handler)
+        if (!isAlreadyTracked && product && amount && order_id) {
+            trackingData = {
+                order_id: order_id,
+                total: Number(amount),
+                coupon: couponCode.toUpperCase(),
+                product: product
+            };
+        } 
+        // Priority 2: Fallback to pending_tracking from sessionStorage (for UPI/Redirect flows)
+        else if (!isAlreadyTracked) {
+            const pending = sessionStorage.getItem('pending_tracking');
+            if (pending) {
+                try {
+                    const p = JSON.parse(pending);
+                    trackingData = {
+                        order_id: p.order_id,
+                        total: Number(p.amount),
+                        coupon: (p.coupon || "").toUpperCase(),
+                        product: p.product
+                    };
+                } catch(e) {}
+            }
+        }
+
+        if (trackingData) {
+            const trackKey = 'order_tracked_' + trackingData.order_id;
+            
+            if (!sessionStorage.getItem(trackKey)) {
+                let orderNumber = trackingData.order_id;
+                const prodLower = trackingData.product.toLowerCase();
+                
+                // Add prefix if missing
+                if (!orderNumber.toString().startsWith('EBK_') && !orderNumber.toString().startsWith('CNS_')) {
+                    if (prodLower.includes('ebook')) {
+                        orderNumber = 'EBK_' + trackingData.order_id;
+                    } else if (prodLower.includes('counselling') || prodLower.includes('counseling')) {
+                        orderNumber = 'CNS_' + trackingData.order_id;
+                    }
                 }
 
-                console.log('Calling API URL:', 'https://api.dcneetcounselling.com/api/track-order');
+                console.log('🚀 Triggering Fallback Tracking for:', orderNumber);
+                
                 fetch('https://api.dcneetcounselling.com/api/track-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         order_id: orderNumber,
-                        total: Number(amount),
-                        coupon: couponCode.toUpperCase()
+                        total: trackingData.total,
+                        coupon: trackingData.coupon
                     })
-                }).catch(e => console.error("Tracking error:", e));
-                sessionStorage.setItem('gaff_tracked', 'true');
+                })
+                .then(res => res.json())
+                .then(data => {
+                    console.log('✅ Fallback tracking success:', data);
+                    sessionStorage.setItem(trackKey, 'true');
+                    sessionStorage.removeItem('pending_tracking'); // Clear after success
+                })
+                .catch(e => console.error("Tracking error:", e));
             }
         }
 

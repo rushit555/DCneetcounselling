@@ -6371,7 +6371,16 @@ window.submitEbookPurchase = async function() {
 
       var insertRes = null;
 
-      // 3. Initiate Razorpay Checkout window
+      // 3. Store tracking data for thank-you page fallback (UPI/redirect flows)
+      sessionStorage.setItem('pending_tracking', JSON.stringify({
+          product: ctx.course + ' (' + ctx.quota + ')',
+          amount: ctx.price,
+          order_id: insertRes ? insertRes.id : ('EBK_' + Date.now()),
+          coupon: ctx.appliedCoupon ? ctx.appliedCoupon.code : '',
+          type: 'ebook'
+      }));
+
+      // 4. Initiate Razorpay Checkout window
       var options = {
           "key": "rzp_live_SebrDtxMirg67M", // Live Key Passed In
           "amount": ctx.price * 100, // Razorpay amount in paise
@@ -6463,15 +6472,17 @@ window.submitEbookPurchase = async function() {
                           console.error("GoAffPro tracking API failed:", trackErr);
                       }
 
-                  }
-              } catch (err) {
-                  console.error('Unexpected error in payment handler:', err);
-              } finally {
-                  // ALWAYS redirect to thank you page
-                  closeEbookPurchaseModal();
-                  window.navigate('thank-you');
-              }
-          },
+                    }
+                } catch (err) {
+                    console.error('Unexpected error in payment handler:', err);
+                } finally {
+                    // ALWAYS redirect to physical thank-you page for reliable tracking
+                    closeEbookPurchaseModal();
+                    const finalAmount = ctx.price;
+                    const coupon = ctx.appliedCoupon ? ctx.appliedCoupon.code : '';
+                    window.location.href = `/thank-you/?product=${encodeURIComponent(ctx.course + ' (' + ctx.quota + ')')}&amount=${finalAmount}&order_id=${response.razorpay_payment_id}&coupon=${coupon}&tracked=1`;
+                }
+            },
           "prefill": {
               "name": fullName,
               "email": email,
