@@ -54,13 +54,17 @@ app.post('/api/track-order', async (req, res) => {
 // Explicit Validate Coupon Route
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(
-  process.env.VITE_SUPABASE_URL,
-  process.env.VITE_SUPABASE_ANON_KEY
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
 );
 
 app.post('/api/validate-coupon', async (req, res) => {
   try {
     const coupon = req.body.coupon?.trim().toUpperCase();
+    console.log("Incoming coupon:", coupon);
+
+    const { data: allCoupons } = await supabase.from("coupons").select("*");
+    console.log("ALL COUPONS:", allCoupons);
 
     const { data } = await supabase
       .from('coupons')
