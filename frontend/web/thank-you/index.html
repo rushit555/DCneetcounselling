@@ -132,33 +132,30 @@
         });
     </script>
     <script>
-    // ─── GoAffPro Delayed Runtime Injection ───────────────────────────────────────
-    (function () {
-      function loadGoAffPro() {
-        if (window.goaffpro) return;
+        const affiliate_id = localStorage.getItem("affiliate_id");
+        const applied_coupon = localStorage.getItem("applied_coupon") || coupon;
+        
+        // Try to retrieve email from session if possible, otherwise empty
+        let customerEmail = "";
+        try {
+            const pending = sessionStorage.getItem('pending_tracking');
+            if (pending) {
+                const p = JSON.parse(pending);
+                if (p.email) customerEmail = p.email;
+            }
+        } catch(e) {}
 
-        var existing = document.querySelector('script[src*="goaffpro"]');
-        if (existing) return;
-
-        var s = document.createElement("script");
-        s.src = "https://static.goaffpro.com/loader.js";
-        s.async = true;
-
-        s.onload = function () {
-          console.log("GoAffPro Loaded Successfully");
+        // 🔥 Use REAL order data (NOT static)
+        window.goaffproOrder = {
+            id: order_id, 
+            total: Number(amount), 
+            email: customerEmail, 
+            coupon: applied_coupon
         };
 
-        s.onerror = function () {
-          console.error("GoAffPro Failed to Load");
-        };
-
-        document.head.appendChild(s);
-      }
-
-      // Delay ensures SPA initialization completes
-      setTimeout(loadGoAffPro, 1500);
-    })();
+        console.log("GoAffPro Order Data:", window.goaffproOrder);
     </script>
+    <script src="https://api.goaffpro.com/loader.js"></script>
 </body>
 </html>
 
