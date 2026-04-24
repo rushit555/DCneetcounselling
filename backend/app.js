@@ -51,6 +51,62 @@ app.post('/api/track-order', async (req, res) => {
   }
 });
 
+// Explicit Validate Coupon Route
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient(
+  process.env.VITE_SUPABASE_URL,
+  process.env.VITE_SUPABASE_ANON_KEY
+);
+
+app.post('/api/validate-coupon', async (req, res) => {
+    try {
+        const { coupon } = req.body;
+        
+        if (!coupon) {
+            return res.status(400).json({ valid: false, message: "Coupon code is required" });
+        }
+
+        const uppercaseCode = coupon.trim().toUpperCase();
+
+        const { data: couponData, error } = await supabase
+            .from('coupons')
+            .select('*')
+            .eq('code', uppercaseCode)
+            .single();
+
+        if (error || !couponData || !couponData.is_active) {
+            return res.json({ valid: false, message: "Invalid Coupon" });
+        }
+
+        // Check expiry date
+        if (couponData.expiry_date) {
+            const expiry = new Date(couponData.expiry_date);
+            const now = new Date();
+            if (now > expiry) {
+                return res.json({ valid: false, message: "Invalid Coupon" });
+            }
+        }
+
+        // Check usage limit
+        if (couponData.usage_limit !== null && couponData.used_count >= couponData.usage_limit) {
+            return res.json({ valid: false, message: "Invalid Coupon" });
+        }
+
+        return res.json({
+            valid: true,
+            discount_type: couponData.discount_type,
+            discount_value: couponData.discount_value,
+            affiliate_id: couponData.affiliate_id,
+            min_order_amount: couponData.min_order_amount,
+            message: "Coupon is valid"
+        });
+
+    } catch (error) {
+        console.error("Validate Coupon Error:", error);
+        res.status(500).json({ valid: false, message: "Internal server error" });
+    }
+});
+
 // Start Server
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Backend server is running on port ${PORT} (exposed to network)`);
