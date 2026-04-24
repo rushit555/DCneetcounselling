@@ -748,6 +748,27 @@ window.saveMobileNumber = async function() {
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 // Functions doLogout and updateNavForAuth have been natively moved to index.html to guarantee DOM load synchronization
 
+// ==============================================================================
+// ─── GoAffPro Dynamic Loader ──────────────────────────────────────────────────
+(function () {
+  if (document.querySelector('script[src*="goaffpro"]')) return;
+
+  var s = document.createElement("script");
+  s.src = "https://static.goaffpro.com/loader.js";
+  s.async = true;
+
+  s.onload = function () {
+    console.log("GoAffPro Loaded Successfully");
+  };
+
+  s.onerror = function () {
+    console.error("GoAffPro Failed to Load");
+  };
+
+  document.head.appendChild(s);
+})();
+// ==============================================================================
+
 // ─── Login Page Logic ─────────────────────────────────────────────────────────
 // Auth Modal Global Handlers
 window.openAuthModal = function() {
