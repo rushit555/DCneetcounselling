@@ -62,43 +62,4 @@ router.post('/verify-payment', async (req, res) => {
     }
 });
 
-// Track Order via GoAffPro API
-router.post('/track-order', async (req, res) => {
-  try {
-    console.log('📩 Incoming:', req.body);
-
-    const { order_id, amount, total, coupon } = req.body;
-    
-    // Support both 'amount' and 'total' from different frontend versions
-    const finalAmount = amount !== undefined ? amount : total;
-
-    console.log('Parsed:', { order_id, amount: finalAmount, coupon });
-
-    if (!order_id || finalAmount === undefined) {
-      return res.status(400).json({ success: false, error: 'Missing required fields: order_id or amount' });
-    }
-
-    const response = await fetch('https://dcneetcounselling.goaffpro.com/track', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        order_id,
-        amount: finalAmount,
-        coupon
-      })
-    });
-
-    const text = await response.text();
-    console.log('GoAffPro response:', text);
-
-    res.json({ success: true });
-
-  } catch (err) {
-    console.error('❌ Backend error:', err);
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
 module.exports = router;
