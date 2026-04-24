@@ -485,6 +485,8 @@
                     "name": "DC Neet Counselling",
                     "description": paymentData.plan_name,
                     "handler": async function (response) {
+                        console.log('🔥 ENTERED PAYMENT HANDLER');
+                        console.log('DEBUG Variables:', { finalPrice, appliedCoupon, response });
                         try {
                             // Update booking status
                             await window.supabaseClient.from('counselling_bookings').update({
@@ -495,7 +497,7 @@
                             // Record coupon usage via backend
                             if (appliedCoupon) {
                                 try {
-                                    await fetch(`${BACKEND_URL}/update-coupon-usage`, {
+                                    await fetch('https://api.dcneetcounselling.com/api/update-coupon-usage', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({ code: appliedCoupon.code })
@@ -507,17 +509,29 @@
 
                             // Server-side GoAffPro tracking
                             try {
+                                const orderData = {
+                                    order_id: response.razorpay_payment_id,
+                                    total: finalPrice,
+                                    coupon: appliedCoupon ? appliedCoupon.code : null
+                                };
+                                console.log('📦 GoAffPro Order Data:', orderData);
                                 console.log('Calling API URL:', 'https://api.dcneetcounselling.com/api/track-order');
-                                await fetch('https://api.dcneetcounselling.com/api/track-order', {
+                                
+                                fetch('https://api.dcneetcounselling.com/api/track-order', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        order_id: response.razorpay_payment_id,
-                                        total: finalPrice,
-                                        coupon: appliedCoupon ? appliedCoupon.code : ''
-                                    })
+                                    body: JSON.stringify(orderData)
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    console.log('✅ Track API success:', data);
+                                })
+                                .catch(err => {
+                                    console.error('❌ Fetch error:', err);
                                 });
                             } catch (e) {
+                                console.error("GoAffPro tracking failed:", e);
+                            }
                                 console.error("GoAffPro tracking failed:", e);
                             }
 
