@@ -132,32 +132,26 @@
         });
     </script>
     <script>
-        const affiliate_id = localStorage.getItem("affiliate_id");
-        const applied_coupon = localStorage.getItem("applied_coupon") || coupon;
-        
-        // Try to retrieve email from session if possible, otherwise empty
-        let customerEmail = window.orderData?.email || localStorage.getItem('email') || "";
-        try {
-            const pending = sessionStorage.getItem('pending_tracking');
-            if (pending) {
-                const p = JSON.parse(pending);
-                if (p.email) customerEmail = p.email;
-            }
-        } catch(e) {}
+        const coupon = localStorage.getItem('applied_coupon') || new URLSearchParams(window.location.search).get('coupon') || '';
+        const affiliate_id = localStorage.getItem('affiliate_id');
+
+        const customerEmail =
+            window.orderData?.email ||
+            localStorage.getItem('user_email') ||
+            '';
 
         if (!customerEmail) {
-            console.error("❌ GoAffPro Tracking Error: Customer email is missing!");
+            console.error('Email missing for GoAffPro tracking');
         }
 
-        // 🔥 Use REAL order data (NOT static)
         window.goaffproOrder = {
-            id: order_id, 
-            total: Number(amount), 
-            email: customerEmail, 
-            coupon: applied_coupon
+            id: window.orderData?.id || new URLSearchParams(window.location.search).get('order_id') || 'ORDER_' + Date.now(),
+            total: window.orderData?.amount || Number(new URLSearchParams(window.location.search).get('amount')) || 0,
+            email: customerEmail,
+            coupon: coupon
         };
 
-        console.log("GoAffPro Order Data:", window.goaffproOrder);
+        console.log('GoAffPro Order Data:', window.goaffproOrder);
     </script>
     <script src="https://api.goaffpro.com/loader.js"></script>
 </body>

@@ -324,6 +324,10 @@
             try {
                 paymentData = JSON.parse(dataStr);
                 
+                if (paymentData.email) {
+                    localStorage.setItem('user_email', paymentData.email);
+                }
+                
                 console.log('📋 Payment data loaded:', paymentData);
 
                 // Populate UI

@@ -6340,6 +6340,8 @@ window.submitEbookPurchase = async function() {
       var rank = rankVal ? parseInt(rankVal) : null;
       var email = document.getElementById('eb_email').value;
       var mobile = document.getElementById('eb_mobile').value;
+      
+      if (email) localStorage.setItem('user_email', email);
 
       if (!fullName || !email || !mobile || !category) {
           alert('Please fill all fields');
