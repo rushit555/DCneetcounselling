@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv='Content-Security-Policy' content="script-src 'self' https://static.goaffpro.com https://api.goaffpro.com https://checkout.razorpay.com https://cdn.jsdelivr.net 'unsafe-inline' 'unsafe-eval';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payment Successful!</title>
     <link rel="icon" type="image/jpeg" href="../assets/logo.jpg" />
@@ -119,25 +118,7 @@
             }
         });
     </script>
-    <script>
-(function () {
-  if (document.querySelector('script[src*="goaffpro"]')) return;
-
-  var s = document.createElement("script");
-  s.src = "https://static.goaffpro.com/loader.js";
-  s.async = true;
-
-  s.onload = function () {
-    console.log("GoAffPro Loaded Successfully");
-  };
-
-  s.onerror = function () {
-    console.error("GoAffPro Failed to Load");
-  };
-
-  document.head.appendChild(s);
-})();
-</script>
+    <script async src="https://static.goaffpro.com/loader.js"></script>
 </body>
 </html>
 
