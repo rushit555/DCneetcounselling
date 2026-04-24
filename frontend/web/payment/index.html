@@ -306,16 +306,20 @@
     <script src="../js/supabaseClient.js?v=2026.04.19.2"></script>
     
     <script>
-        function trackGoAffProOrder(order) {
-            setTimeout(() => {
-                window.goaffproOrder = {
-                    id: order.id,
-                    total: order.amount,
-                    currency: 'INR',
-                    coupon: order.coupon || ''
-                };
-                console.log('GoAffPro order sent:', window.goaffproOrder);
-            }, 1500);
+        function trackGoAffPro(order) {
+            if (typeof goaffpro === 'undefined') {
+                console.log('GoAffPro not loaded');
+                return;
+            }
+
+            window.goaffproOrder = {
+                id: order.id,
+                total: order.amount,
+                currency: 'INR',
+                coupon: order.coupon || ''
+            };
+
+            console.log('GoAffPro Order Sent:', window.goaffproOrder);
         }
 
         let paymentData = null;
@@ -480,7 +484,7 @@
                                 }
                             }
 
-                            trackGoAffProOrder({
+                            trackGoAffPro({
                                 id: response.razorpay_payment_id,
                                 amount: finalPrice,
                                 coupon: appliedCoupon ? appliedCoupon.code : ''
@@ -522,6 +526,17 @@
             }
         }
     </script>
-<script async src='https://static.goaffpro.com/loader.js' data-domain='dcneetcounselling.goaffpro.com'></script>
+<script>
+window.addEventListener('load', function () {
+  var s = document.createElement('script');
+  s.src = 'https://static.goaffpro.com/loader.js';
+  s.async = true;
+  s.setAttribute('data-domain', 'dcneetcounselling.goaffpro.com');
+  s.onload = function () {
+    console.log('GoAffPro Loaded Successfully');
+  };
+  document.body.appendChild(s);
+});
+</script>
 </body>
 </html>
