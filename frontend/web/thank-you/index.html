@@ -84,14 +84,17 @@
     <script>
         console.log('🔥 Thank You Page Loaded');
 
+        const params = new URLSearchParams(window.location.search);
+        const order_id = params.get('order_id') || 'ORDER_' + Date.now();
+        const amount = params.get('amount') || 0;
+        const product = params.get('product') || '';
+        const coupon = params.get('coupon') || localStorage.getItem('appliedCoupon') || null;
+
+        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000/api' 
+            : 'https://api.dcneetcounselling.com/api';
+
         try {
-            const params = new URLSearchParams(window.location.search);
-
-            const order_id = params.get('order_id') || 'ORDER_' + Date.now();
-            const amount = params.get('amount') || 0;
-            const product = params.get('product') || '';
-            const coupon = localStorage.getItem('appliedCoupon') || null;
-
             const orderData = {
                 order_id,
                 total: Number(amount),
@@ -100,7 +103,7 @@
 
             console.log('📦 Sending order:', orderData);
 
-            fetch('https://api.dcneetcounselling.com/api/track-order', {
+            fetch(`${BACKEND_URL}/track-order`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
