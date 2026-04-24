@@ -65,49 +65,39 @@ router.post('/verify-payment', async (req, res) => {
 // Track Order via GoAffPro API
 router.post('/track-order', async (req, res) => {
   try {
-    const { order_id, total, coupon } = req.body;
+    console.log('📩 Incoming:', req.body);
 
-    let affiliate_id = null;
+    const { order_id, amount, total, coupon } = req.body;
+    
+    // Support both 'amount' and 'total' from different frontend versions
+    const finalAmount = amount !== undefined ? amount : total;
 
-    if (coupon) {
-      const { data: couponData, error } = await supabase
-        .from('coupons')
-        .select('affiliate_id')
-        .eq('code', coupon)
-        .single();
-        
-      if (couponData && couponData.affiliate_id) {
-        affiliate_id = couponData.affiliate_id;
-      }
+    console.log('Parsed:', { order_id, amount: finalAmount, coupon });
+
+    if (!order_id || finalAmount === undefined) {
+      return res.status(400).json({ success: false, error: 'Missing required fields: order_id or amount' });
     }
 
-    if (!affiliate_id) {
-      console.log('Skipping GoAffPro tracking: No affiliate_id found for order', order_id);
-      return res.json({ success: true, message: 'Tracking skipped (no affiliate_id)' });
-    }
-
-    const response = await fetch('https://api.goaffpro.com/v1/track', {
+    const response = await fetch('https://dcneetcounselling.goaffpro.com/track', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'X-GOAFFPRO-ACCESS-TOKEN': process.env.GOAFFPRO_TOKEN
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        order_id: order_id,
-        total: total,
-        coupon: coupon,
-        affiliate_id: affiliate_id,
-        currency: 'INR'
+        order_id,
+        amount: finalAmount,
+        coupon
       })
     });
 
-    const data = await response.json();
-    console.log('GoAffPro Response:', data);
+    const text = await response.text();
+    console.log('GoAffPro response:', text);
 
     res.json({ success: true });
+
   } catch (err) {
-    console.error('GoAffPro Error:', err);
-    res.status(500).json({ success: false });
+    console.error('❌ Backend error:', err);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
