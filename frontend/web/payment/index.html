@@ -346,7 +346,7 @@
             }
         })();
 
-        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://api.dcneetcounselling.com/api'; // Adjust production URL as needed
+        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://dcneetcounselling.com/api'; // Adjust production URL as needed
 
         async function applyCoupon() {
             const codeInput = document.getElementById('couponInput').value.trim();
@@ -512,7 +512,7 @@
                             // Record coupon usage via backend
                             if (appliedCoupon) {
                                 try {
-                                    await fetch('https://api.dcneetcounselling.com/api/update-coupon-usage', {
+                                    await fetch('https://dcneetcounselling.com/api/update-coupon-usage', {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({ code: appliedCoupon.code })
@@ -530,9 +530,9 @@
                                     coupon: appliedCoupon ? appliedCoupon.code : null
                                 };
                                 console.log('📦 GoAffPro Order Data:', orderData);
-                                console.log('Calling API URL:', 'https://api.dcneetcounselling.com/api/track-order');
+                                console.log('Calling API URL:', 'https://dcneetcounselling.com/api/track-order');
                                 
-                                fetch('https://api.dcneetcounselling.com/api/track-order', {
+                                fetch('https://dcneetcounselling.com/api/track-order', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(orderData)

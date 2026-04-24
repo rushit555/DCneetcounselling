@@ -126,8 +126,8 @@ window.refreshGoAffPro = function() {
 };
 
 window.trackGoAffProOrder = function(order) {
-    console.log('Calling API URL:', 'https://api.dcneetcounselling.com/api/track-order');
-    fetch('https://api.dcneetcounselling.com/api/track-order', {
+    console.log('Calling API URL:', 'https://dcneetcounselling.com/api/track-order');
+    fetch('https://dcneetcounselling.com/api/track-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

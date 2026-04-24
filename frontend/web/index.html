@@ -6463,8 +6463,8 @@ window.submitEbookPurchase = async function() {
                               total: ctx.price,
                               coupon: ctx.appliedCoupon ? ctx.appliedCoupon.code : null
                           };
-                          console.log('Calling API URL:', 'https://api.dcneetcounselling.com/api/track-order');
-                          await fetch('https://api.dcneetcounselling.com/api/track-order', {
+                          console.log('Calling API URL:', 'https://dcneetcounselling.com/api/track-order');
+                          await fetch('https://dcneetcounselling.com/api/track-order', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
                               body: JSON.stringify(orderData)
