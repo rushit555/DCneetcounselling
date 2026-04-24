@@ -13,8 +13,10 @@ app.use(express.json());
 const paymentRoutes = require('./src/routes/payment');
 const ordersRoutes = require('./src/routes/orders');
 const counselingRoutes = require('./src/routes/counseling');
+const couponsRoutes = require('./src/routes/coupons');
 
 app.use('/api', paymentRoutes);
+app.use('/api', couponsRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/submit-counseling-booking', counselingRoutes);
 

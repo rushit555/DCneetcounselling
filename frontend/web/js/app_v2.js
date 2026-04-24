@@ -4,18 +4,18 @@ const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
 const COUNSELLING_META = {
-    'med_basic': { title: 'Medical - Basic Plan', price: 4999, type: 'Medical' },
-    'med_gold': { title: 'Medical - Gold Plan', price: 9999, type: 'Medical' },
-    'med_platinum': { title: 'Medical - Private MBBS/BDS', price: 14999, type: 'Medical' },
-    'ayush_basic': { title: 'AYUSH - Basic Plan', price: 4999, type: 'AYUSH' },
-    'ayush_gold': { title: 'AYUSH - Gold Plan', price: 8999, type: 'AYUSH' },
-    'ayush_platinum': { title: 'AYUSH - Private Plan', price: 9999, type: 'AYUSH' },
-    'vet_basic': { title: 'Veterinary - Basic Plan', price: 4999, type: 'Veterinary' },
-    'vet_gold': { title: 'Veterinary - Gold Plan', price: 8999, type: 'Veterinary' },
-    'vet_platinum': { title: 'Veterinary - Premium Plan', price: 10999, type: 'Veterinary' },
-    'combo_basic': { title: 'Combo - Basic Plan', price: 6999, type: 'Combo' },
-    'combo_gold': { title: 'Combo - Gold Plan', price: 11999, type: 'Combo' },
-    'combo_platinum': { title: 'Combo - Premium Plan', price: 15999, type: 'Combo' }
+    'med_basic': { title: 'Medical - Basic Plan', price: 2, type: 'Medical' },
+    'med_gold': { title: 'Medical - Gold Plan', price: 2, type: 'Medical' },
+    'med_platinum': { title: 'Medical - Private MBBS/BDS', price: 2, type: 'Medical' },
+    'ayush_basic': { title: 'AYUSH - Basic Plan', price: 2, type: 'AYUSH' },
+    'ayush_gold': { title: 'AYUSH - Gold Plan', price: 2, type: 'AYUSH' },
+    'ayush_platinum': { title: 'AYUSH - Private Plan', price: 2, type: 'AYUSH' },
+    'vet_basic': { title: 'Veterinary - Basic Plan', price: 2, type: 'Veterinary' },
+    'vet_gold': { title: 'Veterinary - Gold Plan', price: 2, type: 'Veterinary' },
+    'vet_platinum': { title: 'Veterinary - Premium Plan', price: 2, type: 'Veterinary' },
+    'combo_basic': { title: 'Combo - Basic Plan', price: 2, type: 'Combo' },
+    'combo_gold': { title: 'Combo - Gold Plan', price: 2, type: 'Combo' },
+    'combo_platinum': { title: 'Combo - Premium Plan', price: 2, type: 'Combo' }
 };
 
 
@@ -498,14 +498,44 @@ async function renderOrders() {
     var orders = [];
     if (window.supabaseClient) {
         try {
-            var { data: orderData, error } = await window.supabaseClient
-                .from('orders')
-                .select('*')
-                .eq('user_id', user.id)
-                .order('created_at', { ascending: false });
+            var [ordersRes, counsellingRes] = await Promise.all([
+                window.supabaseClient
+                    .from('orders')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false }),
+                window.supabaseClient
+                    .from('counselling_bookings')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+            ]);
             
-            if (error) throw error;
-            if (orderData) orders = orderData;
+            if (ordersRes.error) throw ordersRes.error;
+            if (counsellingRes.error) throw counsellingRes.error;
+            
+            var allOrders = [];
+            if (ordersRes.data) {
+                allOrders = allOrders.concat(ordersRes.data.map(o => ({
+                    ...o,
+                    display_name: o.product_name || 'Ebook',
+                    display_amount: o.amount_paid || 0,
+                    type: 'ebook'
+                })));
+            }
+            if (counsellingRes.data) {
+                allOrders = allOrders.concat(counsellingRes.data.map(c => ({
+                    ...c,
+                    display_name: c.plan_name || 'Counselling Plan',
+                    display_amount: c.discounted_price || c.plan_price || 0,
+                    type: 'counselling'
+                })));
+            }
+
+            // Sort combined array by created_at descending
+            allOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            orders = allOrders;
+
         } catch(err) {
             console.error('[App] Failed to fetch orders:', err);
             return '<div style="padding:160px 20px; text-align:center; color:#ef4444;">Error loading orders. Please try again.</div>';
@@ -517,7 +547,7 @@ async function renderOrders() {
             '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap: wrap; gap: 15px;">' +
                 '<div>' +
                     '<h2 style="font-size: 28px; font-weight: 800; color: #1e40af;">Order History</h2>' +
-                    '<p style="color:#666; font-size: 14px;">Review all your eBook purchases and transactions here.</p>' +
+                    '<p style="color:#666; font-size: 14px;">Review all your purchases and transactions here.</p>' +
                 '</div>' +
                 '<button class="btn btn-ghost" style="border: 1px solid #ddd;" onclick="window.navigate(\'dashboard\')">← Back to Dashboard</button>' +
             '</div>';
@@ -526,15 +556,15 @@ async function renderOrders() {
         html += '<div style="text-align:center; padding:80px 20px; background: rgba(0,0,0,0.02); border-radius: 16px; border: 2px dashed #ddd;">' +
             '<div style="font-size: 48px; margin-bottom: 20px;">📦</div>' +
             '<h3 style="font-weight: 600;">No orders yet</h3>' +
-            '<p style="color:#666; margin-top: 5px;">You haven\'t made any eBook purchases yet.</p>' +
-            '<button class="btn btn-primary" style="margin-top:20px;" onclick="window.navigate(\'ebooks\')">Browse eBooks</button>' +
+            '<p style="color:#666; margin-top: 5px;">You haven\'t made any purchases yet.</p>' +
+            '<button class="btn btn-primary" style="margin-top:20px;" onclick="window.navigate(\'counselling\')">Browse Plans</button>' +
         '</div>';
     } else {
         html += '<div style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">';
 
         orders.forEach(function(order) {
             var badgeBg = '#666';
-            if (order.payment_status === 'success' || order.payment_status === 'paid') badgeBg = '#22c55e'; // Green
+            if (order.payment_status === 'success' || order.payment_status === 'paid' || order.payment_status === 'completed') badgeBg = '#22c55e'; // Green
             else if (order.payment_status === 'failed') badgeBg = '#ef4444'; // Red
             else if (order.payment_status === 'cancelled') badgeBg = '#f59e0b'; // Yellow
             else if (order.payment_status === 'initiated') badgeBg = '#3b82f6'; // Blue
@@ -542,13 +572,23 @@ async function renderOrders() {
             // Formatting Date to DD/MM/YYYY
             var d = new Date(order.created_at);
             var dateStr = ("0" + d.getDate()).slice(-2) + "/" + ("0" + (d.getMonth() + 1)).slice(-2) + "/" + d.getFullYear();
+            
+            var typeIcon = order.type === 'ebook' ? '📘' : '🧑‍⚕️';
+            var postMessage = '';
+            if (order.payment_status === 'success' || order.payment_status === 'paid' || order.payment_status === 'completed') {
+                if (order.type === 'ebook') {
+                    postMessage = '<span style="font-size: 16px;">📩</span> Check your WhatsApp / Email for your PDF.';
+                } else {
+                    postMessage = '<span style="font-size: 16px;">📞</span> Our team will contact you shortly.';
+                }
+            }
 
             html += '<div style="background: rgba(255,255,255,0.8); border: 1px solid #eee; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">' +
                         
                         '<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">' +
                             '<div>' +
                                 '<div style="font-size: 12px; color: #94a3b8; font-family: monospace; margin-bottom: 4px; font-weight: 600;">ORDER ID: ' + (order.id || 'N/A').split('-')[0].toUpperCase() + '</div>' +
-                                '<h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0;">' + (order.product_name || 'Ebook') + '</h3>' +
+                                '<h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0;">' + typeIcon + ' ' + order.display_name + '</h3>' +
                             '</div>' +
                             '<div style="text-align: right;">' +
                                 '<span style="display: inline-block; padding: 6px 12px; border-radius: 8px; background:' + badgeBg + '; color:#fff; font-weight:700; font-size:12px; text-transform:uppercase;">' + order.payment_status + '</span>' +
@@ -562,7 +602,7 @@ async function renderOrders() {
                             '</div>' +
                             '<div>' +
                                 '<div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Amount</div>' +
-                                '<div style="font-size: 14px; color: #334155; font-weight: 700; margin-top: 4px;">₹' + (order.amount_paid || 0) + '</div>' +
+                                '<div style="font-size: 14px; color: #334155; font-weight: 700; margin-top: 4px;">₹' + order.display_amount + '</div>' +
                             '</div>' +
                             '<div style="display: flex; align-items: flex-end; gap: 8px;">' +
                                 '<div style="flex: 1;">' +
@@ -572,9 +612,9 @@ async function renderOrders() {
                             '</div>' +
                         '</div>' +
 
-                        ((order.payment_status === 'success' || order.payment_status === 'paid') ? 
+                        (postMessage ? 
                         '<div style="margin-top: 5px; text-align: left; border-top: 1px dashed #e2e8f0; padding-top: 15px; font-size: 13.5px; color: #0284c7; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
-                            '<span style="font-size: 16px;">📩</span> Check your WhatsApp / Email for your PDF.' +
+                            postMessage +
                         '</div>' : '') +
 
                     '</div>';

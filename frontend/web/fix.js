@@ -1,0 +1,1 @@
+const fs=require('fs'); let c=fs.readFileSync('payment/index.html', 'utf8'); c=c.replace(/<\/body>/, '<script async src=\'https://static.goaffpro.com/loader.js\' data-campaign=\'YOUR_CAMPAIGN_ID\'></script>\n</body>'); fs.writeFileSync('payment/index.html', c);

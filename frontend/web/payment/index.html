@@ -341,18 +341,14 @@
             }
         });
 
+        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://api.dcneetcounselling.com/api'; // Adjust production URL as needed
+
         async function applyCoupon() {
-            const codeInput = document.getElementById('couponInput').value.trim().toUpperCase();
+            const codeInput = document.getElementById('couponInput').value.trim();
             const msgEl = document.getElementById('couponMessage');
             const btn = document.getElementById('applyCouponBtn');
             
             if (!codeInput) return;
-
-            if (!window.supabaseClient) {
-                msgEl.textContent = "Service unavailable. Try again.";
-                msgEl.className = "message error";
-                return;
-            }
 
             btn.disabled = true;
             btn.textContent = "Applying...";
@@ -360,38 +356,36 @@
             msgEl.style.display = "none";
 
             try {
-                const { data: coupon, error } = await window.supabaseClient
-                    .from('coupons')
-                    .select('*')
-                    .eq('code', codeInput)
-                    .eq('is_active', true)
-                    .single();
+                const response = await fetch(`${BACKEND_URL}/apply-coupon`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: codeInput,
+                        order_amount: originalPrice
+                    })
+                });
 
-                if (error || !coupon) {
-                    msgEl.textContent = "Invalid or expired coupon.";
+                const data = await response.json();
+
+                if (!response.ok || !data.valid) {
+                    msgEl.textContent = data.message || "Invalid or expired coupon.";
                     msgEl.className = "message error";
                     resetDiscount();
                 } else {
-                    appliedCoupon = coupon;
-                    if (coupon.discount_type === 'percentage') {
-                        discountAmount = Math.round(originalPrice * (parseFloat(coupon.discount_value) / 100));
-                    } else {
-                        discountAmount = parseFloat(coupon.discount_value);
-                    }
-                    
-                    finalPrice = originalPrice - discountAmount;
-                    if (finalPrice < 0) finalPrice = 0;
+                    appliedCoupon = { code: codeInput.toUpperCase() }; // Store for tracking
+                    discountAmount = data.discount;
+                    finalPrice = data.final_amount;
 
                     document.getElementById('d_discount').textContent = discountAmount;
                     document.getElementById('discountRow').style.display = 'flex';
                     document.getElementById('d_final_price').textContent = finalPrice;
 
-                    msgEl.textContent = "Coupon applied successfully!";
+                    msgEl.textContent = data.message || "Coupon applied successfully!";
                     msgEl.className = "message success";
                 }
             } catch (err) {
                 console.error(err);
-                msgEl.textContent = "Error validating coupon.";
+                msgEl.textContent = "Error validating coupon. Please try again.";
                 msgEl.className = "message error";
             } finally {
                 btn.disabled = false;
@@ -427,13 +421,11 @@
                     domicile_state: paymentData.domicile_state,
                     neet_score: paymentData.neet_score,
                     rank: paymentData.all_india_rank,
-                    plan_type: paymentData.plan_type,
                     plan_name: paymentData.plan_name,
                     plan_price: paymentData.plan_price,
                     counselling_type: paymentData.counselling_type,
                     coupon_code: appliedCoupon ? appliedCoupon.code : null,
-                    discounted_price: discountAmount > 0 ? finalPrice : null,
-                    amount_paid: finalPrice,
+                    discounted_price: finalPrice,
                     payment_status: 'initiated'
                 };
 
@@ -445,10 +437,10 @@
                     .single();
 
                 if (error || !insertRes) {
-                    throw new Error("Failed to create booking record.");
+                    throw new Error("Failed to create booking record: " + (error ? error.message : "Unknown error"));
                 }
 
-                // 4. Razorpay
+                // 4. Open Razorpay
                 const options = {
                     "key": "rzp_live_SebrDtxMirg67M",
                     "amount": Math.round(finalPrice * 100),
@@ -463,22 +455,22 @@
                                 razorpay_payment_id: response.razorpay_payment_id
                             }).eq('id', insertRes.id);
 
-                            // Record coupon usage
+                            // Record coupon usage via backend
                             if (appliedCoupon) {
-                                const commission = finalPrice * 0.20;
-                                await window.supabaseClient.from('coupon_usages').insert({
-                                    coupon_id: appliedCoupon.id,
-                                    user_email: paymentData.email,
-                                    amount_before: originalPrice,
-                                    discount_applied: discountAmount,
-                                    final_amount: finalPrice,
-                                    commission: commission
-                                });
+                                try {
+                                    await fetch(`${BACKEND_URL}/update-coupon-usage`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ code: appliedCoupon.code })
+                                    });
+                                } catch (e) {
+                                    console.error("Failed to update coupon usage:", e);
+                                }
                             }
 
                             // Clear session and redirect
                             sessionStorage.removeItem('counselling_payment_data');
-                            window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}`;
+                            window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}`;
                         } catch (innerErr) {
                             console.error("Post-payment DB error:", innerErr);
                             alert("Payment succeeded but saving failed. Please contact support.");
@@ -510,5 +502,8 @@
             }
         }
     </script>
+<script async src='https://static.goaffpro.com/loader.js' data-domain='dcneetcounselling.goaffpro.com'></script>
+<script async src='https://static.goaffpro.com/loader.js' data-domain='dcneetcounselling.goaffpro.com'></script>
+<script async src='https://static.goaffpro.com/loader.js' data-domain='dcneetcounselling.goaffpro.com'></script>
 </body>
 </html>
