@@ -371,7 +371,34 @@
 
         init();
     </script>
-    <script async src="https://static.goaffpro.com/loader.js"></script>
+    <script>
+    // ─── GoAffPro Delayed Runtime Injection ───────────────────────────────────────
+    (function () {
+      function loadGoAffPro() {
+        if (window.goaffpro) return;
+
+        var existing = document.querySelector('script[src*="goaffpro"]');
+        if (existing) return;
+
+        var s = document.createElement("script");
+        s.src = "https://static.goaffpro.com/loader.js";
+        s.async = true;
+
+        s.onload = function () {
+          console.log("GoAffPro Loaded Successfully");
+        };
+
+        s.onerror = function () {
+          console.error("GoAffPro Failed to Load");
+        };
+
+        document.head.appendChild(s);
+      }
+
+      // Delay ensures SPA initialization completes
+      setTimeout(loadGoAffPro, 1500);
+    })();
+    </script>
 </body>
 </html>
 

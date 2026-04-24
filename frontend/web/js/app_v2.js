@@ -1,5 +1,32 @@
-// ─── Supabase Configuration ───────────────────────────────────────────────────
+// ─── GoAffPro Delayed Runtime Injection ───────────────────────────────────────
+(function () {
+  function loadGoAffPro() {
+    if (window.goaffpro) return;
 
+    var existing = document.querySelector('script[src*="goaffpro"]');
+    if (existing) return;
+
+    var s = document.createElement("script");
+    s.src = "https://static.goaffpro.com/loader.js";
+    s.async = true;
+
+    s.onload = function () {
+      console.log("GoAffPro Loaded Successfully");
+    };
+
+    s.onerror = function () {
+      console.error("GoAffPro Failed to Load");
+    };
+
+    document.head.appendChild(s);
+  }
+
+  // Delay ensures SPA initialization completes
+  setTimeout(loadGoAffPro, 1500);
+})();
+// ──────────────────────────────────────────────────────────────────────────────
+
+// ─── Supabase Configuration ───────────────────────────────────────────────────
 const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
