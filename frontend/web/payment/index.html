@@ -305,22 +305,6 @@
     <script src="../js/supabase.js?v=2026.04.24.1"></script>
     <script src="../js/supabaseClient.js?v=2026.04.24.1"></script>
     
-    <script>
-        function trackGoAffPro(order) {
-            if (typeof goaffpro === 'undefined') {
-                console.log('GoAffPro not loaded');
-                return;
-            }
-
-            window.goaffproOrder = {
-                id: order.id,
-                total: order.amount,
-                currency: 'INR',
-                coupon: order.coupon || ''
-            };
-
-            console.log('GoAffPro Order Sent:', window.goaffproOrder);
-        }
 
         let paymentData = null;
         let originalPrice = 0;
@@ -520,11 +504,20 @@
                                 }
                             }
 
-                            trackGoAffPro({
-                                id: response.razorpay_payment_id,
-                                amount: finalPrice,
-                                coupon: appliedCoupon ? appliedCoupon.code : ''
-                            });
+                            // Server-side GoAffPro tracking
+                            try {
+                                await fetch(`${BACKEND_URL}/track-order`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        order_id: response.razorpay_payment_id,
+                                        total: finalPrice,
+                                        coupon: appliedCoupon ? appliedCoupon.code : ''
+                                    })
+                                });
+                            } catch (e) {
+                                console.error("GoAffPro tracking failed:", e);
+                            }
 
                             // Clear session and redirect after tracking
                             sessionStorage.removeItem('counselling_payment_data');

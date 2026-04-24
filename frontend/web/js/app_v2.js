@@ -126,15 +126,16 @@ window.refreshGoAffPro = function() {
 };
 
 window.trackGoAffProOrder = function(order) {
-    setTimeout(() => {
-        window.goaffproOrder = {
-            id: order.id,
+    const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://api.dcneetcounselling.com/api';
+    fetch(`${BACKEND_URL}/track-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            order_id: order.id,
             total: order.amount,
-            currency: 'INR',
             coupon: order.coupon || ''
-        };
-        console.log('GoAffPro order sent:', window.goaffproOrder);
-    }, 1500);
+        })
+    }).catch(e => console.error("GoAffPro server track error:", e));
 };
 
 window.addEventListener('load', function() {

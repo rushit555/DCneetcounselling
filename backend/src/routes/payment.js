@@ -56,4 +56,33 @@ router.post('/verify-payment', async (req, res) => {
     }
 });
 
+// Track Order via GoAffPro API
+router.post('/track-order', async (req, res) => {
+  try {
+    const { order_id, total, coupon } = req.body;
+
+    const response = await fetch('https://api.goaffpro.com/v1/track', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-GOAFFPRO-ACCESS-TOKEN': process.env.GOAFFPRO_TOKEN
+      },
+      body: JSON.stringify({
+        order_id: order_id,
+        total: total,
+        coupon: coupon,
+        currency: 'INR'
+      })
+    });
+
+    const data = await response.json();
+    console.log('GoAffPro Response:', data);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error('GoAffPro Error:', err);
+    res.status(500).json({ success: false });
+  }
+});
+
 module.exports = router;

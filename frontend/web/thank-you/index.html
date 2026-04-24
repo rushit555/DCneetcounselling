@@ -99,12 +99,16 @@
                     orderNumber = 'CNS_' + order_id;
                 }
 
-                window.goaffproOrder = {
-                    id: orderNumber,
-                    total: Number(amount),
-                    currency: "INR",
-                    coupon: couponCode.toUpperCase()
-                };
+                const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://api.dcneetcounselling.com/api';
+                fetch(`${BACKEND_URL}/track-order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        order_id: orderNumber,
+                        total: Number(amount),
+                        coupon: couponCode.toUpperCase()
+                    })
+                }).catch(e => console.error("Tracking error:", e));
                 sessionStorage.setItem('gaff_tracked', 'true');
             }
         }
