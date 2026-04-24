@@ -6445,6 +6445,24 @@ window.submitEbookPurchase = async function() {
                       if (ebUpdateError) {
                           console.error("ebook_users update failed:", ebUpdateError);
                       }
+
+                      // Trigger Server-Side GoAffPro Tracking
+                      try {
+                          const orderData = {
+                              order_id: response.razorpay_payment_id,
+                              total: ctx.price,
+                              coupon: ctx.appliedCoupon ? ctx.appliedCoupon.code : null
+                          };
+                          const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://api.dcneetcounselling.com/api';
+                          await fetch(`${BACKEND_URL}/track-order`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify(orderData)
+                          });
+                      } catch (trackErr) {
+                          console.error("GoAffPro tracking API failed:", trackErr);
+                      }
+
                   }
               } catch (err) {
                   console.error('Unexpected error in payment handler:', err);
