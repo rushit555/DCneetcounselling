@@ -510,7 +510,7 @@
                             // Record coupon usage via backend
                             if (appliedCoupon) {
                                 try {
-                                    await fetch('https://dcneetcounselling.com/api/update-coupon-usage', {
+                                    await fetch(`${BACKEND_URL}/update-coupon-usage`, {
                                         method: 'POST',
                                         headers: { 'Content-Type': 'application/json' },
                                         body: JSON.stringify({ code: appliedCoupon.code })
@@ -528,9 +528,9 @@
                                     coupon: appliedCoupon ? appliedCoupon.code : null
                                 };
                                 console.log('📦 GoAffPro Order Data:', orderData);
-                                console.log('Calling API URL:', 'https://dcneetcounselling.com/api/track-order');
+                                console.log('Calling API URL:', `${BACKEND_URL}/track-order`);
                                 
-                                fetch('https://dcneetcounselling.com/api/track-order', {
+                                fetch(`${BACKEND_URL}/track-order`, {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(orderData)

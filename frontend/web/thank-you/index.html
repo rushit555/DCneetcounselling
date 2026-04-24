@@ -136,7 +136,7 @@
         const applied_coupon = localStorage.getItem("applied_coupon") || coupon;
         
         // Try to retrieve email from session if possible, otherwise empty
-        let customerEmail = window.orderData?.email || localStorage.getItem('customer_email') || "";
+        let customerEmail = window.orderData?.email || localStorage.getItem('email') || "";
         try {
             const pending = sessionStorage.getItem('pending_tracking');
             if (pending) {
