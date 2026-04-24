@@ -356,33 +356,69 @@
             msgEl.style.display = "none";
 
             try {
-                const response = await fetch(`${BACKEND_URL}/apply-coupon`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        code: codeInput,
-                        order_amount: originalPrice
-                    })
-                });
+                if (!window.supabaseClient) throw new Error("Database connection not ready.");
+                const uppercaseCode = codeInput.toUpperCase();
+                
+                const { data: coupon, error } = await window.supabaseClient
+                    .from('coupons')
+                    .select('*')
+                    .eq('code', uppercaseCode)
+                    .single();
 
-                const data = await response.json();
-
-                if (!response.ok || !data.valid) {
-                    msgEl.textContent = data.message || "Invalid or expired coupon.";
+                if (error || !coupon || !coupon.is_active) {
+                    msgEl.textContent = "Invalid or expired coupon.";
                     msgEl.className = "message error";
                     resetDiscount();
-                } else {
-                    appliedCoupon = { code: codeInput.toUpperCase() }; // Store for tracking
-                    discountAmount = data.discount;
-                    finalPrice = data.final_amount;
-
-                    document.getElementById('d_discount').textContent = discountAmount;
-                    document.getElementById('discountRow').style.display = 'flex';
-                    document.getElementById('d_final_price').textContent = finalPrice;
-
-                    msgEl.textContent = data.message || "Coupon applied successfully!";
-                    msgEl.className = "message success";
+                    return;
                 }
+
+                // Check expiry date
+                if (coupon.expiry_date) {
+                    const expiry = new Date(coupon.expiry_date);
+                    if (new Date() > expiry) {
+                        msgEl.textContent = "Invalid or expired coupon.";
+                        msgEl.className = "message error";
+                        resetDiscount();
+                        return;
+                    }
+                }
+
+                // Check usage limit
+                if (coupon.usage_limit !== null && coupon.used_count >= coupon.usage_limit) {
+                    msgEl.textContent = "Coupon limit reached.";
+                    msgEl.className = "message error";
+                    resetDiscount();
+                    return;
+                }
+
+                // Check minimum order amount
+                if (coupon.min_order_amount !== null && originalPrice < coupon.min_order_amount) {
+                    msgEl.textContent = `Minimum order amount of ₹${coupon.min_order_amount} not met`;
+                    msgEl.className = "message error";
+                    resetDiscount();
+                    return;
+                }
+
+                // Calculate discount
+                let discount = 0;
+                if (coupon.discount_type === 'percentage') {
+                    discount = Math.round(originalPrice * (parseFloat(coupon.discount_value) / 100));
+                } else {
+                    discount = parseFloat(coupon.discount_value);
+                }
+
+                appliedCoupon = { code: uppercaseCode }; // Store for tracking
+                discountAmount = discount;
+                finalPrice = originalPrice - discount;
+                if (finalPrice < 0) finalPrice = 0;
+
+                document.getElementById('d_discount').textContent = discountAmount;
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('d_final_price').textContent = finalPrice;
+
+                msgEl.textContent = "Coupon applied successfully!";
+                msgEl.className = "message success";
+
             } catch (err) {
                 console.error(err);
                 msgEl.textContent = "Error validating coupon. Please try again.";
