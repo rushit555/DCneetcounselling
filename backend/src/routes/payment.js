@@ -1,7 +1,13 @@
 const express = require('express');
 const Razorpay = require('razorpay');
 const crypto = require('crypto');
+const { createClient } = require('@supabase/supabase-js');
 const router = express.Router();
+
+// Initialize Supabase client
+const supabaseUrl = process.env.VITE_SUPABASE_URL || 'https://rlqmdylbzapyepuwncwt.supabase.co';
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Initialize Razorpay (ensure keys are added in root .env)
 const razorpay = new Razorpay({
@@ -61,12 +67,19 @@ router.post('/track-order', async (req, res) => {
   try {
     const { order_id, total, coupon } = req.body;
 
-    const affiliateMap = {
-      'SAVE20': 'affiliate_123',
-      'MEDICO10': 'affiliate_456'
-    };
-    
-    const affiliate_id = affiliateMap[coupon] || null;
+    let affiliate_id = null;
+
+    if (coupon) {
+      const { data: couponData, error } = await supabase
+        .from('coupons')
+        .select('affiliate_id')
+        .eq('code', coupon)
+        .single();
+        
+      if (couponData && couponData.affiliate_id) {
+        affiliate_id = couponData.affiliate_id;
+      }
+    }
 
     const response = await fetch('https://api.goaffpro.com/v1/track', {
       method: 'POST',

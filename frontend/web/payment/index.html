@@ -407,7 +407,7 @@
                     discount = parseFloat(coupon.discount_value);
                 }
 
-                appliedCoupon = { code: uppercaseCode }; // Store for tracking
+                appliedCoupon = { code: uppercaseCode, affiliate_id: coupon.affiliate_id || null }; // Store for tracking
                 discountAmount = discount;
                 finalPrice = originalPrice - discount;
                 if (finalPrice < 0) finalPrice = 0;
@@ -461,6 +461,7 @@
                     plan_price: paymentData.plan_price,
                     counselling_type: paymentData.counselling_type,
                     coupon_code: appliedCoupon ? appliedCoupon.code : null,
+                    affiliate_id: appliedCoupon ? appliedCoupon.affiliate_id : null,
                     discounted_price: finalPrice,
                     payment_status: 'initiated'
                 };
