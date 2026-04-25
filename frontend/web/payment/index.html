@@ -355,7 +355,7 @@
             btn.disabled = true;
             btn.textContent = "Applying...";
             msgEl.className = "message";
-            msgEl.style.display = "none";
+            msgEl.style.display = "";
 
             try {
                 const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
@@ -423,8 +423,18 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         email: paymentData.email,
+                        full_name: paymentData.full_name,
+                        mobile: paymentData.mobile_number,
+                        product_name: paymentData.plan_name,
                         amount: originalPrice,
-                        coupon: localStorage.getItem("coupon")
+                        coupon: localStorage.getItem("coupon"),
+                        user_id: (window.supabaseClient && (await window.supabaseClient.auth.getUser()).data.user)?.id || null,
+                        // Add counselling specific fields
+                        category: paymentData.category,
+                        domicile_state: paymentData.domicile_state,
+                        neet_score: paymentData.neet_score,
+                        rank: paymentData.all_india_rank,
+                        counselling_type: paymentData.counselling_type
                     })
                 });
 
@@ -438,7 +448,7 @@
 
                 // 2. Open Razorpay
                 const options = {
-                    "key": "rzp_live_SebrDtxMirg67M",
+                    "key": "rzp_live_ShlgHvLVwqmST2",
                     "amount": Math.round(order.final_amount * 100),
                     "currency": "INR",
                     "name": "DC Neet Counselling",

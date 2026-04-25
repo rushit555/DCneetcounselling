@@ -4,299 +4,514 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Affiliate Dashboard | DC Neet Counselling</title>
+    <meta name="description" content="Manage your affiliate earnings, coupons, and referral links on the DC Neet Counselling Affiliate Dashboard.">
     <link rel="icon" type="image/jpeg" href="../../../assets/logo.jpg" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        *, *::before, *::after { box-sizing: border-box; }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            background: #f6f8fb;
             margin: 0;
             color: #1e293b;
-        }
-        .header {
-            background: #fff;
-            padding: 20px 40px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 20px;
-            color: #2563eb;
-        }
-        .btn-logout {
-            background: transparent;
-            border: 1px solid #e2e8f0;
-            padding: 8px 16px;
-            border-radius: 8px;
-            color: #64748b;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-logout:hover {
-            background: #f8fafc;
-            color: #ef4444;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 40px;
-        }
-        .stat-card {
-            background: white;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        .stat-icon.earnings { background: #dcfce7; color: #16a34a; }
-        .stat-icon.orders { background: #dbeafe; color: #2563eb; }
-        
-        .stat-info h3 { margin: 0; font-size: 14px; color: #64748b; font-weight: 500; }
-        .stat-info p { margin: 5px 0 0; font-size: 24px; font-weight: 700; color: #1e293b; }
-
-        .ref-section {
-            background: white;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            margin-bottom: 40px;
-        }
-        .ref-section h3 {
-            margin: 0 0 16px;
-            font-size: 16px;
-        }
-        .ref-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .ref-box input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            color: #475569;
-            background: #f8fafc;
-            outline: none;
-        }
-        .btn-copy {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-copy:hover {
-            background: #1d4ed8;
+            min-height: 100vh;
         }
 
-        .coupon-section {
-            background: white;
-            padding: 24px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            margin-bottom: 40px;
-        }
-        .coupon-section h3 {
-            margin: 0 0 16px;
-            font-size: 16px;
-        }
-        #couponBox {
+        /* ── SIDEBAR ── */
+        .sidebar {
+            width: 240px;
+            background: #0f172a;
+            color: #94a3b8;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            padding: 24px 12px;
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            z-index: 100;
+            transition: transform 0.3s;
         }
-        .coupon-item {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1e293b;
-            background: #f8fafc;
-            padding: 12px 20px;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
+        .sidebar-logo {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px;
+            padding: 0 8px 28px;
+            border-bottom: 1px solid #1e293b;
+            margin-bottom: 16px;
         }
-        .coupon-item strong {
-            color: #10b981;
-            font-size: 18px;
+        .sidebar-logo .logo-icon {
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; color: white;
         }
-        .coupon-value {
-            color: #64748b;
+        .sidebar-logo span {
+            font-size: 15px; font-weight: 700;
+            color: white; line-height: 1.2;
+        }
+        .sidebar nav { flex: 1; }
+        .sidebar a {
+            padding: 11px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 10px;
+            color: #94a3b8;
+            text-decoration: none;
             font-size: 14px;
             font-weight: 500;
+            margin-bottom: 4px;
+            transition: all 0.18s;
+        }
+        .sidebar a i { width: 18px; text-align: center; }
+        .sidebar a:hover { background: #1e293b; color: #e2e8f0; }
+        .sidebar a.active { background: #1e40af; color: white; }
+        .sidebar-footer {
+            border-top: 1px solid #1e293b;
+            padding-top: 16px;
+        }
+        .btn-sidebar-logout {
+            width: 100%;
+            display: flex; align-items: center; gap: 10px;
+            background: none; border: none;
+            color: #64748b; font-size: 14px; font-weight: 500;
+            padding: 11px 14px; border-radius: 10px;
+            cursor: pointer; font-family: 'Inter', sans-serif;
+            transition: all 0.18s;
+        }
+        .btn-sidebar-logout:hover { background: #1e293b; color: #ef4444; }
+
+        /* ── MAIN AREA ── */
+        .main {
+            margin-left: 240px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* ── TOP HEADER ── */
+        .topbar {
+            background: white;
+            padding: 18px 32px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .topbar-left h2 { margin: 0; font-size: 18px; font-weight: 700; color: #0f172a; }
+        .topbar-left p { margin: 2px 0 0; font-size: 13px; color: #64748b; }
+        .topbar-right { display: flex; align-items: center; gap: 12px; }
+        .affiliate-badge {
+            display: flex; align-items: center; gap: 8px;
+            background: #f0f9ff; border: 1px solid #bae6fd;
+            padding: 7px 14px; border-radius: 10px;
+            font-size: 13px; font-weight: 600; color: #0284c7;
+        }
+        .affiliate-badge i { font-size: 11px; }
+
+        /* ── DASHBOARD CONTAINER ── */
+        .dashboard-container {
+            padding: 28px 32px;
+            flex: 1;
+        }
+
+        /* ── STATS GRID ── */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 22px 20px;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            transition: all 0.22s ease;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.09); }
+        .card-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; flex-shrink: 0;
+        }
+        .card-icon.green  { background: #dcfce7; color: #16a34a; }
+        .card-icon.blue   { background: #dbeafe; color: #2563eb; }
+        .card-icon.purple { background: #ede9fe; color: #7c3aed; }
+        .card-icon.amber  { background: #fef3c7; color: #d97706; }
+        .card-title { font-size: 12px; color: #64748b; font-weight: 500; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-value { margin: 0; font-size: 26px; font-weight: 800; color: #0f172a; }
+
+        /* ── SECTION LABEL ── */
+        .section-label {
+            font-size: 13px; font-weight: 700; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            margin: 0 0 14px;
+        }
+
+        /* ── TOP ROW (ref + coupons) ── */
+        .top-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .panel {
+            background: white;
+            padding: 22px 24px;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .panel h3 { margin: 0 0 14px; font-size: 15px; font-weight: 700; color: #0f172a; }
+
+        /* ref link */
+        .ref-box { display: flex; align-items: center; gap: 10px; }
+        .ref-box input {
+            flex: 1; padding: 12px 14px;
+            border: 1px solid #e2e8f0; border-radius: 10px;
+            font-size: 13px; color: #475569;
+            background: #f8fafc; outline: none;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-copy {
+            background: #2563eb; color: white; border: none;
+            padding: 12px 20px; border-radius: 10px;
+            font-weight: 600; font-size: 13px;
+            cursor: pointer; transition: 0.2s;
+            white-space: nowrap; font-family: 'Inter', sans-serif;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-copy:hover { background: #1d4ed8; }
+
+        /* coupon items */
+        #couponBox { display: flex; flex-direction: column; gap: 10px; }
+        .coupon-item {
+            font-size: 14px; font-weight: 600; color: #1e293b;
+            background: #f8fafc; padding: 11px 16px;
+            border-radius: 10px; border: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .coupon-item strong { color: #10b981; font-size: 15px; }
+        .coupon-value { color: #64748b; font-size: 13px; font-weight: 500; }
+        .coupon-copy-btn {
+            background: #f0fdf4; border: 1px solid #bbf7d0;
+            color: #16a34a; font-size: 11px; font-weight: 600;
+            padding: 4px 10px; border-radius: 6px;
+            cursor: pointer; transition: 0.15s; font-family: 'Inter', sans-serif;
+        }
+        .coupon-copy-btn:hover { background: #dcfce7; }
+
+        /* ── QUICK ACTIONS ── */
+        .actions-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 11px 20px; border-radius: 10px;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer; border: none;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.18s;
+        }
+        .action-btn.primary { background: #2563eb; color: white; }
+        .action-btn.primary:hover { background: #1d4ed8; box-shadow: 0 4px 14px rgba(37,99,235,0.35); }
+        .action-btn.secondary { background: white; color: #0f172a; border: 1px solid #e2e8f0; }
+        .action-btn.secondary:hover { background: #f8fafc; }
+
+        /* ── TABLE SECTION ── */
         .table-section {
             background: white;
             border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
             overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.04);
         }
         .table-header {
-            padding: 20px 24px;
+            padding: 18px 24px;
             border-bottom: 1px solid #f1f5f9;
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .table-header h3 {
-            margin: 0;
-            font-size: 16px;
+        .table-header h3 { margin: 0; font-size: 15px; font-weight: 700; }
+        .table-count {
+            font-size: 12px; color: #64748b; font-weight: 500;
+            background: #f1f5f9; padding: 4px 12px; border-radius: 20px;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
         th {
-            padding: 16px 24px;
-            font-size: 13px;
-            color: #64748b;
-            background: #f8fafc;
-            font-weight: 600;
+            padding: 13px 20px;
+            font-size: 12px; color: #64748b;
+            background: #f9fafc; font-weight: 700;
             border-bottom: 1px solid #e2e8f0;
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
         td {
-            padding: 16px 24px;
+            padding: 15px 20px;
             font-size: 14px;
             border-bottom: 1px solid #f8fafc;
         }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #fafbff; }
+
+        /* ── STATUS BADGES ── */
         .status-paid {
-            background: #dcfce7;
-            color: #16a34a;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
+            background: #e6f9f0; color: #16a34a;
+            padding: 4px 12px; border-radius: 8px;
+            font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.4px;
+            display: inline-block;
         }
         .status-pending {
-            background: #fff7ed;
-            color: #ea580c;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
+            background: #fff4e5; color: #f59e0b;
+            padding: 4px 12px; border-radius: 8px;
+            font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.4px;
+            display: inline-block;
+        }
+        .status-cancelled {
+            background: #fef2f2; color: #ef4444;
+            padding: 4px 12px; border-radius: 8px;
+            font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.4px;
+            display: inline-block;
+        }
+
+        /* ── EMPTY / LOADING STATES ── */
+        .empty-state {
+            text-align: center; padding: 48px 20px; color: #94a3b8;
+        }
+        .empty-state i { font-size: 36px; margin-bottom: 12px; display: block; }
+        .empty-state p { margin: 0; font-size: 14px; }
+        .loading-dots { display: flex; gap: 6px; justify-content: center; padding: 20px; }
+        .loading-dots span {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #cbd5e1; animation: bounce 1.2s infinite ease-in-out;
+        }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; }
+            .dashboard-container { padding: 20px 16px; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            .top-row { grid-template-columns: 1fr; }
+            .topbar { padding: 14px 16px; }
+            .topbar-left p { display: none; }
+        }
+        @media (max-width: 480px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>DC Affiliate</h1>
-        <button class="btn-logout" id="logoutBtn">Logout</button>
-    </div>
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+            <span>DC Neet<br>Affiliate</span>
+        </div>
+        <nav>
+            <a href="#" class="active"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a href="#referral"><i class="fas fa-link"></i> Referral Link</a>
+            <a href="#coupons"><i class="fas fa-tag"></i> Coupons</a>
+            <a href="#orders"><i class="fas fa-receipt"></i> Orders</a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-sidebar-logout" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </aside>
 
-    <div class="container">
-        
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 40px;">
-            <div class="ref-section" style="margin-bottom: 0;">
-                <h3>Your Referral Link</h3>
-                <div class="ref-box">
-                    <input type="text" id="refLink" readonly>
-                    <button class="btn-copy" id="copyBtn"><i class="far fa-copy"></i> Copy</button>
-                </div>
+    <!-- ── MAIN ── -->
+    <div class="main">
+
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2>Affiliate Dashboard</h2>
+                <p>Welcome back! Here's your performance overview.</p>
             </div>
-
-            <div class="coupon-section" style="margin-bottom: 0;">
-                <h3>Your Coupons</h3>
-                <div id="couponBox">
-                    <div style="color: #64748b; padding: 12px; text-align: center;">Loading...</div>
+            <div class="topbar-right">
+                <div class="affiliate-badge">
+                    <i class="fas fa-circle" style="color:#22c55e;"></i>
+                    <span id="affiliateRefBadge">Loading...</span>
                 </div>
             </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon earnings">
-                    <i class="fas fa-rupee-sign"></i>
+        <!-- Dashboard Content -->
+        <div class="dashboard-container">
+
+            <!-- STATS GRID -->
+            <div class="dashboard-grid" style="margin-bottom: 28px;">
+                <div class="card">
+                    <div class="card-icon green"><i class="fas fa-rupee-sign"></i></div>
+                    <div>
+                        <p class="card-title">Total Earnings</p>
+                        <h2 class="card-value" id="totalEarnings">₹0</h2>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>Total Earnings</h3>
-                    <p id="totalEarnings">₹0</p>
+                <div class="card">
+                    <div class="card-icon blue"><i class="fas fa-shopping-bag"></i></div>
+                    <div>
+                        <p class="card-title">Total Orders</p>
+                        <h2 class="card-value" id="totalOrders">0</h2>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon purple"><i class="fas fa-tag"></i></div>
+                    <div>
+                        <p class="card-title">Active Coupons</p>
+                        <h2 class="card-value" id="totalCoupons">0</h2>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon amber"><i class="fas fa-clock"></i></div>
+                    <div>
+                        <p class="card-title">Pending Commission</p>
+                        <h2 class="card-value" id="pendingEarnings">₹0</h2>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon orders">
-                    <i class="fas fa-shopping-bag"></i>
+
+            <!-- QUICK ACTIONS -->
+            <div class="actions-row">
+                <button class="action-btn primary" id="copyRefBtn">
+                    <i class="fas fa-link"></i> Copy Referral Link
+                </button>
+                <button class="action-btn secondary" id="shareBtn">
+                    <i class="fas fa-share-alt"></i> Share Link
+                </button>
+            </div>
+
+            <!-- REFERRAL LINK + COUPONS -->
+            <div class="top-row">
+                <div class="panel" id="referral">
+                    <h3><i class="fas fa-link" style="color:#2563eb; margin-right:8px;"></i>Your Referral Link</h3>
+                    <div class="ref-box">
+                        <input type="text" id="refLink" readonly placeholder="Generating your link...">
+                        <button class="btn-copy" id="copyBtnInline">
+                            <i class="far fa-copy"></i> Copy
+                        </button>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>Total Orders</h3>
-                    <p id="totalOrders">0</p>
+
+                <div class="panel" id="coupons">
+                    <h3><i class="fas fa-tag" style="color:#10b981; margin-right:8px;"></i>Your Coupons</h3>
+                    <div id="couponBox">
+                        <div class="loading-dots"><span></span><span></span><span></span></div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="table-section">
-            <div class="table-header">
-                <h3>Recent Referrals</h3>
+            <!-- RECENT ORDERS TABLE -->
+            <div class="table-section" id="orders">
+                <div class="table-header">
+                    <h3><i class="fas fa-receipt" style="color:#64748b; margin-right:8px;"></i>Recent Referrals</h3>
+                    <span class="table-count" id="orderCount">0 orders</span>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Coupon Used</th>
+                                <th>Order Amount</th>
+                                <th>Commission</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td colspan="5">
+                                    <div class="loading-dots"><span></span><span></span><span></span></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Order Amount</th>
-                        <th>Commission</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="ordersTableBody">
-                    <tr><td colspan="4" style="text-align: center; color: #64748b;">Loading data...</td></tr>
-                </tbody>
-            </table>
-        </div>
 
-    </div>
+        </div><!-- /dashboard-container -->
+    </div><!-- /main -->
 
-    <!-- Ensure correct path to app_v2.js which initializes Supabase -->
     <script src="../../../js/app_v2.js"></script>
     <script>
         const affiliateRef = localStorage.getItem("affiliate_ref");
 
-        // Protection check
+        // Guard
         if (!affiliateRef) {
             window.location.href = "/affiliate";
         }
 
-        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? 'http://localhost:3000/api' 
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3000/api'
             : 'https://dcneetcounselling-backend.onrender.com/api';
 
+        // ── Set badge ──
+        const badge = document.getElementById('affiliateRefBadge');
+        if (badge) badge.textContent = affiliateRef || 'Affiliate';
+
+        // ── Referral link ──
+        const baseUrl = "https://dcneetcounselling.com";
+        const fullLink = `${baseUrl}/?ref=${affiliateRef}`;
+        document.getElementById('refLink').value = fullLink;
+
+        function copyLink(btnEl) {
+            navigator.clipboard.writeText(fullLink).then(() => {
+                const orig = btnEl.innerHTML;
+                btnEl.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => { btnEl.innerHTML = orig; }, 2000);
+            });
+        }
+
+        document.getElementById('copyBtnInline').addEventListener('click', (e) => copyLink(e.currentTarget));
+        document.getElementById('copyRefBtn').addEventListener('click', (e) => copyLink(e.currentTarget));
+
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            if (navigator.share) {
+                navigator.share({ title: 'DC Neet Counselling', url: fullLink });
+            } else {
+                copyLink(document.getElementById('shareBtn'));
+            }
+        });
+
+        // ── Logout ──
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem("affiliate_ref");
+            window.location.href = "/affiliate";
+        });
+
+        // ── Load Coupons ──
         async function loadCoupons() {
             const ref_code = localStorage.getItem("affiliate_ref");
-            console.log("REF CODE:", ref_code);
+            const box = document.getElementById("couponBox");
 
-            if (!ref_code) {
-                document.getElementById("couponBox").innerText = "Not logged in";
-                return;
-            }
+            if (!ref_code) { box.innerText = "Not logged in"; return; }
 
             try {
                 const res = await fetch(`${API_BASE}/get-affiliate-coupons`, {
@@ -304,118 +519,114 @@
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ ref_code: ref_code.toUpperCase() })
                 });
-
-                const text = await res.text();
-                console.log("RAW RESPONSE:", text);
-
-                const data = JSON.parse(text);
-                console.log("PARSED DATA:", data);
-
-                const box = document.getElementById("couponBox");
+                const data = await res.json();
 
                 if (!data.success || !data.coupons || data.coupons.length === 0) {
-                    box.innerHTML = '<div style="color: #64748b; padding: 12px; text-align: center; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">No coupons assigned</div>';
+                    box.innerHTML = `
+                        <div class="empty-state" style="padding:20px;">
+                            <i class="fas fa-tag" style="font-size:24px; color:#cbd5e1;"></i>
+                            <p>No coupons assigned yet</p>
+                        </div>`;
+                    document.getElementById('totalCoupons').textContent = '0';
                     return;
                 }
+
+                document.getElementById('totalCoupons').textContent = data.coupons.length;
 
                 box.innerHTML = data.coupons.map(c => `
                     <div class="coupon-item">
                         <strong>${c.code}</strong>
                         <span class="coupon-value">${c.value}${c.type === 'percentage' ? '%' : '₹'} off</span>
+                        <button class="coupon-copy-btn" onclick="navigator.clipboard.writeText('${c.code}'); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500)">Copy</button>
                     </div>
                 `).join("");
             } catch (err) {
-                console.error("ERROR:", err);
-                document.getElementById("couponBox").innerHTML = '<div style="color: #ef4444; padding: 12px; text-align: center; background: #fef2f2; border-radius: 8px; border: 1px dashed #fca5a5;">Error loading</div>';
+                console.error("Coupon load error:", err);
+                box.innerHTML = `<div style="color:#ef4444; font-size:13px; padding:12px; background:#fef2f2; border-radius:10px; text-align:center;"><i class="fas fa-exclamation-circle"></i> Error loading coupons</div>`;
             }
         }
 
-        window.addEventListener("load", loadCoupons);
-
+        // ── Load Dashboard Data ──
         document.addEventListener("DOMContentLoaded", async () => {
-            // Set Ref Link
-            const baseUrl = "https://dcneetcounselling.com";
-            const fullLink = `${baseUrl}/?ref=${affiliateRef}`;
-            document.getElementById('refLink').value = fullLink;
+            await loadCoupons();
 
-            // Copy logic
-            document.getElementById('copyBtn').addEventListener('click', () => {
-                navigator.clipboard.writeText(fullLink).then(() => {
-                    const btn = document.getElementById('copyBtn');
-                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="far fa-copy"></i> Copy';
-                    }, 2000);
-                });
-            });
-
-            // Logout logic
-            document.getElementById('logoutBtn').addEventListener('click', () => {
-                localStorage.removeItem("affiliate_ref");
-                window.location.href = "/affiliate";
-            });
-
-            // Fetch Data
             try {
                 if (!window.supabaseClient) throw new Error("Database not ready");
 
-                // Check status
+                // Verify affiliate status
                 const { data: aff, error: affErr } = await window.supabaseClient
                     .from('affiliates')
                     .select('status')
                     .eq('ref_code', affiliateRef)
                     .single();
-                
+
                 if (affErr || aff?.status !== 'approved') {
                     localStorage.removeItem("affiliate_ref");
                     window.location.href = "/affiliate";
                     return;
                 }
 
-                // 1. Total Orders
-                const { count: totalOrders } = await window.supabaseClient
+                // Fetch orders
+                const { data: orders, count: orderCount, error } = await window.supabaseClient
                     .from('orders')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('affiliate_ref', affiliateRef);
-                
-                document.getElementById('totalOrders').textContent = totalOrders || 0;
-
-                // 2. Total Earnings & Recent Orders
-                const { data: orders, error } = await window.supabaseClient
-                    .from('orders')
-                    .select('created_at, final_amount, commission, status')
+                    .select('created_at, final_amount, commission, status, coupon_code', { count: 'exact' })
                     .eq('affiliate_ref', affiliateRef)
                     .order('created_at', { ascending: false });
-                
+
                 if (error) throw error;
 
-                // Calculate earnings
-                let earnings = 0;
+                // Metrics
+                let paidEarnings = 0, pendingEarnings = 0;
                 orders?.forEach(o => {
-                    if (o.status === 'paid' && o.commission) {
-                        earnings += Number(o.commission);
-                    }
+                    const comm = Number(o.commission || 0);
+                    if (o.status === 'paid') paidEarnings += comm;
+                    else pendingEarnings += comm;
                 });
-                document.getElementById('totalEarnings').textContent = `₹${earnings.toLocaleString('en-IN')}`;
 
-                // Populate Table
+                document.getElementById('totalOrders').textContent = orderCount || 0;
+                document.getElementById('totalEarnings').textContent = `₹${paidEarnings.toLocaleString('en-IN')}`;
+                document.getElementById('pendingEarnings').textContent = `₹${pendingEarnings.toLocaleString('en-IN')}`;
+                document.getElementById('orderCount').textContent = `${orderCount || 0} order${orderCount !== 1 ? 's' : ''}`;
+
+                // Table
                 const tbody = document.getElementById('ordersTableBody');
                 if (!orders || orders.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #64748b;">No referrals yet.</td></tr>';
+                    tbody.innerHTML = `
+                        <tr><td colspan="5">
+                            <div class="empty-state">
+                                <i class="fas fa-receipt"></i>
+                                <p>No referral orders yet — share your link to start earning!</p>
+                            </div>
+                        </td></tr>`;
                 } else {
-                    const recentOrders = orders.slice(0, 10);
-                    tbody.innerHTML = recentOrders.map(o => `
-                        <tr>
-                            <td>${new Date(o.created_at).toLocaleDateString()}</td>
-                            <td style="font-weight: 500;">₹${Number(o.final_amount || 0).toLocaleString('en-IN')}</td>
-                            <td style="color: #10b981; font-weight: 600;">₹${Number(o.commission || 0).toLocaleString('en-IN')}</td>
-                            <td><span class="status-${o.status === 'paid' ? 'paid' : 'pending'}">${o.status}</span></td>
-                        </tr>
-                    `).join('');
+                    tbody.innerHTML = orders.slice(0, 20).map(o => {
+                        const statusClass = o.status === 'paid' ? 'status-paid'
+                                          : o.status === 'cancelled' ? 'status-cancelled'
+                                          : 'status-pending';
+                        const date = new Date(o.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                        const coupon = o.coupon_code
+                            ? `<span style="background:#f0fdf4;color:#16a34a;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;">${o.coupon_code}</span>`
+                            : `<span style="color:#94a3b8;font-size:13px;">—</span>`;
+                        return `
+                            <tr>
+                                <td style="color:#475569;">${date}</td>
+                                <td>${coupon}</td>
+                                <td style="font-weight:600;">₹${Number(o.final_amount || 0).toLocaleString('en-IN')}</td>
+                                <td style="color:#10b981; font-weight:700;">₹${Number(o.commission || 0).toLocaleString('en-IN')}</td>
+                                <td><span class="${statusClass}">${o.status || 'pending'}</span></td>
+                            </tr>`;
+                    }).join('');
                 }
 
             } catch (err) {
                 console.error("Dashboard error:", err);
+                document.getElementById('ordersTableBody').innerHTML = `
+                    <tr><td colspan="5">
+                        <div class="empty-state">
+                            <i class="fas fa-exclamation-triangle" style="color:#f87171;"></i>
+                            <p>Error loading data. Please refresh the page.</p>
+                        </div>
+                    </td></tr>`;
             }
         });
     </script>
