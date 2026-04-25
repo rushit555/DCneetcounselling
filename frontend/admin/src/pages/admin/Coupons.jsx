@@ -8,7 +8,7 @@ export default function Coupons() {
   const [code, setCode] = useState('');
   const [discountValue, setDiscountValue] = useState('');
   const [discountType, setDiscountType] = useState('percentage');
-  const [influencerId, setInfluencerId] = useState('');
+  const [goaffproRef, setGoaffproRef] = useState('');
   const [influencers, setInfluencers] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -24,16 +24,15 @@ export default function Coupons() {
       
       // Fetch Influencers
       const { data: infs } = await supabase
-        .from('users')
-        .select('id, name, email')
-        .eq('role', 'influencer');
+        .from('affiliates')
+        .select('goaffpro_id, username, email');
       
       setInfluencers(infs || []);
 
       // Fetch existing coupons
       const { data: cups } = await supabase
         .from('coupons')
-        .select('*, users!influencer_id(name, email)')
+        .select('*')
         .order('created_at', { ascending: false });
       
       setCoupons(cups || []);
@@ -54,7 +53,7 @@ export default function Coupons() {
         code: code.trim().toUpperCase(),
         discount_type: discountType,
         discount_value: Number(discountValue),
-        influencer_id: influencerId,
+        goaffpro_ref: goaffproRef,
         is_active: true
       });
 
@@ -66,7 +65,7 @@ export default function Coupons() {
       alert('Coupon created successfully!');
       setCode('');
       setDiscountValue('');
-      setInfluencerId('');
+      setGoaffproRef('');
       fetchData();
     } catch (err) {
       alert(err.message || 'Error creating coupon');
@@ -115,25 +114,42 @@ export default function Coupons() {
 
             <form onSubmit={createCoupon}>
               <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Assign Influencer</label>
-                <select 
-                  value={influencerId}
-                  onChange={(e) => setInfluencerId(e.target.value)}
-                  style={{ 
-                    width: '100%', 
-                    padding: '12px 16px', 
-                    borderRadius: '12px', 
-                    border: '1px solid #e2e8f0',
-                    outline: 'none',
-                    fontSize: '14px',
-                    background: '#fff'
-                  }}
-                >
-                  <option value="">Select an Influencer</option>
-                  {influencers.map(inf => (
-                    <option key={inf.id} value={inf.id}>{inf.name} ({inf.email})</option>
-                  ))}
-                </select>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Assign Influencer (GoAffPro Affiliate)</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <select 
+                    value={goaffproRef}
+                    onChange={(e) => setGoaffproRef(e.target.value)}
+                    style={{ 
+                      flex: 1, 
+                      padding: '12px 16px', 
+                      borderRadius: '12px', 
+                      border: '1px solid #e2e8f0',
+                      outline: 'none',
+                      fontSize: '14px',
+                      background: '#fff'
+                    }}
+                  >
+                    <option value="">Select an Affiliate</option>
+                    {influencers.map(inf => (
+                      <option key={inf.goaffpro_id} value={inf.goaffpro_id}>{inf.username} ({inf.email})</option>
+                    ))}
+                  </select>
+                  <button 
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('http://localhost:3000/api/sync-affiliates');
+                        if (res.ok) {
+                          alert('Synced affiliates from GoAffPro successfully!');
+                          fetchData();
+                        }
+                      } catch (e) { alert('Error syncing affiliates'); }
+                    }}
+                    style={{ padding: '0 16px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#f8fafc', cursor: 'pointer' }}
+                  >
+                    Sync API
+                  </button>
+                </div>
               </div>
 
               <div style={{ marginBottom: '20px' }}>
@@ -235,7 +251,9 @@ export default function Coupons() {
                 </tr>
               </thead>
               <tbody>
-                {coupons.length > 0 ? coupons.map((c, i) => (
+                {coupons.length > 0 ? coupons.map((c, i) => {
+                  const aff = influencers.find(inf => inf.goaffpro_id === c.goaffpro_ref) || { username: c.goaffpro_ref, email: '' };
+                  return (
                   <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}>
                     <td style={{ padding: '16px 24px' }}>
                       <span style={{ background: '#10b98110', color: '#059669', padding: '6px 12px', borderRadius: '8px', fontWeight: '700', fontSize: '14px' }}>
@@ -243,8 +261,8 @@ export default function Coupons() {
                       </span>
                     </td>
                     <td style={{ padding: '16px 24px' }}>
-                      <div style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b' }}>{c.users?.name || 'Unknown'}</div>
-                      <div style={{ fontSize: '12px', color: '#64748b' }}>{c.users?.email}</div>
+                      <div style={{ fontSize: '14px', fontWeight: '500', color: '#1e293b' }}>{aff.username || 'Unknown'}</div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>{aff.email}</div>
                     </td>
                     <td style={{ padding: '16px 24px', fontSize: '14px', color: '#1e293b' }}>
                       {c.discount_value}{c.discount_type === 'percentage' ? '%' : '₹'} off
@@ -271,7 +289,7 @@ export default function Coupons() {
                       </button>
                     </td>
                   </tr>
-                )) : (
+                )}) : (
                   <tr>
                     <td colSpan="4" style={{ padding: '32px', textAlign: 'center', color: '#64748b' }}>
                       {fetchLoading ? 'Loading coupons...' : 'No coupons generated yet.'}

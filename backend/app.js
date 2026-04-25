@@ -63,9 +63,6 @@ app.post('/api/validate-coupon', async (req, res) => {
     const coupon = req.body.coupon?.trim().toUpperCase();
     console.log("Incoming coupon:", coupon);
 
-    const { data: allCoupons } = await supabase.from("coupons").select("*");
-    console.log("ALL COUPONS:", allCoupons);
-
     const { data } = await supabase
       .from('coupons')
       .select('*')
@@ -77,8 +74,8 @@ app.post('/api/validate-coupon', async (req, res) => {
         valid: true,
         discount_type: c.discount_type,
         discount_value: c.discount_value,
-        affiliate_id: c.affiliate_id,
-        min_order_amount: c.min_order_amount // Retained to avoid frontend breaks
+        goaffpro_ref: c.goaffpro_ref, // updated to use goaffpro_ref
+        min_order_amount: c.min_order_amount
       });
     }
 
@@ -86,6 +83,49 @@ app.post('/api/validate-coupon', async (req, res) => {
   } catch (err) {
     console.error("Validate Coupon Error:", err);
     return res.status(500).json({ valid: false, message: "Internal server error" });
+  }
+});
+
+// Sync Affiliates Route
+app.get('/api/sync-affiliates', async (req, res) => {
+  try {
+    const response = await fetch('https://api.goaffpro.com/v1/admin/affiliates', {
+      headers: {
+        'x-goaffpro-access-token': process.env.GOAFFPRO_TOKEN
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`GoAffPro API returned ${response.status}: ${await response.text()}`);
+    }
+
+    const data = await response.json();
+    const affiliates = data.affiliates || [];
+    
+    let inserted = 0;
+    for (const aff of affiliates) {
+      // Map properties based on typical GoAffPro response
+      const goaffproId = aff.id;
+      const username = aff.refcode || aff.username || aff.referral_code || '';
+      const email = aff.email || '';
+      
+      if (!goaffproId) continue;
+
+      const { error } = await supabase
+        .from('affiliates')
+        .upsert({
+          goaffpro_id: goaffproId,
+          username: username,
+          email: email
+        }, { onConflict: 'goaffpro_id' });
+        
+      if (!error) inserted++;
+    }
+
+    res.json({ success: true, count: inserted });
+  } catch (err) {
+    console.error('❌ Sync Error:', err);
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 

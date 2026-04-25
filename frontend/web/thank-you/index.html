@@ -153,7 +153,18 @@
 
         console.log('GoAffPro Order Data:', window.goaffproOrder);
     </script>
-    <script src="https://api.goaffpro.com/loader.js"></script>
+    <script>
+        function loadGoAffPro() {
+            if (window.goaffpro) return;
+            const script = document.createElement("script");
+            script.src = "https://api.goaffpro.com/loader.js";
+            script.async = true;
+            script.onload = () => console.log("GoAffPro Loaded Successfully");
+            script.onerror = () => console.error("GoAffPro Failed to Load");
+            document.body.appendChild(script);
+        }
+        loadGoAffPro();
+    </script>
 </body>
 </html>
 

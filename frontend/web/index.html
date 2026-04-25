@@ -6303,11 +6303,11 @@ window.closeEbookPurchaseModal = function() {
    }
 
    ctx.price = Math.max(0, ctx.originalPrice - discount);
-   ctx.appliedCoupon = { code: code, affiliate_id: data.affiliate_id || null };
+   ctx.appliedCoupon = { code: code, affiliate_id: data.goaffpro_ref || null };
    localStorage.setItem('applied_coupon', code);
    localStorage.setItem('appliedCoupon', code); // backward compatibility
-   if (data.affiliate_id) {
-       localStorage.setItem('affiliate_id', data.affiliate_id);
+   if (data.goaffpro_ref) {
+       localStorage.setItem('affiliate_id', data.goaffpro_ref);
    }
    } catch (err) {
        console.error(err);

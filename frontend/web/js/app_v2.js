@@ -1,29 +1,22 @@
-// ─── GoAffPro Delayed Runtime Injection ───────────────────────────────────────
-(function () {
-  function loadGoAffPro() {
+// ─── GoAffPro Dynamic Loader ────────────────────────────────────────────────
+window.loadGoAffPro = function() {
     if (window.goaffpro) return;
 
-    var existing = document.querySelector('script[src*="goaffpro"]');
-    if (existing) return;
+    const script = document.createElement("script");
+    script.src = "https://api.goaffpro.com/loader.js";
+    script.async = true;
 
-    var s = document.createElement("script");
-    s.src = "https://static.goaffpro.com/loader.js";
-    s.async = true;
-
-    s.onload = function () {
-      console.log("GoAffPro Loaded Successfully");
+    script.onload = () => {
+        console.log("GoAffPro Loaded Successfully");
     };
 
-    s.onerror = function () {
-      console.error("GoAffPro Failed to Load");
+    script.onerror = () => {
+        console.error("GoAffPro Failed to Load");
     };
 
-    document.head.appendChild(s);
-  }
-
-  // Delay ensures SPA initialization completes
-  setTimeout(loadGoAffPro, 1500);
-})();
+    document.body.appendChild(script);
+};
+window.loadGoAffPro();
 // ──────────────────────────────────────────────────────────────────────────────
 
 // ─── Supabase Configuration ───────────────────────────────────────────────────
@@ -199,6 +192,7 @@ window.navigate = function(route) {
 
     setTimeout(function() {
         if (window.refreshGoAffPro) window.refreshGoAffPro();
+        if (window.loadGoAffPro) window.loadGoAffPro();
     }, 1000);
 };
 
