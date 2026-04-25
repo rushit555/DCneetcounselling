@@ -302,23 +302,19 @@
     </div>
 
     <!-- Load Supabase strictly after DOM to avoid blocking -->
-    <script src="../js/supabase.js?v=2026.04.24.1"></script>
-    <script src="../js/supabaseClient.js?v=2026.04.24.1"></script>
+    <script src="../js/supabase.js?v=2026.04.19.2"></script>
+    <script src="../js/supabaseClient.js?v=2026.04.19.2"></script>
     
     <script>
-<<<<<<< HEAD
-=======
 
 
->>>>>>> testing
         let paymentData = null;
         let originalPrice = 0;
         let finalPrice = 0;
         let appliedCoupon = null;
         let discountAmount = 0;
 
-        // Run immediately — DOM elements are already above this script block
-        (function populatePaymentPage() {
+        document.addEventListener("DOMContentLoaded", () => {
             const dataStr = sessionStorage.getItem('counselling_payment_data');
             if (!dataStr) {
                 alert("No booking details found. Please submit the form again.");
@@ -329,12 +325,6 @@
             try {
                 paymentData = JSON.parse(dataStr);
                 
-                if (paymentData.email) {
-                    localStorage.setItem('user_email', paymentData.email);
-                }
-                
-                console.log('📋 Payment data loaded:', paymentData);
-
                 // Populate UI
                 document.getElementById('d_plan_name').textContent = paymentData.plan_name || "N/A";
                 document.getElementById('d_category').textContent = paymentData.category || "N/A";
@@ -347,15 +337,13 @@
                 
                 document.getElementById('d_original_price').textContent = originalPrice;
                 document.getElementById('d_final_price').textContent = finalPrice;
-
-                console.log('✅ Payment page populated — Price:', finalPrice);
             } catch (e) {
                 console.error("Data parse error", e);
                 window.location.href = "/";
             }
-        })();
+        });
 
-        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://dcneetcounselling.onrender.com/api'; // Adjust production URL as needed
+        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://dcneetcounselling-backend.onrender.com/api';
 
         async function applyCoupon() {
             const codeInput = document.getElementById('couponInput').value.trim();
@@ -370,14 +358,6 @@
             msgEl.style.display = "none";
 
             try {
-<<<<<<< HEAD
-                const uppercaseCode = codeInput.toUpperCase();
-                
-                const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ coupon: uppercaseCode })
-=======
                 const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -385,24 +365,14 @@
                         code: codeInput,
                         amount: originalPrice
                     })
->>>>>>> testing
                 });
 
-                if (!response.ok) {
-                    throw new Error(`API error: ${response.status} ${response.statusText}`);
-                }
-                
                 const data = await response.json();
-                console.log("Coupon Response:", data);
 
-                if (!data.valid) {
-                    msgEl.textContent = "Invalid Coupon";
+                if (!response.ok || !data.valid) {
+                    msgEl.textContent = data.message || "Invalid or expired coupon.";
                     msgEl.className = "message error";
                     resetDiscount();
-<<<<<<< HEAD
-                    msgEl.style.display = "block";
-                    return;
-=======
                 } else {
                     appliedCoupon = { code: data.coupon };
                     localStorage.setItem("coupon", data.coupon);
@@ -419,50 +389,11 @@
 
                     msgEl.textContent = "Coupon applied successfully!";
                     msgEl.className = "message success";
->>>>>>> testing
                 }
-
-                // Check minimum order amount
-                if (data.min_order_amount !== null && originalPrice < data.min_order_amount) {
-                    msgEl.textContent = `Minimum order amount of ₹${data.min_order_amount} not met`;
-                    msgEl.className = "message error";
-                    resetDiscount();
-                    msgEl.style.display = "block";
-                    return;
-                }
-
-                // Calculate discount
-                let discount = 0;
-                if (data.discount_type === 'percentage') {
-                    discount = Math.round(originalPrice * (parseFloat(data.discount_value) / 100));
-                } else {
-                    discount = parseFloat(data.discount_value);
-                }
-
-                appliedCoupon = { code: uppercaseCode, affiliate_id: data.goaffpro_ref || null }; // Store for tracking
-                localStorage.setItem('applied_coupon', uppercaseCode);
-                localStorage.setItem('appliedCoupon', uppercaseCode); // keep old key for backward compatibility
-                if (data.goaffpro_ref) {
-                    localStorage.setItem('affiliate_id', data.goaffpro_ref);
-                }
-                
-                discountAmount = discount;
-                finalPrice = originalPrice - discount;
-                if (finalPrice < 0) finalPrice = 0;
-
-                document.getElementById('d_discount').textContent = discountAmount;
-                document.getElementById('discountRow').style.display = 'flex';
-                document.getElementById('d_final_price').textContent = finalPrice;
-
-                msgEl.textContent = "Coupon applied successfully!";
-                msgEl.className = "message success";
-                msgEl.style.display = "block";
-
             } catch (err) {
                 console.error(err);
                 msgEl.textContent = "Error validating coupon. Please try again.";
                 msgEl.className = "message error";
-                msgEl.style.display = "block";
             } finally {
                 btn.disabled = false;
                 btn.textContent = "Apply";
@@ -497,50 +428,6 @@
                     })
                 });
 
-<<<<<<< HEAD
-                // 2. Prepare DB record
-                const recordData = {
-                    user_id: paymentData.user_id,
-                    full_name: paymentData.full_name,
-                    email: paymentData.email,
-                    mobile: paymentData.mobile_number,
-                    category: paymentData.category,
-                    domicile_state: paymentData.domicile_state,
-                    neet_score: paymentData.neet_score,
-                    rank: paymentData.all_india_rank,
-                    plan_name: paymentData.plan_name,
-                    plan_price: paymentData.plan_price,
-                    counselling_type: paymentData.counselling_type,
-                    coupon_code: appliedCoupon ? appliedCoupon.code : null,
-                    affiliate_id: appliedCoupon ? appliedCoupon.affiliate_id : null,
-                    discounted_price: finalPrice,
-                    payment_status: 'initiated'
-                };
-
-                // 3. Insert into DB
-                const { data: insertRes, error } = await window.supabaseClient
-                    .from('counselling_bookings')
-                    .insert(recordData)
-                    .select('id')
-                    .single();
-
-                if (error || !insertRes) {
-                    throw new Error("Failed to create booking record: " + (error ? error.message : "Unknown error"));
-                }
-
-                // 4. Store tracking data for thank-you page fallback (UPI/redirect flows)
-                sessionStorage.setItem('pending_tracking', JSON.stringify({
-                    product: paymentData.plan_name,
-                    amount: finalPrice,
-                    order_id: insertRes.id,
-                    coupon: appliedCoupon ? appliedCoupon.code : '',
-                    type: 'counselling',
-                    email: paymentData.email
-                }));
-                localStorage.setItem('customer_email', paymentData.email);
-
-                // 5. Open Razorpay
-=======
                 const order = await createRes.json();
                 
                 if (!order.success) {
@@ -550,7 +437,6 @@
                 localStorage.setItem("order_id", order.order_id);
 
                 // 2. Open Razorpay
->>>>>>> testing
                 const options = {
                     "key": "rzp_live_SebrDtxMirg67M",
                     "amount": Math.round(order.final_amount * 100),
@@ -559,58 +445,9 @@
                     "description": paymentData.plan_name,
                     "order_id": order.razorpay_order_id,
                     "handler": async function (response) {
-                        console.log('🔥 ENTERED PAYMENT HANDLER');
-                        console.log('DEBUG Variables:', { finalPrice, appliedCoupon, response });
                         try {
                             const order_id = localStorage.getItem("order_id");
 
-<<<<<<< HEAD
-                            // Record coupon usage via backend
-                            if (appliedCoupon) {
-                                try {
-                                    await fetch(`${BACKEND_URL}/update-coupon-usage`, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ code: appliedCoupon.code })
-                                    });
-                                } catch (e) {
-                                    console.error("Failed to update coupon usage:", e);
-                                }
-                            }
-
-                            // Server-side GoAffPro tracking
-                            try {
-                                const orderData = {
-                                    order_id: response.razorpay_payment_id,
-                                    total: finalPrice,
-                                    coupon: appliedCoupon ? appliedCoupon.code : null
-                                };
-                                console.log('📦 GoAffPro Order Data:', orderData);
-                                console.log('Calling API URL:', `${BACKEND_URL}/track-order`);
-                                
-                                fetch(`${BACKEND_URL}/track-order`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify(orderData)
-                                })
-                                .then(res => res.json())
-                                .then(data => {
-                                    console.log('✅ Track API success:', data);
-                                })
-                                .catch(err => {
-                                    console.error('❌ Fetch error:', err);
-                                });
-                            } catch (e) {
-                                console.error("GoAffPro tracking failed:", e);
-                            }
-
-                            // Clear tracking data — handler already fired, no need for thank-you fallback
-                            sessionStorage.removeItem('pending_tracking');
-                            sessionStorage.removeItem('counselling_payment_data');
-                            setTimeout(() => {
-                                window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}&tracked=1`;
-                            }, 2000);
-=======
                             // Confirm payment with backend
                             const confirmRes = await fetch(`${BACKEND_URL}/confirm-payment`, {
                                 method: "POST",
@@ -631,7 +468,6 @@
                                 throw new Error("Backend verification failed");
                             }
 
->>>>>>> testing
                         } catch (innerErr) {
                             console.error("Post-payment DB error:", innerErr);
                             alert("Payment succeeded but verification failed. Please contact support.");
@@ -660,21 +496,6 @@
             }
         }
     </script>
-<<<<<<< HEAD
-    <script>
-        function loadGoAffPro() {
-            if (window.goaffpro) return;
-            const script = document.createElement("script");
-            script.src = "https://api.goaffpro.com/loader.js";
-            script.async = true;
-            script.onload = () => console.log("GoAffPro Loaded Successfully");
-            script.onerror = () => console.error("GoAffPro Failed to Load");
-            document.body.appendChild(script);
-        }
-        loadGoAffPro();
-    </script>
-=======
 
->>>>>>> testing
 </body>
 </html>
