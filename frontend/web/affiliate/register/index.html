@@ -168,25 +168,30 @@
             msgBox.className = "";
 
             try {
-                // We'll assume backend is at http://localhost:3000 if dev, or relative /api
-                // We will use the VITE_BACKEND_URL pattern or simply relative
-                const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                                   ? 'http://localhost:3000' 
-                                   : 'https://dc-neet-counselling-backend.onrender.com';
+                const API_BASE = window.location.hostname === "localhost" 
+                                   ? "http://localhost:3000/api" 
+                                   : "https://dcneetcounselling-backend.onrender.com/api";
 
-                const response = await fetch(`${backendUrl}/api/register-affiliate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const response = await fetch(`${API_BASE}/register-affiliate`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name, email, ref_code, password })
                 });
 
-                const data = await response.json();
-
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || "Registration failed");
+                if (!response.ok) {
+                    throw new Error("Server error");
                 }
 
-                msgBox.textContent = data.message;
+                const data = await response.json();
+
+                if (!data.success) {
+                    msgBox.textContent = data.message || "Registration failed";
+                    msgBox.classList.add("error");
+                    msgBox.style.display = "block";
+                    return;
+                }
+
+                msgBox.textContent = "Registration successful! Await approval.";
                 msgBox.classList.add("success");
                 msgBox.style.display = "block";
                 
@@ -194,8 +199,8 @@
                 document.getElementById('registerForm').reset();
 
             } catch (err) {
-                console.error(err);
-                msgBox.textContent = err.message || "An error occurred during registration.";
+                console.error("API Error:", err);
+                msgBox.textContent = "Server not reachable. Please try again.";
                 msgBox.classList.add("error");
                 msgBox.style.display = "block";
             } finally {

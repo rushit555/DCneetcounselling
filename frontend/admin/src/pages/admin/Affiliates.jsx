@@ -111,7 +111,13 @@ export default function Affiliates() {
       <div style={{ flex: 1, marginLeft: '260px', padding: '32px' }}>
         <Header title="Affiliates Management" />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '32px', marginTop: '32px' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '1fr 2fr', 
+          gap: '24px', 
+          marginTop: '32px',
+          alignItems: 'start'
+        }}>
           
           {/* Create Affiliate Card */}
           <div style={{ 
@@ -211,7 +217,7 @@ export default function Affiliates() {
             background: '#fff', 
             borderRadius: '24px', 
             boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
-            overflow: 'hidden',
+            overflowX: 'auto',
             border: '1px solid #e2e8f0'
           }}>
             <div style={{ padding: '24px', borderBottom: '1px solid #f1f5f9' }}>
