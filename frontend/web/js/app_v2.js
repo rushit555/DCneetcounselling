@@ -90,31 +90,6 @@ window.setNavActive = function(route) {
 
 // ─── Core Router (Upgraded) ──────────────────────────────────────────────────
 
-// ─── GoAffPro Tracking Utilities ──────────────────────────────────────────────
-window.refreshGoAffPro = function() {
-    if (window.goaffpro && window.goaffpro.refetch) {
-        window.goaffpro.refetch();
-        console.log('GoAffPro refetched');
-    }
-};
-
-window.trackGoAffProOrder = function(order) {
-    setTimeout(() => {
-        window.goaffproOrder = {
-            id: order.id,
-            total: order.amount,
-            currency: 'INR',
-            coupon: order.coupon || ''
-        };
-        console.log('GoAffPro order sent:', window.goaffproOrder);
-    }, 1500);
-};
-
-window.addEventListener('load', function() {
-    setTimeout(() => {
-        console.log('GoAffPro status:', typeof goaffpro);
-    }, 2000);
-});
 // ──────────────────────────────────────────────────────────────────────────────
 
 // Enhance the stub navigation with animations and dynamic features
@@ -168,9 +143,6 @@ window.navigate = function(route) {
         if (typeof bindDynamicEvents === 'function') bindDynamicEvents();
     }, 50);
 
-    setTimeout(function() {
-        if (window.refreshGoAffPro) window.refreshGoAffPro();
-    }, 1000);
 };
 
 

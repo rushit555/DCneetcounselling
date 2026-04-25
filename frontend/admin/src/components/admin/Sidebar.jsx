@@ -18,9 +18,9 @@ export default function Sidebar() {
 
   const menuItems = [
     { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { path: '/admin/influencers', label: 'Influencers', icon: Users },
+    { path: '/admin/orders', label: 'Orders', icon: Ticket },
+    { path: '/admin/affiliates', label: 'Affiliates', icon: Users },
     { path: '/admin/coupons', label: 'Coupons', icon: Ticket },
-    { path: '/admin/analytics', label: 'Analytics', icon: TrendingUp },
   ];
 
   return (

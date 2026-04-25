@@ -28,36 +28,56 @@ export default function Dashboard() {
     try {
       setLoading(true);
 
-      // 1. Total Influencers (Users with role='influencer')
-      const { count: influencers } = await supabase
-        .from('users')
-        .select('*', { count: 'exact', head: true })
-        .eq('role', 'influencer');
+      // 1. Total Orders
+      const { count: ordersCount } = await supabase
+        .from('orders')
+        .select('*', { count: 'exact', head: true });
 
       // 2. Total Active Coupons
-      const { count: coupons } = await supabase
+      const { count: couponsCount } = await supabase
         .from('coupons')
         .select('*', { count: 'exact', head: true })
         .eq('is_active', true);
 
-      // 3. Totals from coupon_usages
-      const { data: usageData } = await supabase
-        .from('coupon_usages')
-        .select('final_amount, commission');
+      // 3. Totals from orders table
+      const { data: ordersData } = await supabase
+        .from('orders')
+        .select('final_amount, commission, coupon_code, affiliate_ref')
+        .eq('status', 'paid');
 
       let revenue = 0;
       let commission = 0;
-      usageData?.forEach(item => {
+      let couponFreq = {};
+      let affiliateFreq = {};
+
+      ordersData?.forEach(item => {
         revenue += Number(item.final_amount) || 0;
         commission += Number(item.commission) || 0;
+        
+        if (item.coupon_code) {
+          couponFreq[item.coupon_code] = (couponFreq[item.coupon_code] || 0) + 1;
+        }
+        if (item.affiliate_ref) {
+          affiliateFreq[item.affiliate_ref] = (affiliateFreq[item.affiliate_ref] || 0) + 1;
+        }
       });
 
-      setStats({ influencers: influencers || 0, coupons: coupons || 0, revenue, commission });
+      let topCoupon = Object.keys(couponFreq).sort((a,b) => couponFreq[b] - couponFreq[a])[0] || 'N/A';
+      let topAffiliate = Object.keys(affiliateFreq).sort((a,b) => affiliateFreq[b] - affiliateFreq[a])[0] || 'N/A';
+
+      setStats({ 
+        orders: ordersCount || 0, 
+        coupons: couponsCount || 0, 
+        revenue, 
+        commission,
+        topCoupon,
+        topAffiliate
+      });
 
       // 4. Recent Transactions
       const { data: recent } = await supabase
-        .from('coupon_usages')
-        .select('*, coupons(code)')
+        .from('orders')
+        .select('*')
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -70,10 +90,12 @@ export default function Dashboard() {
   };
 
   const statCards = [
-    { label: 'Total Influencers', value: stats.influencers, icon: Users, color: '#3b82f6' },
-    { label: 'Active Coupons', value: stats.coupons, icon: Ticket, color: '#10b981' },
     { label: 'Total Revenue', value: '₹' + stats.revenue.toLocaleString('en-IN'), icon: TrendingUp, color: '#8b5cf6' },
-    { label: 'Total Commission', value: '₹' + stats.commission.toLocaleString('en-IN'), icon: IndianRupee, color: '#f59e0b' },
+    { label: 'Total Orders', value: stats.orders, icon: Users, color: '#3b82f6' },
+    { label: 'Total Commission Paid', value: '₹' + stats.commission.toLocaleString('en-IN'), icon: IndianRupee, color: '#f59e0b' },
+    { label: 'Active Coupons', value: stats.coupons, icon: Ticket, color: '#10b981' },
+    { label: 'Top Affiliate', value: stats.topAffiliate, icon: Users, color: '#eab308' },
+    { label: 'Top Coupon', value: stats.topCoupon, icon: Ticket, color: '#ef4444' },
   ];
 
   return (
@@ -155,7 +177,7 @@ export default function Dashboard() {
                   <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
                     <td style={{ padding: '16px 24px', fontSize: '14px', color: '#1e293b' }}>{t.user_email}</td>
                     <td style={{ padding: '16px 24px', fontSize: '14px', color: '#1e293b' }}>
-                      <span style={{ background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px', fontWeight: '600', color: '#3b82f6' }}>{t.coupons?.code || '—'}</span>
+                      <span style={{ background: '#f1f5f9', padding: '4px 10px', borderRadius: '6px', fontWeight: '600', color: '#3b82f6' }}>{t.coupon_code || '—'}</span>
                     </td>
                     <td style={{ padding: '16px 24px', fontSize: '14px', fontWeight: '600', color: '#1e293b' }}>₹{Number(t.final_amount).toLocaleString('en-IN')}</td>
                     <td style={{ padding: '16px 24px', fontSize: '14px', fontWeight: '600', color: '#16a34a' }}>₹{Number(t.commission).toLocaleString('en-IN')}</td>

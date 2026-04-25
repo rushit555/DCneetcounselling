@@ -75,7 +75,8 @@
         <div id="order-summary" style="display:none; background:#f1f5f9; text-align:left; padding:20px; border-radius:10px; margin-bottom:30px;">
             <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Product:</strong> <span id="summary-product"></span></p>
             <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Amount Paid:</strong> ₹<span id="summary-amount"></span></p>
-            <p style="margin:0 0 0px; font-size:14px; color:#475569;"><strong>Payment ID:</strong> <span id="summary-id"></span></p>
+            <p id="coupon-row" style="margin:0 0 5px; font-size:14px; color:#475569; display:none;"><strong>Coupon Applied:</strong> <span id="summary-coupon"></span></p>
+            <p style="margin:0 0 0px; font-size:14px; color:#475569;"><strong>Order ID:</strong> <span id="summary-id"></span></p>
         </div>
 
         <a href="/#orders" class="btn-home">Go to Profile</a>
@@ -89,36 +90,30 @@
         const couponCode = params.get('coupon') || "";
 
         if (product && amount && order_id) {
-            // Setup GoAffPro Order BEFORE loader script
-            if (!sessionStorage.getItem('gaff_tracked')) {
-                let orderNumber = order_id;
-                const prodLower = product.toLowerCase();
-                if (prodLower.includes('ebook')) {
-                    orderNumber = 'EBK_' + order_id;
-                } else if (prodLower.includes('counselling') || prodLower.includes('counseling')) {
-                    orderNumber = 'CNS_' + order_id;
-                }
-
-                window.goaffproOrder = {
-                    id: orderNumber,
-                    total: Number(amount),
-                    currency: "INR",
-                    coupon: couponCode.toUpperCase()
-                };
-                sessionStorage.setItem('gaff_tracked', 'true');
-            }
+            // Tracking removed
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             if (product && amount) {
                 document.getElementById('summary-product').textContent = product;
                 document.getElementById('summary-amount').textContent = amount;
-                document.getElementById('summary-id').textContent = order_id || "N/A";
+                document.getElementById('summary-id').textContent = order_id || localStorage.getItem("order_id") || "N/A";
+                
+                if (couponCode) {
+                    document.getElementById('summary-coupon').textContent = couponCode;
+                    document.getElementById('coupon-row').style.display = 'block';
+                }
+                
                 document.getElementById('order-summary').style.display = 'block';
             }
+
+            // Cleanup LocalStorage
+            localStorage.removeItem("coupon");
+            localStorage.removeItem("affiliate_ref");
+            localStorage.removeItem("order_id");
         });
     </script>
-    <script async src="https://static.goaffpro.com/loader.js"></script>
+
 </body>
 </html>
 

@@ -306,21 +306,7 @@
     <script src="../js/supabaseClient.js?v=2026.04.19.2"></script>
     
     <script>
-        function trackGoAffPro(order) {
-            if (typeof goaffpro === 'undefined') {
-                console.log('GoAffPro not loaded');
-                return;
-            }
 
-            window.goaffproOrder = {
-                id: order.id,
-                total: order.amount,
-                currency: 'INR',
-                coupon: order.coupon || ''
-            };
-
-            console.log('GoAffPro Order Sent:', window.goaffproOrder);
-        }
 
         let paymentData = null;
         let originalPrice = 0;
@@ -372,12 +358,12 @@
             msgEl.style.display = "none";
 
             try {
-                const response = await fetch(`${BACKEND_URL}/apply-coupon`, {
+                const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         code: codeInput,
-                        order_amount: originalPrice
+                        amount: originalPrice
                     })
                 });
 
@@ -388,7 +374,12 @@
                     msgEl.className = "message error";
                     resetDiscount();
                 } else {
-                    appliedCoupon = { code: codeInput.toUpperCase() }; // Store for tracking
+                    appliedCoupon = { code: data.coupon };
+                    localStorage.setItem("coupon", data.coupon);
+                    if (data.affiliate_ref) {
+                        localStorage.setItem("affiliate_ref", data.affiliate_ref);
+                    }
+
                     discountAmount = data.discount;
                     finalPrice = data.final_amount;
 
@@ -396,7 +387,7 @@
                     document.getElementById('discountRow').style.display = 'flex';
                     document.getElementById('d_final_price').textContent = finalPrice;
 
-                    msgEl.textContent = data.message || "Coupon applied successfully!";
+                    msgEl.textContent = "Coupon applied successfully!";
                     msgEl.className = "message success";
                 }
             } catch (err) {
@@ -411,6 +402,8 @@
 
         function resetDiscount() {
             appliedCoupon = null;
+            localStorage.removeItem("coupon");
+            localStorage.removeItem("affiliate_ref");
             discountAmount = 0;
             finalPrice = originalPrice;
             document.getElementById('discountRow').style.display = 'none';
@@ -424,80 +417,60 @@
             btnText.textContent = "Processing...";
 
             try {
-                // 1. Validate Supabase
-                if (!window.supabaseClient) throw new Error("Database connection not ready.");
+                // 1. Create order on backend
+                const createRes = await fetch(`${BACKEND_URL}/create-order`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: paymentData.email,
+                        amount: originalPrice,
+                        coupon: localStorage.getItem("coupon")
+                    })
+                });
 
-                // 2. Prepare DB record
-                const recordData = {
-                    user_id: paymentData.user_id,
-                    full_name: paymentData.full_name,
-                    email: paymentData.email,
-                    mobile: paymentData.mobile_number,
-                    category: paymentData.category,
-                    domicile_state: paymentData.domicile_state,
-                    neet_score: paymentData.neet_score,
-                    rank: paymentData.all_india_rank,
-                    plan_name: paymentData.plan_name,
-                    plan_price: paymentData.plan_price,
-                    counselling_type: paymentData.counselling_type,
-                    coupon_code: appliedCoupon ? appliedCoupon.code : null,
-                    discounted_price: finalPrice,
-                    payment_status: 'initiated'
-                };
-
-                // 3. Insert into DB
-                const { data: insertRes, error } = await window.supabaseClient
-                    .from('counselling_bookings')
-                    .insert(recordData)
-                    .select('id')
-                    .single();
-
-                if (error || !insertRes) {
-                    throw new Error("Failed to create booking record: " + (error ? error.message : "Unknown error"));
+                const order = await createRes.json();
+                
+                if (!order.success) {
+                    throw new Error(order.error || "Failed to create order");
                 }
 
-                // 4. Open Razorpay
+                localStorage.setItem("order_id", order.order_id);
+
+                // 2. Open Razorpay
                 const options = {
                     "key": "rzp_live_SebrDtxMirg67M",
-                    "amount": Math.round(finalPrice * 100),
+                    "amount": Math.round(order.final_amount * 100),
                     "currency": "INR",
                     "name": "DC Neet Counselling",
                     "description": paymentData.plan_name,
+                    "order_id": order.razorpay_order_id,
                     "handler": async function (response) {
                         try {
-                            // Update booking status
-                            await window.supabaseClient.from('counselling_bookings').update({
-                                payment_status: 'completed',
-                                razorpay_payment_id: response.razorpay_payment_id
-                            }).eq('id', insertRes.id);
+                            const order_id = localStorage.getItem("order_id");
 
-                            // Record coupon usage via backend
-                            if (appliedCoupon) {
-                                try {
-                                    await fetch(`${BACKEND_URL}/update-coupon-usage`, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ code: appliedCoupon.code })
-                                    });
-                                } catch (e) {
-                                    console.error("Failed to update coupon usage:", e);
-                                }
-                            }
-
-                            trackGoAffPro({
-                                id: response.razorpay_payment_id,
-                                amount: finalPrice,
-                                coupon: appliedCoupon ? appliedCoupon.code : ''
+                            // Confirm payment with backend
+                            const confirmRes = await fetch(`${BACKEND_URL}/confirm-payment`, {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ 
+                                    order_id: order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id 
+                                })
                             });
 
-                            // Clear session and redirect after tracking
-                            sessionStorage.removeItem('counselling_payment_data');
-                            setTimeout(() => {
-                                window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${finalPrice}&order_id=${insertRes.id}&coupon=${appliedCoupon ? appliedCoupon.code : ''}`;
-                            }, 2000);
+                            const data = await confirmRes.json();
+                            
+                            if (data.success) {
+                                // Clear session and redirect
+                                sessionStorage.removeItem('counselling_payment_data');
+                                window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${order.final_amount}&order_id=${order_id}&coupon=${localStorage.getItem("coupon") || ''}`;
+                            } else {
+                                throw new Error("Backend verification failed");
+                            }
+
                         } catch (innerErr) {
                             console.error("Post-payment DB error:", innerErr);
-                            alert("Payment succeeded but saving failed. Please contact support.");
+                            alert("Payment succeeded but verification failed. Please contact support.");
                         }
                     },
                     "prefill": {
@@ -510,9 +483,6 @@
 
                 const rzp = new window.Razorpay(options);
                 rzp.on('payment.failed', async function (response) {
-                    await window.supabaseClient.from('counselling_bookings').update({
-                        payment_status: 'failed'
-                    }).eq('id', insertRes.id);
                     alert("Payment failed. Please try again.");
                 });
                 rzp.open();
@@ -526,6 +496,6 @@
             }
         }
     </script>
-<script async src="https://static.goaffpro.com/loader.js"></script>
+
 </body>
 </html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate Dashboard | DC Neet Counselling</title>
+    <link rel="icon" type="image/jpeg" href="../../../assets/logo.jpg" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            color: #1e293b;
+        }
+        .header {
+            background: #fff;
+            padding: 20px 40px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #2563eb;
+        }
+        .btn-logout {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: #64748b;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-logout:hover {
+            background: #f8fafc;
+            color: #ef4444;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .stat-icon.earnings { background: #dcfce7; color: #16a34a; }
+        .stat-icon.orders { background: #dbeafe; color: #2563eb; }
+        
+        .stat-info h3 { margin: 0; font-size: 14px; color: #64748b; font-weight: 500; }
+        .stat-info p { margin: 5px 0 0; font-size: 24px; font-weight: 700; color: #1e293b; }
+
+        .ref-section {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+        .ref-section h3 {
+            margin: 0 0 16px;
+            font-size: 16px;
+        }
+        .ref-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .ref-box input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #475569;
+            background: #f8fafc;
+            outline: none;
+        }
+        .btn-copy {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-copy:hover {
+            background: #1d4ed8;
+        }
+
+        .table-section {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .table-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th {
+            padding: 16px 24px;
+            font-size: 13px;
+            color: #64748b;
+            background: #f8fafc;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        td {
+            padding: 16px 24px;
+            font-size: 14px;
+            border-bottom: 1px solid #f8fafc;
+        }
+        .status-paid {
+            background: #dcfce7;
+            color: #16a34a;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            background: #fff7ed;
+            color: #ea580c;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>DC Affiliate</h1>
+        <button class="btn-logout" id="logoutBtn">Logout</button>
+    </div>
+
+    <div class="container">
+        
+        <div class="ref-section">
+            <h3>Your Referral Link</h3>
+            <div class="ref-box">
+                <input type="text" id="refLink" readonly>
+                <button class="btn-copy" id="copyBtn"><i class="far fa-copy"></i> Copy</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon earnings">
+                    <i class="fas fa-rupee-sign"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Earnings</h3>
+                    <p id="totalEarnings">₹0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orders">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Orders</h3>
+                    <p id="totalOrders">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-header">
+                <h3>Recent Referrals</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Order Amount</th>
+                        <th>Commission</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    <tr><td colspan="4" style="text-align: center; color: #64748b;">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Ensure correct path to app_v2.js which initializes Supabase -->
+    <script src="../../../js/app_v2.js"></script>
+    <script>
+        const affiliateRef = localStorage.getItem("affiliate_ref");
+
+        // Protection check
+        if (!affiliateRef) {
+            window.location.href = "/affiliate";
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            // Set Ref Link
+            const baseUrl = "https://dcneetcounselling.com";
+            const fullLink = `${baseUrl}/?ref=${affiliateRef}`;
+            document.getElementById('refLink').value = fullLink;
+
+            // Copy logic
+            document.getElementById('copyBtn').addEventListener('click', () => {
+                navigator.clipboard.writeText(fullLink).then(() => {
+                    const btn = document.getElementById('copyBtn');
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="far fa-copy"></i> Copy';
+                    }, 2000);
+                });
+            });
+
+            // Logout logic
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                localStorage.removeItem("affiliate_ref");
+                window.location.href = "/affiliate";
+            });
+
+            // Fetch Data
+            try {
+                if (!window.supabaseClient) throw new Error("Database not ready");
+
+                // Check status
+                const { data: aff, error: affErr } = await window.supabaseClient
+                    .from('affiliates')
+                    .select('status')
+                    .eq('ref_code', affiliateRef)
+                    .single();
+                
+                if (affErr || aff?.status !== 'approved') {
+                    localStorage.removeItem("affiliate_ref");
+                    window.location.href = "/affiliate";
+                    return;
+                }
+
+                // 1. Total Orders
+                const { count: totalOrders } = await window.supabaseClient
+                    .from('orders')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('affiliate_ref', affiliateRef);
+                
+                document.getElementById('totalOrders').textContent = totalOrders || 0;
+
+                // 2. Total Earnings & Recent Orders
+                const { data: orders, error } = await window.supabaseClient
+                    .from('orders')
+                    .select('created_at, final_amount, commission, status')
+                    .eq('affiliate_ref', affiliateRef)
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+
+                // Calculate earnings
+                let earnings = 0;
+                orders?.forEach(o => {
+                    if (o.status === 'paid' && o.commission) {
+                        earnings += Number(o.commission);
+                    }
+                });
+                document.getElementById('totalEarnings').textContent = `₹${earnings.toLocaleString('en-IN')}`;
+
+                // Populate Table
+                const tbody = document.getElementById('ordersTableBody');
+                if (!orders || orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #64748b;">No referrals yet.</td></tr>';
+                } else {
+                    const recentOrders = orders.slice(0, 10);
+                    tbody.innerHTML = recentOrders.map(o => `
+                        <tr>
+                            <td>${new Date(o.created_at).toLocaleDateString()}</td>
+                            <td style="font-weight: 500;">₹${Number(o.final_amount || 0).toLocaleString('en-IN')}</td>
+                            <td style="color: #10b981; font-weight: 600;">₹${Number(o.commission || 0).toLocaleString('en-IN')}</td>
+                            <td><span class="status-${o.status === 'paid' ? 'paid' : 'pending'}">${o.status}</span></td>
+                        </tr>
+                    `).join('');
+                }
+
+            } catch (err) {
+                console.error("Dashboard error:", err);
+            }
+        });
+    </script>
+
+</body>
+</html>
