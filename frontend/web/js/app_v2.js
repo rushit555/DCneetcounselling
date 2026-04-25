@@ -4,18 +4,18 @@ const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
 const COUNSELLING_META = {
-    'med_basic': { title: 'Medical - Basic Plan', price: 2, type: 'Medical' },
-    'med_gold': { title: 'Medical - Gold Plan', price: 2, type: 'Medical' },
-    'med_platinum': { title: 'Medical - Private MBBS/BDS', price: 2, type: 'Medical' },
-    'ayush_basic': { title: 'AYUSH - Basic Plan', price: 2, type: 'AYUSH' },
-    'ayush_gold': { title: 'AYUSH - Gold Plan', price: 2, type: 'AYUSH' },
-    'ayush_platinum': { title: 'AYUSH - Private Plan', price: 2, type: 'AYUSH' },
-    'vet_basic': { title: 'Veterinary - Basic Plan', price: 2, type: 'Veterinary' },
-    'vet_gold': { title: 'Veterinary - Gold Plan', price: 2, type: 'Veterinary' },
-    'vet_platinum': { title: 'Veterinary - Premium Plan', price: 2, type: 'Veterinary' },
-    'combo_basic': { title: 'Combo - Basic Plan', price: 2, type: 'Combo' },
-    'combo_gold': { title: 'Combo - Gold Plan', price: 2, type: 'Combo' },
-    'combo_platinum': { title: 'Combo - Premium Plan', price: 2, type: 'Combo' }
+    'med_basic': { title: 'Medical - Basic Plan', price: 4999, type: 'Medical' },
+    'med_gold': { title: 'Medical - Gold Plan', price: 9999, type: 'Medical' },
+    'med_platinum': { title: 'Medical - Private MBBS/BDS', price: 14999, type: 'Medical' },
+    'ayush_basic': { title: 'AYUSH - Basic Plan', price: 4999, type: 'AYUSH' },
+    'ayush_gold': { title: 'AYUSH - Gold Plan', price: 8999, type: 'AYUSH' },
+    'ayush_platinum': { title: 'AYUSH - Private Plan', price: 9999, type: 'AYUSH' },
+    'vet_basic': { title: 'Veterinary - Basic Plan', price: 4999, type: 'Veterinary' },
+    'vet_gold': { title: 'Veterinary - Gold Plan', price: 8999, type: 'Veterinary' },
+    'vet_platinum': { title: 'Veterinary - Premium Plan', price: 9999, type: 'Veterinary' },
+    'combo_basic': { title: 'Combo - Basic Plan', price: 5999, type: 'Combo' },
+    'combo_gold': { title: 'Combo - Gold Plan', price: 14999, type: 'Combo' },
+    'combo_platinum': { title: 'Combo - Premium Plan', price: 14999, type: 'Combo' }
 };
 
 
