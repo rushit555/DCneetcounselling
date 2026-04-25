@@ -7688,15 +7688,15 @@ window.cartCheckout = async function() {
           });
         }
 
-        /* â”€â”€ 3. Init â”€â”€ */
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', function () {
-            tagElements();
-            observe();
-          });
-        } else {
+        /* ── 3. Init ── */
+        window.initAnimations = function() {
           tagElements();
           observe();
+        };
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', window.initAnimations);
+        } else {
+          window.initAnimations();
         }
       })();
     </script>
