@@ -5148,7 +5148,7 @@
         <div style="max-width: 1100px; margin: 0 auto; padding-top: 80px; padding-bottom: 60px;">
           <!-- Header -->
           <div style="margin-bottom: 30px;">
-            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Your Cart Ã°Å¸â€ºâ€™</h2>
+            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Your Cart 🛒</h2>
             <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Review your selected eBooks</p>
           </div>
 
@@ -6708,7 +6708,7 @@ window.renderCartPage = async function() {
 
   itemsList.innerHTML = cardsHTML;
   document.getElementById('cartTotalItems').textContent = data.length;
-  document.getElementById('cartTotalPrice').textContent = '&#x20B9;' + totalPrice;
+  document.getElementById('cartTotalPrice').innerHTML = '&#x20B9;' + totalPrice;
 };
 
 window.removeFromCart = async function(btn, ebookId) {
