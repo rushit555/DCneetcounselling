@@ -518,23 +518,31 @@ async function renderOrders() {
             if (ordersRes.error) throw ordersRes.error;
             if (counsellingRes.error) throw counsellingRes.error;
             
-            var allOrders = [];
-            if (ordersRes.data) {
-                allOrders = allOrders.concat(ordersRes.data.map(o => ({
-                    ...o,
-                    display_name: o.product_name || 'Ebook',
-                    display_amount: o.amount_paid || 0,
-                    type: 'ebook'
-                })));
-            }
-            if (counsellingRes.data) {
-                allOrders = allOrders.concat(counsellingRes.data.map(c => ({
+            const counsellingData = counsellingRes.data || [];
+            const ebookData = ordersRes.data || [];
+            const seenOrderIds = new Set();
+            let allOrders = [];
+            
+            counsellingData.forEach(c => {
+                if (c.order_id) seenOrderIds.add(c.order_id);
+                allOrders.push({
                     ...c,
                     display_name: c.plan_name || 'Counselling Plan',
                     display_amount: c.discounted_price || c.plan_price || 0,
                     type: 'counselling'
-                })));
-            }
+                });
+            });
+
+            ebookData.forEach(o => {
+                if (!seenOrderIds.has(o.id.toString())) {
+                    allOrders.push({
+                        ...o,
+                        display_name: o.product_name || 'Ebook',
+                        display_amount: o.amount_paid || 0,
+                        type: 'ebook'
+                    });
+                }
+            });
 
             // Sort combined array by created_at descending
             allOrders.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
