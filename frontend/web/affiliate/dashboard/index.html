@@ -117,6 +117,44 @@
             background: #1d4ed8;
         }
 
+        .coupon-section {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+        .coupon-section h3 {
+            margin: 0 0 16px;
+            font-size: 16px;
+        }
+        #couponBox {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .coupon-item {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            background: #f8fafc;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .coupon-item strong {
+            color: #10b981;
+            font-size: 18px;
+        }
+        .coupon-value {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
         .table-section {
             background: white;
             border-radius: 16px;
@@ -178,11 +216,20 @@
 
     <div class="container">
         
-        <div class="ref-section">
-            <h3>Your Referral Link</h3>
-            <div class="ref-box">
-                <input type="text" id="refLink" readonly>
-                <button class="btn-copy" id="copyBtn"><i class="far fa-copy"></i> Copy</button>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 40px;">
+            <div class="ref-section" style="margin-bottom: 0;">
+                <h3>Your Referral Link</h3>
+                <div class="ref-box">
+                    <input type="text" id="refLink" readonly>
+                    <button class="btn-copy" id="copyBtn"><i class="far fa-copy"></i> Copy</button>
+                </div>
+            </div>
+
+            <div class="coupon-section" style="margin-bottom: 0;">
+                <h3>Your Coupons</h3>
+                <div id="couponBox">
+                    <div style="color: #64748b; padding: 12px; text-align: center;">Loading...</div>
+                </div>
             </div>
         </div>
 
@@ -237,6 +284,53 @@
         if (!affiliateRef) {
             window.location.href = "/affiliate";
         }
+
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000/api' 
+            : 'https://dcneetcounselling-backend.onrender.com/api';
+
+        async function loadCoupons() {
+            const ref_code = localStorage.getItem("affiliate_ref");
+            console.log("REF CODE:", ref_code);
+
+            if (!ref_code) {
+                document.getElementById("couponBox").innerText = "Not logged in";
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/get-affiliate-coupons`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ref_code: ref_code.toUpperCase() })
+                });
+
+                const text = await res.text();
+                console.log("RAW RESPONSE:", text);
+
+                const data = JSON.parse(text);
+                console.log("PARSED DATA:", data);
+
+                const box = document.getElementById("couponBox");
+
+                if (!data.success || !data.coupons || data.coupons.length === 0) {
+                    box.innerHTML = '<div style="color: #64748b; padding: 12px; text-align: center; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">No coupons assigned</div>';
+                    return;
+                }
+
+                box.innerHTML = data.coupons.map(c => `
+                    <div class="coupon-item">
+                        <strong>${c.code}</strong>
+                        <span class="coupon-value">${c.value}${c.type === 'percentage' ? '%' : '₹'} off</span>
+                    </div>
+                `).join("");
+            } catch (err) {
+                console.error("ERROR:", err);
+                document.getElementById("couponBox").innerHTML = '<div style="color: #ef4444; padding: 12px; text-align: center; background: #fef2f2; border-radius: 8px; border: 1px dashed #fca5a5;">Error loading</div>';
+            }
+        }
+
+        window.addEventListener("load", loadCoupons);
 
         document.addEventListener("DOMContentLoaded", async () => {
             // Set Ref Link

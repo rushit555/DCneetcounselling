@@ -136,6 +136,11 @@
                 <label>Desired Username (Ref Code)</label>
                 <input type="text" id="ref_code" placeholder="john123" required pattern="[A-Za-z0-9]+" title="Only letters and numbers allowed">
             </div>
+
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Create a strong password" required minlength="6">
+            </div>
             
             <button type="submit" id="submitBtn">Submit Application</button>
             <div id="message-box"></div>
@@ -153,8 +158,9 @@
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const ref_code = document.getElementById('ref_code').value.trim();
+            const password = document.getElementById('password').value.trim();
 
-            if (!name || !email || !ref_code) return;
+            if (!name || !email || !ref_code || !password) return;
 
             btn.disabled = true;
             btn.textContent = "Submitting...";
@@ -162,25 +168,30 @@
             msgBox.className = "";
 
             try {
-                // We'll assume backend is at http://localhost:3000 if dev, or relative /api
-                // We will use the VITE_BACKEND_URL pattern or simply relative
-                const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                                   ? 'http://localhost:3000' 
-                                   : 'https://dc-neet-counselling-backend.onrender.com';
+                const API_BASE = window.location.hostname === "localhost" 
+                                   ? "http://localhost:3000/api" 
+                                   : "https://dcneetcounselling-backend.onrender.com/api";
 
-                const response = await fetch(`${backendUrl}/api/register-affiliate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, ref_code })
+                const response = await fetch(`${API_BASE}/register-affiliate`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, ref_code, password })
                 });
+
+                if (!response.ok) {
+                    throw new Error("Server error");
+                }
 
                 const data = await response.json();
 
-                if (!response.ok || !data.success) {
-                    throw new Error(data.message || "Registration failed");
+                if (!data.success) {
+                    msgBox.textContent = data.message || "Registration failed";
+                    msgBox.classList.add("error");
+                    msgBox.style.display = "block";
+                    return;
                 }
 
-                msgBox.textContent = data.message;
+                msgBox.textContent = "Registration successful! Await approval.";
                 msgBox.classList.add("success");
                 msgBox.style.display = "block";
                 
@@ -188,8 +199,8 @@
                 document.getElementById('registerForm').reset();
 
             } catch (err) {
-                console.error(err);
-                msgBox.textContent = err.message || "An error occurred during registration.";
+                console.error("API Error:", err);
+                msgBox.textContent = "Server not reachable. Please try again.";
                 msgBox.classList.add("error");
                 msgBox.style.display = "block";
             } finally {
