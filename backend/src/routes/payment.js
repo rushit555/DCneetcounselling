@@ -17,6 +17,7 @@ const supabase = createClient(
 
 // Create Order API
 router.post('/create-order', async (req, res) => {
+    try {
         const { 
             email, full_name, mobile, product_name, amount, coupon, user_id,
             category, domicile_state, neet_score, rank, counselling_type
