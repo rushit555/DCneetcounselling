@@ -14,9 +14,11 @@ const paymentRoutes = require('./src/routes/payment');
 const ordersRoutes = require('./src/routes/orders');
 const counselingRoutes = require('./src/routes/counseling');
 const couponsRoutes = require('./src/routes/coupons');
+const affiliatesRoutes = require('./src/routes/affiliates');
 
 app.use('/api', paymentRoutes);
 app.use('/api', couponsRoutes);
+app.use('/api', affiliatesRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/submit-counseling-booking', counselingRoutes);
 

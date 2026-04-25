@@ -108,6 +108,92 @@ router.post('/update-coupon-usage', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 // Route removed, handled directly in app.js
+=======
+// POST /validate-coupon
+router.post('/validate-coupon', async (req, res) => {
+    try {
+        const { code, amount } = req.body;
+        
+        if (!code) {
+            return res.json({ valid: false, message: "Invalid coupon" });
+        }
+
+        const uppercaseCode = code.trim().toUpperCase();
+
+        const { data: coupon, error } = await supabase
+            .from('coupons')
+            .select('*')
+            .eq('code', uppercaseCode)
+            .single();
+
+        if (error || !coupon) {
+            return res.json({ valid: false, message: "Invalid coupon" });
+        }
+
+        if (!coupon.is_active) {
+            return res.json({ valid: false, message: "Coupon expired or limit reached" });
+        }
+
+        if (coupon.expires_at) {
+            const expiry = new Date(coupon.expires_at);
+            const now = new Date();
+            if (now > expiry) {
+                return res.json({ valid: false, message: "Coupon expired or limit reached" });
+            }
+        }
+
+        if (coupon.usage_limit !== null && coupon.used_count >= coupon.usage_limit) {
+            return res.json({ valid: false, message: "Coupon expired or limit reached" });
+        }
+
+        let discount = 0;
+        let final_amount = 0;
+        let parsedAmount = parseFloat(amount);
+
+        if (!isNaN(parsedAmount) && parsedAmount >= 0) {
+            if (coupon.type === 'percentage') {
+                discount = Math.round(parsedAmount * (parseFloat(coupon.value) / 100));
+            } else if (coupon.type === 'flat') {
+                discount = Math.round(parseFloat(coupon.value));
+            }
+            final_amount = parsedAmount - discount;
+            if (final_amount < 0) final_amount = 0;
+        }
+
+        let commission_type = null;
+        let commission_value = null;
+        let affiliate_ref = coupon.affiliate_ref || null;
+
+        if (affiliate_ref) {
+            const { data: affiliate } = await supabase
+                .from('affiliates')
+                .select('*')
+                .eq('ref_code', affiliate_ref)
+                .single();
+                
+            if (affiliate) {
+                commission_type = affiliate.commission_type;
+                commission_value = parseFloat(affiliate.commission_value);
+            }
+        }
+
+        return res.json({
+            valid: true,
+            discount: discount,
+            final_amount: final_amount,
+            coupon: uppercaseCode,
+            affiliate_ref: affiliate_ref,
+            commission_type: commission_type,
+            commission_value: commission_value
+        });
+
+    } catch (error) {
+        console.error("Validate Coupon Error:", error);
+        res.status(500).json({ valid: false, message: "Internal server error" });
+    }
+});
+>>>>>>> testing
 
 module.exports = router;

@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
-import Influencers from './pages/admin/Influencers';
+import Affiliates from './pages/admin/Affiliates';
 import Coupons from './pages/admin/Coupons';
-import Analytics from './pages/admin/Analytics';
+import Orders from './pages/admin/Orders';
 
 function App() {
   return (
@@ -11,9 +11,9 @@ function App() {
       <Routes>
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/influencers" element={<Influencers />} />
+        <Route path="/admin/affiliates" element={<Affiliates />} />
         <Route path="/admin/coupons" element={<Coupons />} />
-        <Route path="/admin/analytics" element={<Analytics />} />
+        <Route path="/admin/orders" element={<Orders />} />
         
         {/* Redirect root / to dashboard or login */}
         <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,8 @@
     <link rel="icon" type="image/jpeg" href="../assets/logo.jpg" />
     <!-- Use the existing global styles -->
     <link rel="stylesheet" href="../css/main.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
@@ -19,32 +21,37 @@
             margin: 0;
             font-family: 'Poppins', sans-serif;
         }
+
         .thank-you-card {
             background: #ffffff;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             text-align: center;
             max-width: 450px;
             width: 90%;
         }
+
         .success-icon {
             color: #16a34a;
             font-size: 64px;
             margin-bottom: 20px;
         }
+
         .thank-you-title {
             color: #1e293b;
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 12px;
         }
+
         .thank-you-msg {
             color: #64748b;
             font-size: 15px;
             line-height: 1.6;
             margin-bottom: 30px;
         }
+
         .btn-home {
             display: inline-block;
             background: #2563eb;
@@ -55,11 +62,13 @@
             font-weight: 600;
             transition: opacity 0.2s;
         }
+
         .btn-home:hover {
             opacity: 0.9;
         }
     </style>
 </head>
+
 <body>
 
     <div class="thank-you-card">
@@ -71,11 +80,17 @@
             We have received your payment successfully.<br>
             Your eBook(s) will be sent to your WhatsApp and Email within 12 hours.
         </p>
-        
-        <div id="order-summary" style="display:none; background:#f1f5f9; text-align:left; padding:20px; border-radius:10px; margin-bottom:30px;">
-            <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Product:</strong> <span id="summary-product"></span></p>
-            <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Amount Paid:</strong> ₹<span id="summary-amount"></span></p>
-            <p style="margin:0 0 0px; font-size:14px; color:#475569;"><strong>Payment ID:</strong> <span id="summary-id"></span></p>
+
+        <div id="order-summary"
+            style="display:none; background:#f1f5f9; text-align:left; padding:20px; border-radius:10px; margin-bottom:30px;">
+            <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Product:</strong> <span
+                    id="summary-product"></span></p>
+            <p style="margin:0 0 5px; font-size:14px; color:#475569;"><strong>Amount Paid:</strong> ₹<span
+                    id="summary-amount"></span></p>
+            <p id="coupon-row" style="margin:0 0 5px; font-size:14px; color:#475569; display:none;"><strong>Coupon
+                    Applied:</strong> <span id="summary-coupon"></span></p>
+            <p style="margin:0 0 0px; font-size:14px; color:#475569;"><strong>Order ID:</strong> <span
+                    id="summary-id"></span></p>
         </div>
 
         <a href="/#orders" class="btn-home">Go to Profile</a>
@@ -85,86 +100,53 @@
         console.log('🔥 Thank You Page Loaded');
 
         const params = new URLSearchParams(window.location.search);
-        const order_id = params.get('order_id') || 'ORDER_' + Date.now();
-        const amount = params.get('amount') || 0;
-        const product = params.get('product') || '';
-        const coupon = localStorage.getItem('applied_coupon') || params.get('coupon') || localStorage.getItem('appliedCoupon') || null;
+        const product = params.get('product');
+        const amount = params.get('amount');
+        const order_id = params.get('order_id');
+        const couponCode = params.get('coupon') || "";
 
-        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-            ? 'http://localhost:3000/api' 
-            : 'https://dcneetcounselling.onrender.com/api';
+        if (product && amount && order_id) {
+            // Setup GoAffPro Order BEFORE loader script
+            if (!sessionStorage.getItem('gaff_tracked')) {
+                let orderNumber = order_id;
+                const prodLower = product.toLowerCase();
+                if (prodLower.includes('ebook')) {
+                    orderNumber = 'EBK_' + order_id;
+                } else if (prodLower.includes('counselling') || prodLower.includes('counseling')) {
+                    orderNumber = 'CNS_' + order_id;
+                }
 
-        try {
-            const orderData = {
-                order_id,
-                total: Number(amount),
-                coupon
-            };
-
-            console.log('📦 Sending order:', orderData);
-
-            fetch(`${BACKEND_URL}/track-order`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(orderData)
-            })
-            .then(res => res.json())
-            .then(data => {
-                console.log('✅ Tracking success:', data);
-            })
-            .catch(err => {
-                console.error('❌ Tracking error:', err);
-            });
-
-        } catch (err) {
-            console.error('❌ Script crashed:', err);
+                window.goaffproOrder = {
+                    id: orderNumber,
+                    total: Number(amount),
+                    currency: "INR",
+                    coupon: couponCode.toUpperCase()
+                };
+                sessionStorage.setItem('gaff_tracked', 'true');
+            }
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             if (product && amount) {
                 document.getElementById('summary-product').textContent = product;
                 document.getElementById('summary-amount').textContent = amount;
-                document.getElementById('summary-id').textContent = order_id || "N/A";
+                document.getElementById('summary-id').textContent = order_id || localStorage.getItem("order_id") || "N/A";
+
+                if (couponCode) {
+                    document.getElementById('summary-coupon').textContent = couponCode;
+                    document.getElementById('coupon-row').style.display = 'block';
+                }
+
                 document.getElementById('order-summary').style.display = 'block';
             }
+
+            // Cleanup LocalStorage
+            localStorage.removeItem("coupon");
+            localStorage.removeItem("affiliate_ref");
+            localStorage.removeItem("order_id");
         });
     </script>
-    <script>
-        const affiliate_id = localStorage.getItem('affiliate_id');
-
-        const customerEmail =
-            window.orderData?.email ||
-            localStorage.getItem('user_email') ||
-            '';
-
-        if (!customerEmail) {
-            console.error('Email missing for GoAffPro tracking');
-        }
-
-        window.goaffproOrder = {
-            id: window.orderData?.id || new URLSearchParams(window.location.search).get('order_id') || 'ORDER_' + Date.now(),
-            total: window.orderData?.amount || Number(new URLSearchParams(window.location.search).get('amount')) || 0,
-            email: customerEmail,
-            coupon: coupon,
-            ref: affiliate_id
-        };
-
-        console.log('GoAffPro Order Data:', window.goaffproOrder);
-    </script>
-    <script>
-        function loadGoAffPro() {
-            if (window.goaffpro) return;
-            const script = document.createElement("script");
-            script.src = "https://api.goaffpro.com/loader.js";
-            script.async = true;
-            script.onload = () => console.log("GoAffPro Loaded Successfully");
-            script.onerror = () => console.error("GoAffPro Failed to Load");
-            document.body.appendChild(script);
-        }
-        loadGoAffPro();
-    </script>
+    <script async src="https://static.goaffpro.com/loader.js"></script>
 </body>
-</html>
 
+</html>
