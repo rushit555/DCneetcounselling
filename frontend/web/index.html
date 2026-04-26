@@ -39,7 +39,15 @@
         document.querySelectorAll(".page-section").forEach(function (s) {
           s.style.display = "none";
         });
-        var target = document.getElementById("section-" + route);
+        var baseRoute = route;
+        if (route.startsWith("blog/")) {
+            baseRoute = "blog-detail";
+            window.currentBlogSlug = route.split("/")[1];
+        } else if (route.startsWith("news/")) {
+            baseRoute = "news-detail";
+            window.currentNewsId = route.split("/")[1];
+        }
+        var target = document.getElementById("section-" + baseRoute);
         if (target) {
           target.style.display = "block";
           window.history.pushState(null, null, "#" + route);
@@ -7165,7 +7173,7 @@ window.cartCheckout = async function() {
             }
             try {
               const { data, error } = await window.supabaseClient
-                .from('news')
+                .from('news_updates')
                 .select('*')
                 .order('date', { ascending: false });
                 
@@ -7194,8 +7202,13 @@ window.cartCheckout = async function() {
                 const randomColor = colors[Math.floor(Math.random() * colors.length)];
                 
                 const card = document.createElement('a');
-                card.href = item.link || 'javascript:void(0)';
-                if (item.link) card.target = '_blank';
+                card.href = 'javascript:void(0)';
+                if (item.link) {
+                  card.href = item.link;
+                  card.target = '_blank';
+                } else if (item.content) {
+                  card.onclick = () => window.navigate('news/' + item.id);
+                }
                 card.className = 'premium-news-card';
                 card.style.display = 'flex';
                 card.style.flexDirection = 'column';
@@ -7204,6 +7217,11 @@ window.cartCheckout = async function() {
                 const dateObj = new Date(item.date);
                 const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                 
+                let footerText = 'Notice';
+                if (item.link || item.content) {
+                  footerText = 'Read Full Update';
+                }
+
                 card.innerHTML = `
                   <div class="card-header">
                     <div class="card-icon ${randomColor}"><i class="fa-solid ${item.icon || 'fa-bell'}"></i></div>
@@ -7211,7 +7229,7 @@ window.cartCheckout = async function() {
                   </div>
                   <div class="card-title">${item.title}</div>
                   <div style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.description}</div>
-                  <div class="card-footer" style="margin-top: auto;">${item.link ? 'Read Full Update' : 'Notice'} <i class="fa-solid fa-chevron-right"></i></div>
+                  <div class="card-footer" style="margin-top: auto;">${footerText} <i class="fa-solid fa-chevron-right"></i></div>
                 `;
                 grid.appendChild(card);
               });
@@ -7244,6 +7262,291 @@ window.cartCheckout = async function() {
               fetchNews();
             }
             if (originalNavigate) originalNavigate(route);
+          };
+        });
+      </script>
+    </div>
+
+    <!-- News Detail Section -->
+    <div id="section-news-detail" class="page-section" style="display: none;">
+      <section style="min-height: 80vh; padding: 100px 20px 60px; background: #fff;">
+        <div class="premium-news-container" style="max-width: 800px;">
+          <a href="javascript:void(0)" onclick="window.navigate('news')" style="display: inline-flex; align-items: center; gap: 8px; color: #64748b; font-size: 14px; text-decoration: none; font-weight: 500; margin-bottom: 30px; padding: 8px 16px; background: #f8fafc; border-radius: 30px; transition: background 0.2s;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Updates
+          </a>
+          
+          <div id="newsDetailLoading" style="text-align: center; padding: 40px;">
+            <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #cbd5e1;"></i>
+          </div>
+          
+          <div id="newsDetailContent" style="display: none;">
+            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
+              <span id="nd-category" style="font-size: 13px; font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 6px 14px; border-radius: 20px;"></span>
+              <span id="nd-date" style="font-size: 14px; color: #64748b; font-weight: 500;"></span>
+            </div>
+            <h1 id="nd-title" style="font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 24px; line-height: 1.2;"></h1>
+            
+            <img id="nd-image" src="" style="width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: none;">
+            
+            <div id="nd-html" style="font-size: 16px; line-height: 1.8; color: #334155; border-top: 1px solid #e2e8f0; padding-top: 24px;"></div>
+          </div>
+          
+          <div id="newsDetailError" style="display: none; text-align: center; padding: 60px 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; color: #ef4444; margin-bottom: 15px;"></i>
+            <h3 style="font-size: 18px; color: #0f172a;">Update not found</h3>
+            <p style="color: #64748b; font-size: 14px;">The update you are looking for does not exist or has been removed.</p>
+          </div>
+        </div>
+      </section>
+      <style>
+        #nd-html h1, #nd-html h2, #nd-html h3 { color: #0f172a; margin-top: 1.5em; margin-bottom: 0.5em; font-weight: 700; }
+        #nd-html p { margin-bottom: 1em; }
+        #nd-html a { color: #2563eb; text-decoration: underline; }
+        #nd-html ul { list-style: none; padding-left: 0; margin-bottom: 1.5em; }
+        #nd-html li { margin-bottom: 0.5em; }
+      </style>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const oldNav = window.navigate;
+          window.navigate = async function(route) {
+            if (oldNav) oldNav(route);
+            
+            if (route.startsWith('news/') && window.currentNewsId) {
+              const id = window.currentNewsId;
+              document.getElementById('newsDetailContent').style.display = 'none';
+              document.getElementById('newsDetailError').style.display = 'none';
+              document.getElementById('newsDetailLoading').style.display = 'block';
+              
+              try {
+                const { data, error } = await window.supabaseClient
+                  .from('news_updates')
+                  .select('*')
+                  .eq('id', id)
+                  .single();
+                  
+                if (error || !data) throw new Error("Not found");
+                
+                document.getElementById('nd-title').textContent = data.title;
+                document.getElementById('nd-category').innerHTML = `<i class="fa-solid ${data.icon || 'fa-bell'}"></i> &nbsp;` + (data.category || 'General');
+                document.getElementById('nd-date').textContent = new Date(data.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+                document.getElementById('nd-html').innerHTML = data.content || data.description;
+                
+                const img = document.getElementById('nd-image');
+                if (data.image_url) {
+                  img.src = data.image_url;
+                  img.style.display = 'block';
+                } else {
+                  img.style.display = 'none';
+                }
+                
+                document.getElementById('newsDetailLoading').style.display = 'none';
+                document.getElementById('newsDetailContent').style.display = 'block';
+              } catch (err) {
+                document.getElementById('newsDetailLoading').style.display = 'none';
+                document.getElementById('newsDetailError').style.display = 'block';
+              }
+            }
+          };
+        });
+      </script>
+    </div>
+
+    <!-- Blog Section -->
+    <div id="section-blog" class="page-section" style="display: none;">
+      <section class="premium-news-section" style="min-height: 80vh; padding: 100px 20px 60px;">
+        <div class="premium-news-container">
+          <div class="premium-news-header" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+            <div class="premium-news-title">
+              <div class="title-icon"><i class="fa-solid fa-newspaper"></i></div>
+              Our Blog
+            </div>
+            <p style="color: #666; font-size: 15px;">Expert insights, tips, and articles on NEET counselling and medical admissions.</p>
+          </div>
+          
+          <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+            <input type="text" id="blogSearchInput" placeholder="Search articles..." style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 14px; width: 100%; max-width: 400px; outline: none; font-family: inherit;">
+          </div>
+
+          <div id="blogGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+            <!-- Skeleton -->
+            <div class="premium-news-card news-skeleton" style="min-height: 250px; opacity: 0.7; animation: pulse 1.5s infinite;">
+              <div style="width: 100%; height: 140px; background: #eee; border-radius: 10px; margin-bottom: 15px;"></div>
+              <div style="width: 80px; height: 15px; background: #eee; border-radius: 10px; margin-bottom: 15px;"></div>
+              <div style="width: 100%; height: 20px; background: #eee; border-radius: 10px; margin-bottom: 10px;"></div>
+              <div style="width: 80%; height: 20px; background: #eee; border-radius: 10px;"></div>
+            </div>
+          </div>
+          
+          <div id="blogEmptyState" style="display: none; text-align: center; padding: 60px 20px; background: #f9fafb; border-radius: 16px;">
+            <i class="fa-solid fa-folder-open" style="font-size: 48px; color: #cbd5e1; margin-bottom: 15px;"></i>
+            <h3 style="font-size: 18px; color: #334155; margin-bottom: 8px;">No Articles Found</h3>
+            <p style="color: #64748b; font-size: 14px;">Try adjusting your search criteria.</p>
+          </div>
+        </div>
+      </section>
+      
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          let allBlogData = [];
+          
+          async function fetchBlogs() {
+            if (!window.supabaseClient) return;
+            try {
+              const { data, error } = await window.supabaseClient
+                .from('blog_posts')
+                .select('*')
+                .eq('is_published', true)
+                .order('created_at', { ascending: false });
+                
+              if (error) throw error;
+              allBlogData = data || [];
+              renderBlogs(allBlogData);
+            } catch (err) {
+              console.error('Error fetching blogs:', err);
+              document.getElementById('blogGrid').innerHTML = '<p style="color:red;">Failed to load articles. Please try again later.</p>';
+            }
+          }
+
+          function renderBlogs(blogList) {
+            const grid = document.getElementById('blogGrid');
+            const emptyState = document.getElementById('blogEmptyState');
+            
+            grid.innerHTML = '';
+            
+            if (blogList.length === 0) {
+              emptyState.style.display = 'block';
+            } else {
+              emptyState.style.display = 'none';
+              
+              blogList.forEach(item => {
+                const card = document.createElement('a');
+                card.href = 'javascript:void(0)';
+                card.onclick = () => window.navigate('blog/' + item.slug);
+                card.className = 'premium-news-card';
+                card.style.display = 'flex';
+                card.style.flexDirection = 'column';
+                card.style.height = '100%';
+                card.style.padding = '0';
+                card.style.overflow = 'hidden';
+                
+                const dateObj = new Date(item.created_at);
+                const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                
+                const imgHtml = item.image_url ? `<img src="${item.image_url}" style="width: 100%; height: 180px; object-fit: cover;" alt="${item.title}">` : `<div style="width: 100%; height: 180px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8;"><i class="fa-solid fa-image fa-2x"></i></div>`;
+                
+                card.innerHTML = `
+                  ${imgHtml}
+                  <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                      <span style="font-size: 12px; font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 4px 10px; border-radius: 20px;">${item.category || 'General'}</span>
+                      <span style="font-size: 12px; color: #64748b; font-weight: 500;">${dateStr}</span>
+                    </div>
+                    <div class="card-title" style="margin-bottom: 10px;">${item.title}</div>
+                    <div style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.short_description || ''}</div>
+                    <div class="card-footer" style="margin-top: auto;">Read Article <i class="fa-solid fa-chevron-right"></i></div>
+                  </div>
+                `;
+                grid.appendChild(card);
+              });
+            }
+          }
+          
+          document.getElementById('blogSearchInput').addEventListener('input', function(e) {
+            const term = e.target.value.toLowerCase();
+            const filtered = allBlogData.filter(item => item.title.toLowerCase().includes(term) || (item.short_description && item.short_description.toLowerCase().includes(term)));
+            renderBlogs(filtered);
+          });
+          
+          fetchBlogs();
+          
+          const oldNav = window.navigate;
+          window.navigate = function(route) {
+            if (route === 'blog' && allBlogData.length === 0) fetchBlogs();
+            if (oldNav) oldNav(route);
+          };
+        });
+      </script>
+    </div>
+
+    <!-- Blog Detail Section -->
+    <div id="section-blog-detail" class="page-section" style="display: none;">
+      <section style="min-height: 80vh; padding: 100px 20px 60px; background: #fff;">
+        <div class="premium-news-container" style="max-width: 800px;">
+          <a href="javascript:void(0)" onclick="window.navigate('blog')" style="display: inline-flex; align-items: center; gap: 8px; color: #64748b; font-size: 14px; text-decoration: none; font-weight: 500; margin-bottom: 30px; padding: 8px 16px; background: #f8fafc; border-radius: 30px; transition: background 0.2s;">
+            <i class="fa-solid fa-arrow-left"></i> Back to Blog
+          </a>
+          
+          <div id="blogDetailLoading" style="text-align: center; padding: 40px;">
+            <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #cbd5e1;"></i>
+          </div>
+          
+          <div id="blogDetailContent" style="display: none;">
+            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
+              <span id="bd-category" style="font-size: 13px; font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 6px 14px; border-radius: 20px;"></span>
+              <span id="bd-date" style="font-size: 14px; color: #64748b; font-weight: 500;"></span>
+            </div>
+            <h1 id="bd-title" style="font-size: 36px; font-weight: 800; color: #0f172a; margin-bottom: 24px; line-height: 1.2;"></h1>
+            
+            <img id="bd-image" src="" style="width: 100%; height: auto; border-radius: 16px; margin-bottom: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: none;">
+            
+            <div id="bd-html" style="font-size: 17px; line-height: 1.8; color: #334155;"></div>
+          </div>
+          
+          <div id="blogDetailError" style="display: none; text-align: center; padding: 60px 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; color: #ef4444; margin-bottom: 15px;"></i>
+            <h3 style="font-size: 18px; color: #0f172a;">Article not found</h3>
+            <p style="color: #64748b; font-size: 14px;">The article you are looking for does not exist or has been removed.</p>
+          </div>
+        </div>
+      </section>
+      <style>
+        #bd-html h1, #bd-html h2, #bd-html h3 { color: #0f172a; margin-top: 2em; margin-bottom: 1em; font-weight: 700; }
+        #bd-html p { margin-bottom: 1.5em; }
+        #bd-html a { color: #2563eb; text-decoration: underline; }
+        #bd-html ul { list-style: disc; padding-left: 1.5em; margin-bottom: 1.5em; }
+        #bd-html blockquote { border-left: 4px solid #e2e8f0; padding-left: 1rem; color: #64748b; font-style: italic; margin-left: 0; }
+      </style>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const oldNav = window.navigate;
+          window.navigate = async function(route) {
+            if (oldNav) oldNav(route);
+            
+            if (route.startsWith('blog/') && window.currentBlogSlug) {
+              const slug = window.currentBlogSlug;
+              document.getElementById('blogDetailContent').style.display = 'none';
+              document.getElementById('blogDetailError').style.display = 'none';
+              document.getElementById('blogDetailLoading').style.display = 'block';
+              
+              try {
+                const { data, error } = await window.supabaseClient
+                  .from('blog_posts')
+                  .select('*')
+                  .eq('slug', slug)
+                  .single();
+                  
+                if (error || !data) throw new Error("Not found");
+                
+                document.getElementById('bd-title').textContent = data.title;
+                document.getElementById('bd-category').textContent = data.category || 'General';
+                document.getElementById('bd-date').textContent = new Date(data.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+                document.getElementById('bd-html').innerHTML = data.content;
+                
+                const img = document.getElementById('bd-image');
+                if (data.image_url) {
+                  img.src = data.image_url;
+                  img.style.display = 'block';
+                } else {
+                  img.style.display = 'none';
+                }
+                
+                document.getElementById('blogDetailLoading').style.display = 'none';
+                document.getElementById('blogDetailContent').style.display = 'block';
+              } catch (err) {
+                document.getElementById('blogDetailLoading').style.display = 'none';
+                document.getElementById('blogDetailError').style.display = 'block';
+              }
+            }
           };
         });
       </script>

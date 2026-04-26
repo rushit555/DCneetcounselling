@@ -4,6 +4,8 @@ import AdminDashboard from './pages/admin/Dashboard';
 import Affiliates from './pages/admin/Affiliates';
 import Coupons from './pages/admin/Coupons';
 import Orders from './pages/admin/Orders';
+import NewsUpdates from './pages/admin/NewsUpdates';
+import BlogPosts from './pages/admin/BlogPosts';
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         <Route path="/admin/affiliates" element={<Affiliates />} />
         <Route path="/admin/coupons" element={<Coupons />} />
         <Route path="/admin/orders" element={<Orders />} />
+        <Route path="/admin/news" element={<NewsUpdates />} />
+        <Route path="/admin/blogs" element={<BlogPosts />} />
         
         {/* Redirect root / to dashboard or login */}
         <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
