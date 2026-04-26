@@ -51,10 +51,9 @@ export default function Coupons() {
     try {
       setLoading(true);
       const { error } = await supabase.from('coupons').insert({
-        code: code.trim().toUpperCase(),
-        type: discountType,
-        value: Number(discountValue),
-        affiliate_ref: affiliateRef || null,
+        coupon_code: code.trim().toUpperCase(),
+        discount_type: discountType,
+        discount_value: Number(discountValue),
         usage_limit: Number(usageLimit),
         is_active: true
       });
@@ -259,11 +258,11 @@ export default function Coupons() {
                   <tr key={i} style={{ borderBottom: '1px solid #f8fafc' }}>
                     <td style={{ padding: '16px 24px' }}>
                       <span style={{ background: '#10b98110', color: '#059669', padding: '6px 12px', borderRadius: '8px', fontWeight: '700', fontSize: '14px' }}>
-                        {c.code}
+                        {c.coupon_code}
                       </span>
                     </td>
                     <td style={{ padding: '16px 24px', fontSize: '14px', color: '#1e293b' }}>
-                      {c.value}{c.type === 'percentage' ? '%' : '₹'} off
+                      {c.discount_value}{c.discount_type === 'percentage' ? '%' : '₹'} off
                     </td>
                     <td style={{ padding: '16px 24px', fontSize: '14px', color: '#1e293b' }}>
                       {c.affiliate_ref || '—'}

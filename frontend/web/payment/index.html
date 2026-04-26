@@ -343,7 +343,7 @@
             }
         });
 
-        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000/api' : 'https://dcneetcounselling-backend.onrender.com/api';
+        const BACKEND_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1/payment';
 
         async function applyCoupon() {
             const codeInput = document.getElementById('couponInput').value.trim();
@@ -358,38 +358,88 @@
             msgEl.style.display = "";
 
             try {
-                const response = await fetch(`${BACKEND_URL}/validate-coupon`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        code: codeInput,
-                        amount: originalPrice
-                    })
-                });
+                if (!window.supabaseClient) throw new Error("Database not initialized");
+                
+                const uppercaseCode = codeInput.toUpperCase();
+                const { data: coupon, error } = await window.supabaseClient
+                    .from('coupons')
+                    .select('*')
+                    .eq('coupon_code', uppercaseCode)
+                    .single();
 
-                const data = await response.json();
-
-                if (!response.ok || !data.valid) {
-                    msgEl.textContent = data.message || "Invalid or expired coupon.";
+                if (error || !coupon) {
+                    msgEl.textContent = "Invalid or expired coupon.";
                     msgEl.className = "message error";
                     resetDiscount();
-                } else {
-                    appliedCoupon = { code: data.coupon };
-                    localStorage.setItem("coupon", data.coupon);
-                    if (data.affiliate_ref) {
-                        localStorage.setItem("affiliate_ref", data.affiliate_ref);
-                    }
-
-                    discountAmount = data.discount;
-                    finalPrice = data.final_amount;
-
-                    document.getElementById('d_discount').textContent = discountAmount;
-                    document.getElementById('discountRow').style.display = 'flex';
-                    document.getElementById('d_final_price').textContent = finalPrice;
-
-                    msgEl.textContent = "Coupon applied successfully!";
-                    msgEl.className = "message success";
+                    btn.disabled = false;
+                    btn.textContent = "Apply";
+                    return;
                 }
+
+                if (coupon.is_active === false || String(coupon.is_active).toLowerCase() === 'false' || coupon.is_active === 0) {
+                    msgEl.textContent = "Coupon is inactive.";
+                    msgEl.className = "message error";
+                    resetDiscount();
+                    btn.disabled = false;
+                    btn.textContent = "Apply";
+                    return;
+                }
+
+                const now = new Date();
+                if (coupon.valid_from && now < new Date(coupon.valid_from)) {
+                    msgEl.textContent = "Coupon is not yet valid.";
+                    msgEl.className = "message error";
+                    resetDiscount();
+                    btn.disabled = false;
+                    btn.textContent = "Apply";
+                    return;
+                }
+
+                if (coupon.valid_to && now > new Date(coupon.valid_to)) {
+                    msgEl.textContent = "Coupon has expired.";
+                    msgEl.className = "message error";
+                    resetDiscount();
+                    btn.disabled = false;
+                    btn.textContent = "Apply";
+                    return;
+                }
+
+                if (coupon.usage_limit !== null && coupon.used_count >= coupon.usage_limit) {
+                    msgEl.textContent = "Coupon usage limit reached.";
+                    msgEl.className = "message error";
+                    resetDiscount();
+                    btn.disabled = false;
+                    btn.textContent = "Apply";
+                    return;
+                }
+
+                let parsedAmount = parseFloat(originalPrice);
+                let discount = 0;
+                let calculatedFinalPrice = parsedAmount;
+
+                if (!isNaN(parsedAmount) && parsedAmount >= 0) {
+                    if (coupon.discount_type === 'percentage') {
+                        discount = Math.round(parsedAmount * (parseFloat(coupon.discount_value) / 100));
+                    } else if (coupon.discount_type === 'fixed') {
+                        discount = Math.round(parseFloat(coupon.discount_value));
+                    }
+                    calculatedFinalPrice = parsedAmount - discount;
+                    if (calculatedFinalPrice < 0) calculatedFinalPrice = 0;
+                }
+
+                appliedCoupon = { code: coupon.coupon_code };
+                localStorage.setItem("coupon", coupon.coupon_code);
+
+                discountAmount = discount;
+                finalPrice = calculatedFinalPrice;
+
+                document.getElementById('d_discount').textContent = discountAmount;
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('d_final_price').textContent = finalPrice;
+
+                msgEl.textContent = "Coupon applied successfully!";
+                msgEl.className = "message success";
+
             } catch (err) {
                 console.error(err);
                 msgEl.textContent = "Error validating coupon. Please try again.";
