@@ -486,7 +486,7 @@
               cursor: grabbing;
             }
             .news-track.is-dragging .premium-news-card {
-              pointer-events: none;
+              /* Allow pointer events so clicks can still be registered/blocked by JS */
             }
             .premium-news-card {
               display: flex;
@@ -723,10 +723,13 @@
                     pauseAndResume();
                   });
 
+                  var hasMoved = false;
+
                   document.addEventListener('mousemove', function(e) {
                     if (!isDragging) return;
                     e.preventDefault();
                     var moved = e.pageX - startX;
+                    if (Math.abs(moved) > 5) hasMoved = true;
                     currentTranslate = prevTranslate + moved;
                     wrapPosition();
                     setPosition();
@@ -734,7 +737,7 @@
 
                   document.addEventListener('mouseup', function() {
                     if (!isDragging) return;
-                    isDragging = false;
+                    setTimeout(function() { isDragging = false; }, 50);
                     t.classList.remove('is-dragging');
                     prevTranslate = currentTranslate;
                     pauseAndResume();
@@ -742,7 +745,7 @@
 
                   t.addEventListener('mouseleave', function() {
                     if (isDragging) {
-                      isDragging = false;
+                      setTimeout(function() { isDragging = false; }, 50);
                       t.classList.remove('is-dragging');
                       prevTranslate = currentTranslate;
                       pauseAndResume();
@@ -766,13 +769,14 @@
                   t.addEventListener('touchmove', function(e) {
                     if (!isDragging) return;
                     var moved = e.touches[0].clientX - startX;
+                    if (Math.abs(moved) > 5) hasMoved = true;
                     currentTranslate = prevTranslate + moved;
                     wrapPosition();
                     setPosition();
                   }, { passive: false });
 
                   t.addEventListener('touchend', function() {
-                    isDragging = false;
+                    setTimeout(function() { isDragging = false; }, 50);
                     t.classList.remove('is-dragging');
                     prevTranslate = currentTranslate;
                     pauseAndResume();
@@ -784,33 +788,36 @@
                     if (!isDragging) pauseAndResume();
                   });
 
-                  // Prevent link clicks after drag — use simple flag
-                  var wasDragged = false;
-                  document.addEventListener('mouseup', function(e) {
-                    wasDragged = (Math.abs(e.pageX - mouseStartX) + Math.abs(e.pageY - mouseStartY)) > 10;
-                  });
-                  t.addEventListener('touchend', function(e) {
-                    if (e.changedTouches && e.changedTouches[0]) {
-                      wasDragged = (Math.abs(e.changedTouches[0].clientX - touchStartX) + Math.abs(e.changedTouches[0].clientY - touchStartY)) > 10;
-                    }
-                  });
-
                   // Handle card clicks via event delegation on the track
                   t.addEventListener('click', function(e) {
-                    if (wasDragged) {
-                      wasDragged = false;
+                    console.log('News track clicked', { isDragging, hasMoved });
+                    
+                    if (hasMoved) {
+                      console.log('Click ignored due to drag');
+                      hasMoved = false;
                       return;
                     }
-                    wasDragged = false;
+                    
+                    // Reset moved flag
+                    hasMoved = false;
+
                     // Find the clicked card
                     var card = e.target.closest('.premium-news-card');
                     if (!card) return;
+                    
                     var link = card.getAttribute('data-link');
                     var nav = card.getAttribute('data-nav');
+                    
+                    console.log('Card data:', { link, nav });
+
                     if (link) {
                       window.open(link, '_blank');
                     } else if (nav) {
-                      window.navigate(nav);
+                      if (typeof window.navigate === 'function') {
+                        window.navigate(nav);
+                      } else {
+                        window.location.hash = nav;
+                      }
                     }
                   });
 
