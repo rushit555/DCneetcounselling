@@ -617,14 +617,17 @@
                         var card = document.createElement('a');
                         card.href = 'javascript:void(0)';
                         card.className = 'premium-news-card';
+                        card.style.cursor = 'pointer';
 
                         if (item.link) {
                           card.href = item.link;
                           card.target = '_blank';
                         } else if (item.content) {
                           card.addEventListener('click', (function(id) {
-                            return function() { window.navigate('news/' + id); };
+                            return function(e) { if (!e._dragBlocked) window.navigate('news/' + id); };
                           })(item.id));
+                        } else {
+                          card.addEventListener('click', function(e) { if (!e._dragBlocked) window.navigate('news'); });
                         }
 
                         var footerText = (item.link || item.content) ? 'Read Full Update' : 'Notice';
@@ -648,11 +651,16 @@
                         var origTitle = card.querySelector('.card-title');
                         if (origTitle) {
                           var matchingItem = resp.data.find(function(d) { return d.title === origTitle.textContent; });
-                          if (matchingItem && matchingItem.content && !matchingItem.link) {
+                          if (matchingItem && !matchingItem.link) {
                             clone.href = 'javascript:void(0)';
-                            clone.addEventListener('click', (function(id) {
-                              return function() { window.navigate('news/' + id); };
-                            })(matchingItem.id));
+                            clone.style.cursor = 'pointer';
+                            if (matchingItem.content) {
+                              clone.addEventListener('click', (function(id) {
+                                return function(e) { if (!e._dragBlocked) window.navigate('news/' + id); };
+                              })(matchingItem.id));
+                            } else {
+                              clone.addEventListener('click', function(e) { if (!e._dragBlocked) window.navigate('news'); });
+                            }
                           }
                         }
                         t.appendChild(clone);
@@ -721,9 +729,13 @@
                   }
 
                   // Mouse drag
+                  var mouseStartX = 0;
+                  var mouseStartY = 0;
                   t.addEventListener('mousedown', function(e) {
                     isDragging = true;
                     startX = e.pageX;
+                    mouseStartX = e.pageX;
+                    mouseStartY = e.pageY;
                     prevTranslate = currentTranslate;
                     dragStartTranslate = currentTranslate;
                     t.classList.add('is-dragging');
@@ -757,9 +769,13 @@
                   });
 
                   // Touch
+                  var touchStartX = 0;
+                  var touchStartY = 0;
                   t.addEventListener('touchstart', function(e) {
                     isDragging = true;
                     startX = e.touches[0].clientX;
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
                     prevTranslate = currentTranslate;
                     dragStartTranslate = currentTranslate;
                     t.classList.add('is-dragging');
@@ -787,12 +803,23 @@
                     if (!isDragging) pauseAndResume();
                   });
 
-                  // Prevent link clicks after drag
+                  // Prevent link clicks after drag (only if user actually dragged with mouse/touch)
+                  var actualDragDistance = 0;
+                  document.addEventListener('mouseup', function(e) {
+                    actualDragDistance = Math.abs(e.pageX - mouseStartX) + Math.abs(e.pageY - mouseStartY);
+                  });
+                  t.addEventListener('touchend', function(e) {
+                    if (e.changedTouches && e.changedTouches[0]) {
+                      actualDragDistance = Math.abs(e.changedTouches[0].clientX - touchStartX) + Math.abs(e.changedTouches[0].clientY - touchStartY);
+                    }
+                  });
                   t.addEventListener('click', function(e) {
-                    if (Math.abs(currentTranslate - dragStartTranslate) > 5) {
+                    if (actualDragDistance > 10) {
                       e.preventDefault();
                       e.stopPropagation();
+                      e._dragBlocked = true;
                     }
+                    actualDragDistance = 0;
                   }, true);
 
                   // Prevent native image drag
