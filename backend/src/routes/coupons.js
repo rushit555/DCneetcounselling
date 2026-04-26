@@ -15,11 +15,14 @@ async function checkCouponValid(code, amount) {
 
     const uppercaseCode = code.trim().toUpperCase();
 
+    const start = Date.now();
     const { data: coupon, error } = await supabase
         .from('coupons')
-        .select('*')
+        .select('id, coupon_code, discount_type, discount_value, valid_from, valid_to, usage_limit, used_count')
         .eq('coupon_code', uppercaseCode)
         .single();
+    const dur = Date.now() - start;
+    if (dur > 200) console.log(`⚠️ Slow Query [Check Coupon]: ${dur}ms`);
 
     if (error || !coupon) {
         return { valid: false, message: "Invalid coupon" };
@@ -141,11 +144,14 @@ router.post('/payment-success', async (req, res) => {
 
         const uppercaseCode = code.trim().toUpperCase();
 
+        const start = Date.now();
         const { data: coupon, error } = await supabase
             .from('coupons')
-            .select('*')
+            .select('id, used_count')
             .eq('coupon_code', uppercaseCode)
             .single();
+        const dur = Date.now() - start;
+        if (dur > 200) console.log(`⚠️ Slow Query [Payment Success]: ${dur}ms`);
 
         if (error || !coupon) {
             return res.status(400).json({ success: false, message: "Coupon not found" });
@@ -183,33 +189,54 @@ router.post('/payment-success', async (req, res) => {
     }
 });
 
+let analyticsCache = {
+    data: null,
+    lastFetched: 0
+};
+
 // GET /coupon-analytics
 router.get('/coupon-analytics', async (req, res) => {
     try {
-        const { data: coupons, error: couponsError } = await supabase
-            .from('coupons')
-            .select('*')
-            .order('created_at', { ascending: false });
+        const now = Date.now();
+        // Cache for 10 seconds
+        if (analyticsCache.data && (now - analyticsCache.lastFetched < 10000)) {
+            return res.json(analyticsCache.data);
+        }
 
-        if (couponsError) throw couponsError;
+        const start = Date.now();
+        
+        const { data, error } = await supabase.rpc('get_coupon_analytics');
 
-        const { data: usages, error: usagesError } = await supabase
-            .from('coupon_usage')
-            .select('*') // No need for join since coupon_code is now directly in coupon_usage
-            .order('used_at', { ascending: false });
+        const dur = Date.now() - start;
+        if (dur > 200) console.log(`⚠️ Slow Query [Analytics RPC Fetch]: ${dur}ms`);
 
-        if (usagesError) throw usagesError;
+        if (error) throw error;
 
-        return res.json({
+        // Ensure API response includes ONLY: id, coupon_code, usage_count
+        const minimizedData = data.map(item => ({
+            id: item.id,
+            coupon_code: item.coupon_code,
+            usage_count: item.usage_count
+        }));
+
+        const responseData = {
             success: true,
-            total_coupons: coupons.length,
-            total_usages: usages.length,
-            coupons: coupons,
-            recent_usages: usages.slice(0, 50) // Return last 50 usages for analytics
-        });
+            coupons: minimizedData
+        };
+
+        analyticsCache.data = responseData;
+        analyticsCache.lastFetched = now;
+
+        return res.json(responseData);
 
     } catch (error) {
         console.error("Coupon Analytics Error:", error);
+        
+        // Safe fallback to cache if DB fails
+        if (analyticsCache.data) {
+            return res.json(analyticsCache.data);
+        }
+
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 });

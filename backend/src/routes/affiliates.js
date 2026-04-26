@@ -33,7 +33,6 @@ router.post('/register-affiliate', async (req, res) => {
 
         // 1.5 Auto-generate unique ref_code
         async function generateUniqueRefCode(baseName) {
-            let isUnique = false;
             let code = baseName.replace(/\s+/g, '').toUpperCase();
             
             // First try the user's requested ref_code if provided
@@ -41,19 +40,20 @@ router.post('/register-affiliate', async (req, res) => {
                 code = ref_code.trim().toUpperCase();
             }
 
-            while (!isUnique) {
-                const { data } = await supabase
-                    .from('affiliates')
-                    .select('id')
-                    .eq('ref_code', code)
-                    .single();
+            const start = Date.now();
+            const { data } = await supabase
+                .from('affiliates')
+                .select('id')
+                .eq('ref_code', code)
+                .single();
+            const dur = Date.now() - start;
+            if (dur > 200) console.log(`⚠️ Slow Query [Check Affiliate Ref]: ${dur}ms`);
 
-                if (!data) {
-                    isUnique = true;
-                } else {
-                    const random = Math.floor(1000 + Math.random() * 9000);
-                    code = baseName.replace(/\s+/g, '').toUpperCase() + random;
-                }
+            // If it exists, simply append random numbers.
+            // A unique constraint on the database will catch any highly unlikely collisions on insert.
+            if (data) {
+                const random = Math.floor(10000 + Math.random() * 90000);
+                code = baseName.replace(/\s+/g, '').toUpperCase() + random;
             }
             return code;
         }
