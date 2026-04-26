@@ -8166,9 +8166,242 @@ window.cartCheckout = async function() {
     <div id="section-blog-detail" class="page-section" style="display: none;">
       <style>
         .bd-wrapper {
-          max-width: 780px;
+          max-width: 1140px;
           margin: 0 auto;
           padding: 90px 20px 60px;
+          display: flex;
+          gap: 40px;
+          align-items: flex-start;
+        }
+        .bd-main {
+          flex: 1;
+          min-width: 0;
+          max-width: 780px;
+        }
+        .bd-sidebar {
+          width: 320px;
+          flex-shrink: 0;
+          position: sticky;
+          top: 100px;
+          max-height: calc(100vh - 120px);
+          overflow-y: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .bd-sidebar::-webkit-scrollbar {
+          display: none;
+        }
+        /* Sidebar Styles */
+        .bd-sidebar-title {
+          font-size: 18px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 20px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .bd-sidebar-title::before {
+          content: '';
+          display: block;
+          width: 4px;
+          height: 18px;
+          background-color: #facc15;
+          border-radius: 4px;
+        }
+        .bd-latest-item {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 14px;
+          text-decoration: none;
+          color: inherit;
+          transition: transform 0.2s;
+          cursor: pointer;
+        }
+        .bd-latest-item:hover {
+          transform: translateY(-2px);
+        }
+        .bd-latest-img {
+          width: 70px;
+          height: 70px;
+          border-radius: 12px;
+          object-fit: cover;
+          flex-shrink: 0;
+          background: #f1f5f9;
+        }
+        .bd-latest-img-ph {
+          width: 70px;
+          height: 70px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #94a3b8;
+          flex-shrink: 0;
+        }
+        .bd-latest-info {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          min-width: 0;
+        }
+        .bd-latest-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: #0f172a;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          line-height: 1.4;
+          margin-bottom: 4px;
+        }
+        .bd-latest-date {
+          font-size: 12px;
+          color: #777;
+        }
+        /* Counselling CTA */
+        .bd-counselling-cta {
+          padding: 18px;
+          border-radius: 16px;
+          background: #fffdf5;
+          border: 1px solid #fde68a;
+          box-shadow: 0 4px 12px rgba(250,204,21,0.15);
+          margin-top: 20px;
+        }
+        .bd-counselling-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: #000;
+          margin-bottom: 4px;
+        }
+        .bd-counselling-sub {
+          font-size: 13px;
+          color: #666;
+          margin-bottom: 16px;
+          line-height: 1.4;
+        }
+        .bd-counselling-features {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-bottom: 16px;
+        }
+        .bd-counselling-feature {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .bd-counselling-icon {
+          width: 28px;
+          height: 28px;
+          background: #facc15;
+          color: #000;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          flex-shrink: 0;
+        }
+        .bd-counselling-text {
+          font-size: 13px;
+          color: #333;
+          line-height: 1.3;
+        }
+        .bd-counselling-btn {
+          display: block;
+          width: 100%;
+          background: #facc15;
+          color: #000;
+          padding: 12px;
+          border-radius: 10px;
+          font-weight: 600;
+          text-align: center;
+          box-shadow: 0 4px 10px rgba(250,204,21,0.4);
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .bd-counselling-btn:hover {
+          filter: brightness(0.95);
+        }
+        .bd-counselling-btn:active {
+          transform: scale(0.96);
+        }
+
+        /* eBooks CTA */
+        .bd-ebooks-cta {
+          padding: 18px;
+          border-radius: 16px;
+          background: linear-gradient(135deg, #fef3c7, #fde68a);
+          border: 1px solid #facc15;
+          box-shadow: 0 4px 12px rgba(250,204,21,0.2);
+          margin-top: 16px;
+        }
+        .bd-ebooks-badge {
+          font-size: 11px;
+          font-weight: 700;
+          background: #facc15;
+          color: #000;
+          padding: 4px 10px;
+          border-radius: 20px;
+          display: inline-block;
+          margin-bottom: 8px;
+        }
+        .bd-ebooks-title {
+          font-size: 16px;
+          font-weight: 700;
+          color: #000;
+          margin-bottom: 4px;
+        }
+        .bd-ebooks-sub {
+          font-size: 13px;
+          color: #555;
+          margin-bottom: 16px;
+          line-height: 1.4;
+        }
+        .bd-ebooks-features {
+          list-style: none;
+          padding: 0;
+          margin: 0 0 16px 0;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .bd-ebooks-feature {
+          position: relative;
+          padding-left: 16px;
+          font-size: 13px;
+          color: #333;
+          line-height: 1.3;
+        }
+        .bd-ebooks-feature::before {
+          content: '•';
+          color: #d97706;
+          position: absolute;
+          left: 0;
+          top: 0;
+          font-size: 16px;
+          line-height: 1;
+        }
+        .bd-ebooks-btn {
+          display: block;
+          width: 100%;
+          background: #000;
+          color: #facc15;
+          padding: 12px;
+          border-radius: 10px;
+          font-weight: 600;
+          text-align: center;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .bd-ebooks-btn:hover {
+          opacity: 0.9;
+        }
+        .bd-ebooks-btn:active {
+          transform: scale(0.96);
         }
         .bd-back {
           display: inline-flex;
@@ -8353,6 +8586,21 @@ window.cartCheckout = async function() {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
+        @media (max-width: 992px) {
+          .bd-wrapper {
+            flex-direction: column;
+            gap: 20px;
+          }
+          .bd-sidebar {
+            width: 100%;
+            position: static;
+            margin-top: 20px;
+          }
+          .bd-sidebar-title,
+          #bdLatestArticles {
+            display: none !important;
+          }
+        }
         @media (max-width: 768px) {
           .bd-title { font-size: 26px; }
           .bd-related-grid { grid-template-columns: 1fr; }
@@ -8361,44 +8609,89 @@ window.cartCheckout = async function() {
       </style>
 
       <div class="bd-wrapper">
-        <a href="javascript:void(0)" onclick="window.navigate('blog')" class="bd-back">
-          <i class="fa-solid fa-arrow-left"></i> Back to Blog
-        </a>
+        <div class="bd-main">
+          <a href="javascript:void(0)" onclick="window.navigate('blog')" class="bd-back">
+            <i class="fa-solid fa-arrow-left"></i> Back to Blog
+          </a>
 
-        <div id="blogDetailLoading" style="text-align: center; padding: 60px;">
-          <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #cbd5e1;"></i>
-        </div>
-
-        <div id="blogDetailContent" style="display: none;">
-          <div class="bd-meta-row">
-            <span id="bd-category" class="bd-cat-badge"></span>
-            <span id="bd-date" class="bd-date-text"></span>
-          </div>
-          <h1 id="bd-title" class="bd-title"></h1>
-          <img id="bd-image" src="" class="bd-cover" style="display:none;">
-          <div id="bd-html" class="bd-content"></div>
-
-          <!-- Share Bar -->
-          <div class="bd-share-bar">
-            <span class="bd-share-label">Share this article:</span>
-            <button class="bd-share-btn bd-share-whatsapp" id="bdShareWA" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
-            <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on Twitter"><i class="fa-brands fa-x-twitter"></i></button>
-            <button class="bd-share-btn bd-share-linkedin" id="bdShareLI" title="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></button>
-            <button class="bd-share-btn bd-share-copy" id="bdShareCopy" title="Copy Link"><i class="fa-solid fa-link"></i></button>
+          <div id="blogDetailLoading" style="text-align: center; padding: 60px;">
+            <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #cbd5e1;"></i>
           </div>
 
-          <!-- Related Posts -->
-          <div class="bd-related-section" id="bdRelatedSection" style="display:none;">
-            <h3 class="bd-related-title">Related Articles</h3>
-            <div class="bd-related-grid" id="bdRelatedGrid"></div>
+          <div id="blogDetailContent" style="display: none;">
+            <div class="bd-meta-row">
+              <span id="bd-category" class="bd-cat-badge"></span>
+              <span id="bd-date" class="bd-date-text"></span>
+            </div>
+            <h1 id="bd-title" class="bd-title"></h1>
+            <img id="bd-image" src="" class="bd-cover" style="display:none;">
+            <div id="bd-html" class="bd-content"></div>
+
+            <!-- Share Bar -->
+            <div class="bd-share-bar">
+              <span class="bd-share-label">Share this article:</span>
+              <button class="bd-share-btn bd-share-whatsapp" id="bdShareWA" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+              <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on Twitter"><i class="fa-brands fa-x-twitter"></i></button>
+              <button class="bd-share-btn bd-share-linkedin" id="bdShareLI" title="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></button>
+              <button class="bd-share-btn bd-share-copy" id="bdShareCopy" title="Copy Link"><i class="fa-solid fa-link"></i></button>
+            </div>
+
+            <!-- Related Posts -->
+            <div class="bd-related-section" id="bdRelatedSection" style="display:none;">
+              <h3 class="bd-related-title">Related Articles</h3>
+              <div class="bd-related-grid" id="bdRelatedGrid"></div>
+            </div>
+          </div>
+
+          <div id="blogDetailError" style="display: none; text-align: center; padding: 60px 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; color: #ef4444; margin-bottom: 15px;"></i>
+            <h3 style="font-size: 18px; color: #0f172a;">Article not found</h3>
+            <p style="color: #64748b; font-size: 14px;">The article you are looking for does not exist or has been removed.</p>
           </div>
         </div>
 
-        <div id="blogDetailError" style="display: none; text-align: center; padding: 60px 20px;">
-          <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; color: #ef4444; margin-bottom: 15px;"></i>
-          <h3 style="font-size: 18px; color: #0f172a;">Article not found</h3>
-          <p style="color: #64748b; font-size: 14px;">The article you are looking for does not exist or has been removed.</p>
-        </div>
+        <aside class="bd-sidebar">
+          <h3 class="bd-sidebar-title">Latest Articles</h3>
+          <div id="bdLatestArticles"></div>
+
+          <div class="bd-counselling-cta">
+            <div class="bd-counselling-title">Personal Guidance for NEET Counselling</div>
+            <div class="bd-counselling-sub">Get expert help to secure the best medical college</div>
+            <div class="bd-counselling-features">
+              <div class="bd-counselling-feature">
+                <div class="bd-counselling-icon"><i class="fa-solid fa-user-tie"></i></div>
+                <div class="bd-counselling-text">1-to-1 personalized counselling support</div>
+              </div>
+              <div class="bd-counselling-feature">
+                <div class="bd-counselling-icon"><i class="fa-solid fa-bullseye"></i></div>
+                <div class="bd-counselling-text">Smart college selection strategy</div>
+              </div>
+              <div class="bd-counselling-feature">
+                <div class="bd-counselling-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <div class="bd-counselling-text">Guidance from experienced mentors</div>
+              </div>
+              <div class="bd-counselling-feature">
+                <div class="bd-counselling-icon"><i class="fa-solid fa-tags"></i></div>
+                <div class="bd-counselling-text">Affordable plans for every student</div>
+              </div>
+            </div>
+            <a href="javascript:void(0)" onclick="window.navigate('counselling')" class="bd-counselling-btn">Start Counselling &rarr;</a>
+          </div>
+
+          <div class="bd-ebooks-cta">
+            <div class="bd-ebooks-badge">E-BOOKS</div>
+            <div class="bd-ebooks-title">NEET Counselling Master Toolkit</div>
+            <div class="bd-ebooks-sub">Avoid mistakes and make smarter decisions</div>
+            <ul class="bd-ebooks-features">
+              <li class="bd-ebooks-feature">Step-by-step counselling roadmap</li>
+              <li class="bd-ebooks-feature">Latest cut-offs & seat matrix</li>
+              <li class="bd-ebooks-feature">College selection strategy</li>
+              <li class="bd-ebooks-feature">Round-wise analysis insights</li>
+              <li class="bd-ebooks-feature">Top college preference guide</li>
+            </ul>
+            <a href="javascript:void(0)" onclick="window.navigate('ebooks')" class="bd-ebooks-btn">Get eBooks &rarr;</a>
+          </div>
+        </aside>
       </div>
 
       <script>
@@ -8430,6 +8723,11 @@ window.cartCheckout = async function() {
               document.getElementById('blogDetailContent').style.display = 'none';
               document.getElementById('blogDetailError').style.display = 'none';
               document.getElementById('blogDetailLoading').style.display = 'block';
+
+              const latestContainer = document.getElementById('bdLatestArticles');
+              if (latestContainer) {
+                latestContainer.innerHTML = '<div class="bd-latest-item" style="pointer-events:none;opacity:0.6;animation:pulse 1.5s infinite"><div class="bd-latest-img-ph" style="background:#eee;"></div><div class="bd-latest-info" style="flex:1"><div style="height:14px; background:#eee; border-radius:4px; margin-bottom:6px; width:90%;"></div><div style="height:14px; background:#eee; border-radius:4px; margin-bottom:6px; width:60%;"></div><div style="height:10px; background:#eee; border-radius:4px; width:40%;"></div></div></div>'.repeat(3);
+              }
 
               try {
                 const { data, error } = await window.supabaseClient
@@ -8486,6 +8784,43 @@ window.cartCheckout = async function() {
                   }
                 } catch (e) {
                   console.log('Could not load related posts');
+                }
+
+                // Fetch latest posts for sidebar
+                try {
+                  const { data: latest } = await window.supabaseClient
+                    .from('blog_posts')
+                    .select('id, title, image_url, created_at, slug')
+                    .eq('is_published', true)
+                    .neq('slug', slug)
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+
+                  if (latestContainer) {
+                    if (latest && latest.length > 0) {
+                      latestContainer.innerHTML = '';
+                      latest.forEach(function(r) {
+                        const dateStr = new Date(r.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                        const imgHtml = r.image_url 
+                          ? '<img src="' + r.image_url + '" loading="lazy" class="bd-latest-img" alt="' + r.title + '">'
+                          : '<div class="bd-latest-img-ph"><i class="fa-solid fa-image"></i></div>';
+                        
+                        const itemHtml = '<a href="javascript:void(0)" class="bd-latest-item" onclick="window.navigate(\'blog/' + r.slug + '\')">' +
+                          imgHtml +
+                          '<div class="bd-latest-info">' +
+                            '<div class="bd-latest-title" title="' + r.title + '">' + r.title + '</div>' +
+                            '<div class="bd-latest-date">' + dateStr + '</div>' +
+                          '</div>' +
+                        '</a>';
+                        latestContainer.insertAdjacentHTML('beforeend', itemHtml);
+                      });
+                    } else {
+                      latestContainer.innerHTML = '<p style="color:#777; font-size:14px;">No articles available</p>';
+                    }
+                  }
+                } catch (e) {
+                  console.log('Could not load latest articles');
+                  if (latestContainer) latestContainer.innerHTML = '<p style="color:#777; font-size:14px;">No articles available</p>';
                 }
               } catch (err) {
                 document.getElementById('blogDetailLoading').style.display = 'none';
@@ -8731,7 +9066,7 @@ window.cartCheckout = async function() {
           <a href="javascript:void(0)" onclick="window.navigate('privacy-policy'); return false;" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Privacy Policy</a>
           <a href="javascript:void(0)" onclick="window.navigate('refund-policy'); return false;" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Refund Policy</a>
           <a href="javascript:void(0)" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> FAQs</a>
-          <a href="javascript:void(0)" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Blogs</a>
+          <a href="javascript:void(0)" onclick="window.navigate('blog'); return false;" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Blogs</a>
           <a href="javascript:void(0)" class="dc-ft-link"><i class="fa-solid fa-chevron-right"></i> Sitemap</a>
         </div>
 
