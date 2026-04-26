@@ -6905,8 +6905,9 @@ window.submitEbookPurchase = async function() {
           // Check if user is logged in
           if (window._authUser) {
               // Update user profile with phone number
-              const { error: profileError } = await window.supabaseClient.from('users')
-                .update({ phone: mobile, mobile_number: mobile })
+              const { error: profileError } = await window.supabaseClient
+                .from('users')
+                .update({ mobile_number: mobile, phone: mobile })
                 .eq('id', window._authUser.id);
                 
               if (profileError) {
@@ -6952,14 +6953,16 @@ window.submitEbookPurchase = async function() {
                       // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Record Coupon Usage Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
                       if (ctx.appliedCoupon) {
                           const finalAmount = ctx.price;
-                          const commission = finalAmount * 0.20;
-                          await window.supabaseClient.from('coupon_usages').insert({
-                              coupon_id: ctx.appliedCoupon.id,
+                          await window.supabaseClient.from('coupon_usage').insert({
+                              coupon_code: ctx.appliedCoupon.code,
                               user_email: email,
-                              amount_before: ctx.originalPrice,
+                              user_mobile: mobile,
+                              order_id: response.razorpay_payment_id || ('EBK_' + Date.now()),
+                              plan_name: ctx.course + ' (' + ctx.quota + ')',
+                              original_price: ctx.originalPrice,
                               discount_applied: ctx.originalPrice - ctx.price,
-                              final_amount: finalAmount,
-                              commission: commission
+                              discounted_price: finalAmount,
+                              payment_status: 'success'
                           });
                       }
 

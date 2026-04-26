@@ -131,6 +131,11 @@ router.post('/create-order', async (req, res) => {
             });
         }
 
+        // 3. Update user profile with the provided mobile number if user is logged in
+        if (user_id && mobile && mobile !== 'N/A') {
+            await supabase.from('users').update({ mobile_number: mobile, phone: mobile }).eq('id', user_id);
+        }
+
         res.json({ 
             success: true, 
             order_id: newOrder.id, 
