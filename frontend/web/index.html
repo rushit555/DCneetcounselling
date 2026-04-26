@@ -562,7 +562,7 @@
                 <div class="title-icon"><i class="fa-solid fa-bullhorn"></i></div>
                 Latest News & Updates
               </div>
-              <a href="#" class="premium-news-btn">View All Updates</a>
+              <a href="javascript:void(0)" onclick="window.navigate('news');" class="premium-news-btn">View All Updates</a>
             </div>
 
             <div class="news-track-wrapper" id="newsTrackWrapper">
@@ -7105,6 +7105,150 @@ window.cartCheckout = async function() {
 };
 
 </script>
+    <!-- News & Updates Section -->
+    <div id="section-news" class="page-section" style="display: none;">
+      <section class="premium-news-section" style="min-height: 80vh; padding: 100px 20px 60px;">
+        <div class="premium-news-container">
+          <div class="premium-news-header" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+            <div class="premium-news-title">
+              <div class="title-icon"><i class="fa-solid fa-bullhorn"></i></div>
+              All News & Updates
+            </div>
+            <p style="color: #666; font-size: 15px;">Stay up to date with the latest announcements regarding NEET counselling.</p>
+          </div>
+          
+          <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+            <input type="text" id="newsSearchInput" placeholder="Search updates..." style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 14px; width: 100%; max-width: 400px; outline: none; font-family: inherit;">
+            <select id="newsCategoryFilter" style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 14px; outline: none; font-family: inherit; background: #fff;">
+              <option value="All">All Categories</option>
+              <option value="Admit Card">Admit Card</option>
+              <option value="NEET">NEET</option>
+              <option value="Colleges">Colleges</option>
+              <option value="NTA">NTA</option>
+              <option value="NMC">NMC</option>
+            </select>
+          </div>
+
+          <div id="newsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+            <!-- Skeleton Loading UI -->
+            <div class="premium-news-card news-skeleton" style="min-height: 200px; opacity: 0.7; animation: pulse 1.5s infinite;">
+              <div style="width: 40px; height: 40px; background: #eee; border-radius: 50%; margin-bottom: 15px;"></div>
+              <div style="width: 80px; height: 15px; background: #eee; border-radius: 10px; margin-bottom: 15px;"></div>
+              <div style="width: 100%; height: 20px; background: #eee; border-radius: 10px; margin-bottom: 10px;"></div>
+              <div style="width: 80%; height: 20px; background: #eee; border-radius: 10px;"></div>
+            </div>
+          </div>
+          
+          <div id="newsEmptyState" style="display: none; text-align: center; padding: 60px 20px; background: #f9fafb; border-radius: 16px;">
+            <i class="fa-solid fa-folder-open" style="font-size: 48px; color: #cbd5e1; margin-bottom: 15px;"></i>
+            <h3 style="font-size: 18px; color: #334155; margin-bottom: 8px;">No Updates Found</h3>
+            <p style="color: #64748b; font-size: 14px;">Try adjusting your search or filter criteria.</p>
+          </div>
+        </div>
+      </section>
+      
+      <style>
+        @keyframes pulse {
+          0% { background-color: #f3f4f6; }
+          50% { background-color: #e5e7eb; }
+          100% { background-color: #f3f4f6; }
+        }
+      </style>
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          let allNewsData = [];
+          
+          async function fetchNews() {
+            if (!window.supabaseClient) {
+                console.error("Supabase client not found.");
+                return;
+            }
+            try {
+              const { data, error } = await window.supabaseClient
+                .from('news')
+                .select('*')
+                .order('date', { ascending: false });
+                
+              if (error) throw error;
+              allNewsData = data || [];
+              renderNews(allNewsData);
+            } catch (err) {
+              console.error('Error fetching news:', err);
+              document.getElementById('newsGrid').innerHTML = '<p style="color:red;">Failed to load updates. Please try again later.</p>';
+            }
+          }
+
+          function renderNews(newsList) {
+            const grid = document.getElementById('newsGrid');
+            const emptyState = document.getElementById('newsEmptyState');
+            
+            grid.innerHTML = '';
+            
+            if (newsList.length === 0) {
+              emptyState.style.display = 'block';
+            } else {
+              emptyState.style.display = 'none';
+              
+              newsList.forEach(item => {
+                const colors = ['icon-blue', 'icon-green', 'icon-purple', 'icon-orange'];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                const card = document.createElement('a');
+                card.href = item.link || 'javascript:void(0)';
+                if (item.link) card.target = '_blank';
+                card.className = 'premium-news-card';
+                card.style.display = 'flex';
+                card.style.flexDirection = 'column';
+                card.style.height = '100%';
+                
+                const dateObj = new Date(item.date);
+                const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                
+                card.innerHTML = `
+                  <div class="card-header">
+                    <div class="card-icon ${randomColor}"><i class="fa-solid ${item.icon || 'fa-bell'}"></i></div>
+                    <div class="card-date">${dateStr}</div>
+                  </div>
+                  <div class="card-title">${item.title}</div>
+                  <div style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.description}</div>
+                  <div class="card-footer" style="margin-top: auto;">${item.link ? 'Read Full Update' : 'Notice'} <i class="fa-solid fa-chevron-right"></i></div>
+                `;
+                grid.appendChild(card);
+              });
+            }
+          }
+          
+          function filterNews() {
+            const searchTerm = document.getElementById('newsSearchInput').value.toLowerCase();
+            const category = document.getElementById('newsCategoryFilter').value;
+            
+            const filtered = allNewsData.filter(item => {
+              const matchesSearch = item.title.toLowerCase().includes(searchTerm) || item.description.toLowerCase().includes(searchTerm);
+              const matchesCategory = category === 'All' || item.category === category;
+              return matchesSearch && matchesCategory;
+            });
+            
+            renderNews(filtered);
+          }
+          
+          document.getElementById('newsSearchInput').addEventListener('input', filterNews);
+          document.getElementById('newsCategoryFilter').addEventListener('change', filterNews);
+          
+          // Initial fetch when page loads or when navigated to section
+          fetchNews();
+          
+          // Add a hook to refetch if needed when navigating to #news
+          const originalNavigate = window.navigate;
+          window.navigate = function(route) {
+            if (route === 'news' && allNewsData.length === 0) {
+              fetchNews();
+            }
+            if (originalNavigate) originalNavigate(route);
+          };
+        });
+      </script>
+    </div>
+
     <!-- Footer Section -->
     <footer style="background: #f4b400; padding: 60px 20px 40px;">
       <style>
