@@ -478,6 +478,15 @@
               display: flex;
               gap: 20px;
               width: max-content;
+              cursor: grab;
+              user-select: none;
+              -webkit-user-select: none;
+            }
+            .news-track.is-dragging {
+              cursor: grabbing;
+            }
+            .news-track.is-dragging .premium-news-card {
+              pointer-events: none;
             }
             .premium-news-card {
               display: flex;
@@ -626,6 +635,137 @@
                 </a>
               </div>
             </div>
+
+            <script>
+              (function() {
+                document.addEventListener('DOMContentLoaded', function() {
+                  var wrapper = document.getElementById('newsTrackWrapper');
+                  var track = document.getElementById('newsTrack');
+                  if (!wrapper || !track) return;
+
+                  var isDragging = false;
+                  var startX = 0;
+                  var currentTranslate = 0;
+                  var prevTranslate = 0;
+                  var autoScrollId = null;
+                  var resumeTimeout = null;
+                  var maxScroll = 0;
+
+                  function getMaxScroll() {
+                    return track.scrollWidth - wrapper.clientWidth;
+                  }
+
+                  function setPosition() {
+                    track.style.transform = 'translateX(' + currentTranslate + 'px)';
+                  }
+
+                  // --- Auto Scroll ---
+                  function startAutoScroll() {
+                    stopAutoScroll();
+                    autoScrollId = setInterval(function() {
+                      maxScroll = getMaxScroll();
+                      currentTranslate -= 1;
+                      if (Math.abs(currentTranslate) >= maxScroll) {
+                        currentTranslate = 0;
+                      }
+                      setPosition();
+                    }, 30);
+                  }
+
+                  function stopAutoScroll() {
+                    clearInterval(autoScrollId);
+                    autoScrollId = null;
+                  }
+
+                  function pauseAndResume() {
+                    stopAutoScroll();
+                    clearTimeout(resumeTimeout);
+                    resumeTimeout = setTimeout(startAutoScroll, 3000);
+                  }
+
+                  // --- Mouse Drag ---
+                  function onMouseDown(e) {
+                    isDragging = true;
+                    startX = e.pageX;
+                    prevTranslate = currentTranslate;
+                    track.classList.add('is-dragging');
+                    pauseAndResume();
+                  }
+
+                  function onMouseMove(e) {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    var moved = e.pageX - startX;
+                    maxScroll = getMaxScroll();
+                    currentTranslate = Math.max(Math.min(prevTranslate + moved, 0), -maxScroll);
+                    setPosition();
+                  }
+
+                  function onMouseUp() {
+                    isDragging = false;
+                    track.classList.remove('is-dragging');
+                    prevTranslate = currentTranslate;
+                    pauseAndResume();
+                  }
+
+                  // --- Touch ---
+                  function onTouchStart(e) {
+                    isDragging = true;
+                    startX = e.touches[0].clientX;
+                    prevTranslate = currentTranslate;
+                    track.classList.add('is-dragging');
+                    pauseAndResume();
+                  }
+
+                  function onTouchMove(e) {
+                    if (!isDragging) return;
+                    var moved = e.touches[0].clientX - startX;
+                    maxScroll = getMaxScroll();
+                    currentTranslate = Math.max(Math.min(prevTranslate + moved, 0), -maxScroll);
+                    setPosition();
+                  }
+
+                  function onTouchEnd() {
+                    isDragging = false;
+                    track.classList.remove('is-dragging');
+                    prevTranslate = currentTranslate;
+                    pauseAndResume();
+                  }
+
+                  // Bind mouse events
+                  track.addEventListener('mousedown', onMouseDown);
+                  document.addEventListener('mousemove', onMouseMove);
+                  document.addEventListener('mouseup', onMouseUp);
+                  track.addEventListener('mouseleave', function() {
+                    if (isDragging) onMouseUp();
+                  });
+
+                  // Bind touch events (passive where possible)
+                  track.addEventListener('touchstart', onTouchStart, {passive: true});
+                  track.addEventListener('touchmove', onTouchMove, {passive: false});
+                  track.addEventListener('touchend', onTouchEnd, {passive: true});
+
+                  // Hover pausing
+                  wrapper.addEventListener('mouseenter', stopAutoScroll);
+                  wrapper.addEventListener('mouseleave', function() {
+                    if (!isDragging) pauseAndResume();
+                  });
+
+                  // Prevent link clicks after drag
+                  track.addEventListener('click', function(e) {
+                    if (Math.abs(currentTranslate - prevTranslate) > 5) {
+                      e.preventDefault();
+                    }
+                  }, true);
+
+                  // Prevent images from being dragged
+                  track.addEventListener('dragstart', function(e) { e.preventDefault(); });
+
+                  // Start auto-scroll
+                  startAutoScroll();
+                });
+              })();
+            </script>
 
             <!-- Premium College Search Bar -->
             <div class="news-search-block">
