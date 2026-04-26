@@ -23,7 +23,7 @@
     />
     
     <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/main.css?v=2026.04.22.5" />
@@ -7292,119 +7292,6 @@ window.cartCheckout = async function() {
 </script>
     <!-- News & Updates Section -->
     <div id="section-news" class="page-section" style="display: none;">
-      <style>
-        @media (max-width: 768px) {
-          #section-news .premium-news-section {
-            padding: 80px 16px 40px !important;
-            min-height: auto !important;
-          }
-          #section-news .premium-news-header {
-            gap: 4px !important;
-            margin-bottom: 16px !important;
-          }
-          #section-news .premium-news-title {
-            font-size: 20px !important;
-            font-weight: 600 !important;
-          }
-          #section-news .premium-news-title .title-icon {
-            width: 28px !important;
-            height: 28px !important;
-            font-size: 12px !important;
-          }
-          #section-news .premium-news-header p {
-            font-size: 13px !important;
-            margin-bottom: 12px !important;
-            color: #666 !important;
-          }
-          /* Search & Filter row */
-          #section-news .news-toolbar-row {
-            display: flex !important;
-            flex-direction: row !important;
-            gap: 8px !important;
-            margin-bottom: 16px !important;
-            width: 100% !important;
-          }
-          #newsSearchInput {
-            flex: 2 !important;
-            height: 40px !important;
-            padding: 0 12px !important;
-            border-radius: 8px !important;
-            font-size: 13px !important;
-            max-width: none !important;
-          }
-          #newsCategoryFilter {
-            flex: 1.2 !important;
-            height: 40px !important;
-            padding: 0 8px !important;
-            border-radius: 8px !important;
-            font-size: 13px !important;
-          }
-          /* News Cards Grid */
-          #newsGrid {
-            grid-template-columns: 1fr !important;
-            gap: 12px !important;
-          }
-          #section-news .premium-news-card {
-            width: 100% !important;
-            padding: 12px 16px !important;
-            border-radius: 12px !important;
-            background: #ffffff !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;
-            border: 1px solid rgba(0,0,0,0.05) !important;
-            display: flex !important;
-            flex-direction: column !important;
-          }
-          #section-news .premium-news-card .card-header {
-            display: flex !important;
-            flex-direction: row !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            margin-bottom: 8px !important;
-            width: 100% !important;
-          }
-          #section-news .premium-news-card .card-icon {
-            width: 28px !important;
-            height: 28px !important;
-            font-size: 12px !important;
-            margin-bottom: 0 !important;
-          }
-          #section-news .premium-news-card .card-date {
-            font-size: 11px !important;
-            padding: 2px 6px !important;
-            margin-bottom: 0 !important;
-          }
-          #section-news .premium-news-card .card-title {
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            line-height: 1.4 !important;
-            margin-bottom: 4px !important;
-            display: -webkit-box !important;
-            -webkit-line-clamp: 2 !important;
-            -webkit-box-orient: vertical !important;
-            overflow: hidden !important;
-            color: #1a1a1a !important;
-          }
-          #section-news .premium-news-card .card-desc {
-            font-size: 12px !important;
-            color: #71717a !important;
-            line-height: 1.4 !important;
-            margin-bottom: 8px !important;
-            display: -webkit-box !important;
-            -webkit-line-clamp: 2 !important;
-            -webkit-box-orient: vertical !important;
-            overflow: hidden !important;
-          }
-          #section-news .premium-news-card .card-footer {
-            font-size: 12px !important;
-            font-weight: 500 !important;
-            color: #4f46e5 !important;
-            margin-top: auto !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 4px !important;
-          }
-        }
-      </style>
       <section class="premium-news-section" style="min-height: 80vh; padding: 100px 20px 60px;">
         <div class="premium-news-container">
           <div class="premium-news-header" style="flex-direction: column; align-items: flex-start; gap: 10px;">
@@ -7415,7 +7302,7 @@ window.cartCheckout = async function() {
             <p style="color: #666; font-size: 15px;">Stay up to date with the latest announcements regarding NEET counselling.</p>
           </div>
           
-          <div class="news-toolbar-row" style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+          <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
             <input type="text" id="newsSearchInput" placeholder="Search updates..." style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 14px; width: 100%; max-width: 400px; outline: none; font-family: inherit;">
             <select id="newsCategoryFilter" style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 14px; outline: none; font-family: inherit; background: #fff;">
               <option value="All">All Categories</option>
@@ -7509,7 +7396,7 @@ window.cartCheckout = async function() {
                 
                 let footerText = 'Notice';
                 if (item.link || item.content) {
-                  footerText = 'Read More &rarr;';
+                  footerText = 'Read Full Update';
                 }
 
                 card.innerHTML = `
@@ -7518,8 +7405,8 @@ window.cartCheckout = async function() {
                     <div class="card-date">${dateStr}</div>
                   </div>
                   <div class="card-title">${item.title}</div>
-                  <div class="card-desc" style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.description}</div>
-                  <div class="card-footer" style="margin-top: auto;">${footerText} ${footerText === 'Notice' ? '<i class="fa-solid fa-chevron-right"></i>' : ''}</div>
+                  <div style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.description}</div>
+                  <div class="card-footer" style="margin-top: auto;">${footerText} <i class="fa-solid fa-chevron-right"></i></div>
                 `;
                 grid.appendChild(card);
               });
@@ -8271,7 +8158,7 @@ window.cartCheckout = async function() {
           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .bd-share-whatsapp { background: #25d366; }
-        .bd-share-twitter { background: #000000; }
+        .bd-share-twitter { background: #1da1f2; }
         .bd-share-linkedin { background: #0077b5; }
         .bd-share-copy { background: #64748b; }
 
@@ -9186,7 +9073,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
     .floating-whatsapp {
       width: 54px;
       height: 54px;
-      bottom: 80px;
+      bottom: 20px;
       right: 20px;
       font-size: 32px;
     }
