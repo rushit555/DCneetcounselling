@@ -492,9 +492,9 @@
               display: flex;
               flex-direction: column;
               background: #ffffff;
-              width: 320px;
-              padding: 24px;
-              border-radius: 20px;
+              width: 400px;
+              padding: 24px 28px;
+              border-radius: 16px;
               box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
               text-decoration: none;
               transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -639,12 +639,30 @@
 
                         t.appendChild(card);
                       });
+
+                      // Clone all cards and append for seamless infinite loop
+                      var originalCards = t.querySelectorAll('.premium-news-card');
+                      originalCards.forEach(function(card) {
+                        var clone = card.cloneNode(true);
+                        // Re-attach click listeners for clones
+                        var origTitle = card.querySelector('.card-title');
+                        if (origTitle) {
+                          var matchingItem = resp.data.find(function(d) { return d.title === origTitle.textContent; });
+                          if (matchingItem && matchingItem.content && !matchingItem.link) {
+                            clone.href = 'javascript:void(0)';
+                            clone.addEventListener('click', (function(id) {
+                              return function() { window.navigate('news/' + id); };
+                            })(matchingItem.id));
+                          }
+                        }
+                        t.appendChild(clone);
+                      });
                     }
                   } catch (err) {
                     console.error('Failed to fetch news for slider:', err);
                   }
 
-                  // Controlled Drag Slider
+                  // Infinite Loop Drag Slider
                   var isDragging = false;
                   var startX = 0;
                   var currentTranslate = 0;
@@ -653,22 +671,40 @@
                   var autoScrollId = null;
                   var resumeTimeout = null;
 
-                  function getMaxScroll() {
-                    return t.scrollWidth - w.clientWidth;
+                  // Half width = width of just the original cards (before cloning)
+                  function getHalfWidth() {
+                    var cards = t.querySelectorAll('.premium-news-card');
+                    var half = Math.floor(cards.length / 2);
+                    var totalW = 0;
+                    for (var i = 0; i < half; i++) {
+                      totalW += cards[i].offsetWidth + 20; // 20 = gap
+                    }
+                    return totalW;
                   }
 
                   function setPosition() {
                     t.style.transform = 'translateX(' + currentTranslate + 'px)';
                   }
 
+                  // Seamless loop reset
+                  function wrapPosition() {
+                    var halfW = getHalfWidth();
+                    if (halfW <= 0) return;
+                    // When scrolled past all original cards, jump back seamlessly
+                    if (Math.abs(currentTranslate) >= halfW) {
+                      currentTranslate += halfW;
+                    }
+                    // When dragged right past start, jump to second half
+                    if (currentTranslate > 0) {
+                      currentTranslate -= halfW;
+                    }
+                  }
+
                   function startAutoScroll() {
                     stopAutoScroll();
                     autoScrollId = setInterval(function() {
-                      var ms = getMaxScroll();
                       currentTranslate -= 1;
-                      if (Math.abs(currentTranslate) >= ms) {
-                        currentTranslate = 0;
-                      }
+                      wrapPosition();
                       setPosition();
                     }, 30);
                   }
@@ -698,8 +734,8 @@
                     if (!isDragging) return;
                     e.preventDefault();
                     var moved = e.pageX - startX;
-                    var ms = getMaxScroll();
-                    currentTranslate = Math.max(Math.min(prevTranslate + moved, 0), -ms);
+                    currentTranslate = prevTranslate + moved;
+                    wrapPosition();
                     setPosition();
                   });
 
@@ -733,8 +769,8 @@
                   t.addEventListener('touchmove', function(e) {
                     if (!isDragging) return;
                     var moved = e.touches[0].clientX - startX;
-                    var ms = getMaxScroll();
-                    currentTranslate = Math.max(Math.min(prevTranslate + moved, 0), -ms);
+                    currentTranslate = prevTranslate + moved;
+                    wrapPosition();
                     setPosition();
                   }, { passive: false });
 
@@ -7494,42 +7530,380 @@ window.cartCheckout = async function() {
 
     <!-- Blog Section -->
     <div id="section-blog" class="page-section" style="display: none;">
-      <section class="premium-news-section" style="min-height: 80vh; padding: 100px 20px 60px;">
-        <div class="premium-news-container">
-          <div class="premium-news-header" style="flex-direction: column; align-items: flex-start; gap: 10px;">
-            <div class="premium-news-title">
-              <div class="title-icon"><i class="fa-solid fa-newspaper"></i></div>
-              Our Blog
-            </div>
-            <p style="color: #666; font-size: 15px;">Expert insights, tips, and articles on NEET counselling and medical admissions.</p>
-          </div>
-          
-          <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
-            <input type="text" id="blogSearchInput" placeholder="Search articles..." style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 14px; width: 100%; max-width: 400px; outline: none; font-family: inherit;">
-          </div>
+      <style>
+        .blog-hero {
+          background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #334155 100%);
+          padding: 80px 20px 60px;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
+        .blog-hero::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -20%;
+          width: 500px;
+          height: 500px;
+          background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+          border-radius: 50%;
+        }
+        .blog-hero::after {
+          content: '';
+          position: absolute;
+          bottom: -30%;
+          left: -10%;
+          width: 400px;
+          height: 400px;
+          background: radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%);
+          border-radius: 50%;
+        }
+        .blog-hero h1 {
+          font-size: 42px;
+          font-weight: 800;
+          color: #ffffff;
+          margin-bottom: 14px;
+          position: relative;
+          z-index: 1;
+        }
+        .blog-hero h1 span {
+          background: linear-gradient(90deg, #f59e0b, #f97316);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+        .blog-hero p {
+          font-size: 17px;
+          color: #94a3b8;
+          max-width: 550px;
+          margin: 0 auto;
+          line-height: 1.6;
+          position: relative;
+          z-index: 1;
+        }
+        .blog-container {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 40px 20px 80px;
+        }
+        .blog-toolbar {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 36px;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+        .blog-search-input {
+          flex: 1;
+          min-width: 220px;
+          padding: 12px 20px;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 12px;
+          font-size: 14px;
+          outline: none;
+          font-family: inherit;
+          transition: border-color 0.2s;
+          background: #fff;
+        }
+        .blog-search-input:focus {
+          border-color: #6366f1;
+          box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+        .blog-cat-btn {
+          padding: 8px 18px;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 30px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          background: #fff;
+          color: #475569;
+          transition: all 0.2s ease;
+          font-family: inherit;
+          white-space: nowrap;
+        }
+        .blog-cat-btn:hover {
+          border-color: #6366f1;
+          color: #6366f1;
+        }
+        .blog-cat-btn.active {
+          background: #6366f1;
+          color: #fff;
+          border-color: #6366f1;
+        }
 
-          <div id="blogGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
-            <!-- Skeleton -->
-            <div class="premium-news-card news-skeleton" style="min-height: 250px; opacity: 0.7; animation: pulse 1.5s infinite;">
-              <div style="width: 100%; height: 140px; background: #eee; border-radius: 10px; margin-bottom: 15px;"></div>
-              <div style="width: 80px; height: 15px; background: #eee; border-radius: 10px; margin-bottom: 15px;"></div>
-              <div style="width: 100%; height: 20px; background: #eee; border-radius: 10px; margin-bottom: 10px;"></div>
-              <div style="width: 80%; height: 20px; background: #eee; border-radius: 10px;"></div>
-            </div>
-          </div>
-          
-          <div id="blogEmptyState" style="display: none; text-align: center; padding: 60px 20px; background: #f9fafb; border-radius: 16px;">
-            <i class="fa-solid fa-folder-open" style="font-size: 48px; color: #cbd5e1; margin-bottom: 15px;"></i>
-            <h3 style="font-size: 18px; color: #334155; margin-bottom: 8px;">No Articles Found</h3>
-            <p style="color: #64748b; font-size: 14px;">Try adjusting your search criteria.</p>
-          </div>
+        /* Featured Card */
+        .blog-featured {
+          display: grid;
+          grid-template-columns: 1.2fr 1fr;
+          gap: 0;
+          background: #fff;
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+          border: 1px solid rgba(0,0,0,0.06);
+          margin-bottom: 48px;
+          cursor: pointer;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          text-decoration: none;
+          color: inherit;
+        }
+        .blog-featured:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+        }
+        .blog-featured-img {
+          width: 100%;
+          height: 100%;
+          min-height: 320px;
+          object-fit: contain;
+          background: #f8fafc;
+        }
+        .blog-featured-img-placeholder {
+          width: 100%;
+          min-height: 320px;
+          background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #818cf8;
+          font-size: 48px;
+        }
+        .blog-featured-body {
+          padding: 40px 36px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+        .blog-featured-badge {
+          display: inline-block;
+          font-size: 12px;
+          font-weight: 700;
+          color: #f59e0b;
+          background: #fef3c7;
+          padding: 5px 14px;
+          border-radius: 20px;
+          margin-bottom: 16px;
+          width: fit-content;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        .blog-featured-title {
+          font-size: 26px;
+          font-weight: 800;
+          color: #0f172a;
+          line-height: 1.3;
+          margin-bottom: 14px;
+        }
+        .blog-featured-desc {
+          font-size: 15px;
+          color: #64748b;
+          line-height: 1.6;
+          margin-bottom: 24px;
+        }
+        .blog-featured-meta {
+          font-size: 13px;
+          color: #94a3b8;
+          font-weight: 500;
+        }
+
+        /* Blog Grid */
+        .blog-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+        }
+
+        /* Blog Card */
+        .blog-card {
+          background: #fff;
+          border-radius: 16px;
+          overflow: hidden;
+          box-shadow: 0 2px 16px rgba(0,0,0,0.04);
+          border: 1px solid rgba(0,0,0,0.06);
+          cursor: pointer;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          text-decoration: none;
+          color: inherit;
+          display: flex;
+          flex-direction: column;
+        }
+        .blog-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        }
+        .blog-card-img {
+          width: 100%;
+          height: 200px;
+          object-fit: contain;
+          background: #f8fafc;
+        }
+        .blog-card-img-placeholder {
+          width: 100%;
+          height: 200px;
+          background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #94a3b8;
+          font-size: 28px;
+        }
+        .blog-card-body {
+          padding: 22px;
+          display: flex;
+          flex-direction: column;
+          flex-grow: 1;
+        }
+        .blog-card-cat {
+          font-size: 11px;
+          font-weight: 700;
+          color: #6366f1;
+          background: #eef2ff;
+          padding: 4px 12px;
+          border-radius: 20px;
+          width: fit-content;
+          margin-bottom: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+        .blog-card-title {
+          font-size: 17px;
+          font-weight: 700;
+          color: #0f172a;
+          line-height: 1.4;
+          margin-bottom: 8px;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .blog-card-desc {
+          font-size: 13px;
+          color: #64748b;
+          line-height: 1.5;
+          margin-bottom: 16px;
+          flex-grow: 1;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        .blog-card-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: auto;
+        }
+        .blog-card-date {
+          font-size: 12px;
+          color: #94a3b8;
+          font-weight: 500;
+        }
+        .blog-card-read {
+          font-size: 13px;
+          font-weight: 600;
+          color: #6366f1;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+        }
+        .blog-card:hover .blog-card-read i {
+          transform: translateX(3px);
+        }
+        .blog-card-read i {
+          font-size: 10px;
+          transition: transform 0.2s;
+        }
+
+        .blog-empty {
+          text-align: center;
+          padding: 60px 20px;
+          background: #f9fafb;
+          border-radius: 16px;
+          grid-column: 1 / -1;
+        }
+        .blog-load-more {
+          display: block;
+          margin: 40px auto 0;
+          padding: 14px 36px;
+          border: 2px solid #e2e8f0;
+          border-radius: 12px;
+          background: #fff;
+          color: #334155;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-family: inherit;
+        }
+        .blog-load-more:hover {
+          background: #6366f1;
+          color: #fff;
+          border-color: #6366f1;
+        }
+
+        @media (max-width: 900px) {
+          .blog-grid { grid-template-columns: repeat(2, 1fr); }
+          .blog-featured { grid-template-columns: 1fr; }
+          .blog-featured-img, .blog-featured-img-placeholder { min-height: 220px; }
+          .blog-featured-body { padding: 28px 24px; }
+          .blog-featured-title { font-size: 22px; }
+        }
+        @media (max-width: 600px) {
+          .blog-hero { padding: 70px 16px 40px; }
+          .blog-hero h1 { font-size: 28px; }
+          .blog-hero p { font-size: 14px; }
+          .blog-grid { grid-template-columns: 1fr; }
+          .blog-featured-title { font-size: 20px; }
+          .blog-container { padding: 24px 16px 60px; }
+        }
+      </style>
+
+      <!-- Hero -->
+      <div class="blog-hero">
+        <h1>Insights & <span>Guides</span></h1>
+        <p>Latest updates, NEET counselling guides, cutoff analysis, and expert tips to help you secure your dream medical seat.</p>
+      </div>
+
+      <div class="blog-container">
+        <!-- Featured Post -->
+        <div id="blogFeaturedCard" style="display:none;"></div>
+
+        <!-- Toolbar: Search + Category Filters -->
+        <div class="blog-toolbar">
+          <input type="text" id="blogSearchInput2" class="blog-search-input" placeholder="🔍  Search articles...">
+          <button class="blog-cat-btn active" data-cat="All">All</button>
+          <button class="blog-cat-btn" data-cat="Counselling Guide">Counselling Guide</button>
+          <button class="blog-cat-btn" data-cat="College List">College List</button>
+          <button class="blog-cat-btn" data-cat="Cutoff Analysis">Cutoff Analysis</button>
+          <button class="blog-cat-btn" data-cat="Tips & Strategy">Tips & Strategy</button>
+          <button class="blog-cat-btn" data-cat="NEET Updates">NEET Updates</button>
         </div>
-      </section>
-      
+
+        <!-- Blog Grid -->
+        <div id="blogGrid2" class="blog-grid">
+          <!-- Skeleton loaders -->
+          <div class="blog-card" style="pointer-events:none;opacity:0.5"><div style="height:200px;background:#eee"></div><div style="padding:22px"><div style="width:60px;height:16px;background:#eee;border-radius:10px;margin-bottom:12px"></div><div style="width:100%;height:20px;background:#eee;border-radius:10px;margin-bottom:8px"></div><div style="width:80%;height:16px;background:#eee;border-radius:10px"></div></div></div>
+          <div class="blog-card" style="pointer-events:none;opacity:0.5"><div style="height:200px;background:#eee"></div><div style="padding:22px"><div style="width:60px;height:16px;background:#eee;border-radius:10px;margin-bottom:12px"></div><div style="width:100%;height:20px;background:#eee;border-radius:10px;margin-bottom:8px"></div><div style="width:80%;height:16px;background:#eee;border-radius:10px"></div></div></div>
+          <div class="blog-card" style="pointer-events:none;opacity:0.5"><div style="height:200px;background:#eee"></div><div style="padding:22px"><div style="width:60px;height:16px;background:#eee;border-radius:10px;margin-bottom:12px"></div><div style="width:100%;height:20px;background:#eee;border-radius:10px;margin-bottom:8px"></div><div style="width:80%;height:16px;background:#eee;border-radius:10px"></div></div></div>
+        </div>
+
+        <div id="blogEmptyState2" class="blog-empty" style="display:none;">
+          <i class="fa-solid fa-folder-open" style="font-size:48px;color:#cbd5e1;margin-bottom:15px;"></i>
+          <h3 style="font-size:18px;color:#334155;margin-bottom:8px;">No Articles Found</h3>
+          <p style="color:#64748b;font-size:14px;">Try a different search term or category.</p>
+        </div>
+
+        <button id="blogLoadMore" class="blog-load-more" style="display:none;">Load More Articles</button>
+      </div>
+
       <script>
         document.addEventListener("DOMContentLoaded", function() {
           let allBlogData = [];
-          
+          let activeCategory = 'All';
+          let searchTerm = '';
+          const POSTS_PER_PAGE = 6;
+          let visibleCount = POSTS_PER_PAGE;
+
           async function fetchBlogs() {
             if (!window.supabaseClient) return;
             try {
@@ -7538,68 +7912,115 @@ window.cartCheckout = async function() {
                 .select('*')
                 .eq('is_published', true)
                 .order('created_at', { ascending: false });
-                
+
               if (error) throw error;
               allBlogData = data || [];
-              renderBlogs(allBlogData);
+              renderFeatured();
+              renderBlogs();
             } catch (err) {
-              console.error('Error fetching blogs:', err);
-              document.getElementById('blogGrid').innerHTML = '<p style="color:red;">Failed to load articles. Please try again later.</p>';
+              console.error('Blog fetch error:', err);
+              document.getElementById('blogGrid2').innerHTML = '<p style="color:red;grid-column:1/-1;text-align:center;">Failed to load articles.</p>';
             }
           }
 
-          function renderBlogs(blogList) {
-            const grid = document.getElementById('blogGrid');
-            const emptyState = document.getElementById('blogEmptyState');
-            
-            grid.innerHTML = '';
-            
-            if (blogList.length === 0) {
-              emptyState.style.display = 'block';
-            } else {
-              emptyState.style.display = 'none';
-              
-              blogList.forEach(item => {
-                const card = document.createElement('a');
-                card.href = 'javascript:void(0)';
-                card.onclick = () => window.navigate('blog/' + item.slug);
-                card.className = 'premium-news-card';
-                card.style.display = 'flex';
-                card.style.flexDirection = 'column';
-                card.style.height = '100%';
-                card.style.padding = '0';
-                card.style.overflow = 'hidden';
-                
-                const dateObj = new Date(item.created_at);
-                const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-                
-                const imgHtml = item.image_url ? `<img src="${item.image_url}" style="width: 100%; height: 180px; object-fit: cover;" alt="${item.title}">` : `<div style="width: 100%; height: 180px; background: #e2e8f0; display: flex; align-items: center; justify-content: center; color: #94a3b8;"><i class="fa-solid fa-image fa-2x"></i></div>`;
-                
-                card.innerHTML = `
-                  ${imgHtml}
-                  <div style="padding: 20px; display: flex; flex-direction: column; flex-grow: 1;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                      <span style="font-size: 12px; font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 4px 10px; border-radius: 20px;">${item.category || 'General'}</span>
-                      <span style="font-size: 12px; color: #64748b; font-weight: 500;">${dateStr}</span>
-                    </div>
-                    <div class="card-title" style="margin-bottom: 10px;">${item.title}</div>
-                    <div style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.short_description || ''}</div>
-                    <div class="card-footer" style="margin-top: auto;">Read Article <i class="fa-solid fa-chevron-right"></i></div>
-                  </div>
-                `;
-                grid.appendChild(card);
-              });
-            }
+          function renderFeatured() {
+            const container = document.getElementById('blogFeaturedCard');
+            if (allBlogData.length === 0) { container.style.display = 'none'; return; }
+            const feat = allBlogData[0];
+            const dateStr = new Date(feat.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+            const imgHtml = feat.image_url
+              ? '<img class="blog-featured-img" src="' + feat.image_url + '" alt="' + feat.title + '">'
+              : '<div class="blog-featured-img-placeholder"><i class="fa-solid fa-image"></i></div>';
+
+            container.innerHTML = '<a href="javascript:void(0)" class="blog-featured" onclick="window.navigate(\'blog/' + feat.slug + '\')">' +
+              imgHtml +
+              '<div class="blog-featured-body">' +
+                '<div class="blog-featured-badge">⭐ Featured</div>' +
+                '<div class="blog-featured-title">' + feat.title + '</div>' +
+                '<div class="blog-featured-desc">' + (feat.short_description || '') + '</div>' +
+                '<div class="blog-featured-meta"><i class="fa-regular fa-calendar"></i> &nbsp;' + dateStr + ' &nbsp;&bull;&nbsp; ' + (feat.category || 'General') + '</div>' +
+              '</div>' +
+            '</a>';
+            container.style.display = 'block';
           }
-          
-          document.getElementById('blogSearchInput').addEventListener('input', function(e) {
-            const term = e.target.value.toLowerCase();
-            const filtered = allBlogData.filter(item => item.title.toLowerCase().includes(term) || (item.short_description && item.short_description.toLowerCase().includes(term)));
-            renderBlogs(filtered);
+
+          function getFilteredBlogs() {
+            return allBlogData.filter(function(item, idx) {
+              if (activeCategory !== 'All' && item.category !== activeCategory) return false;
+              if (searchTerm && !item.title.toLowerCase().includes(searchTerm) && !(item.short_description && item.short_description.toLowerCase().includes(searchTerm))) return false;
+              return true;
+            });
+          }
+
+          function renderBlogs() {
+            const grid = document.getElementById('blogGrid2');
+            const emptyState = document.getElementById('blogEmptyState2');
+            const loadMore = document.getElementById('blogLoadMore');
+            const filtered = getFilteredBlogs();
+
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+              emptyState.style.display = 'block';
+              loadMore.style.display = 'none';
+              return;
+            }
+            emptyState.style.display = 'none';
+
+            const toShow = filtered.slice(0, visibleCount);
+            toShow.forEach(function(item) {
+              const dateStr = new Date(item.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+              const imgHtml = item.image_url
+                ? '<img class="blog-card-img" src="' + item.image_url + '" alt="' + item.title + '">'
+                : '<div class="blog-card-img-placeholder"><i class="fa-solid fa-image"></i></div>';
+
+              const card = document.createElement('a');
+              card.href = 'javascript:void(0)';
+              card.className = 'blog-card';
+              card.onclick = function() { window.navigate('blog/' + item.slug); };
+              card.innerHTML =
+                imgHtml +
+                '<div class="blog-card-body">' +
+                  '<div class="blog-card-cat">' + (item.category || 'General') + '</div>' +
+                  '<div class="blog-card-title">' + item.title + '</div>' +
+                  '<div class="blog-card-desc">' + (item.short_description || '') + '</div>' +
+                  '<div class="blog-card-footer">' +
+                    '<span class="blog-card-date">' + dateStr + '</span>' +
+                    '<span class="blog-card-read">Read Article <i class="fa-solid fa-chevron-right"></i></span>' +
+                  '</div>' +
+                '</div>';
+              grid.appendChild(card);
+            });
+
+            loadMore.style.display = filtered.length > visibleCount ? 'block' : 'none';
+          }
+
+          // Category filter
+          document.querySelectorAll('.blog-cat-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              document.querySelectorAll('.blog-cat-btn').forEach(function(b) { b.classList.remove('active'); });
+              btn.classList.add('active');
+              activeCategory = btn.getAttribute('data-cat');
+              visibleCount = POSTS_PER_PAGE;
+              renderBlogs();
+            });
           });
-          
+
+          // Search
+          document.getElementById('blogSearchInput2').addEventListener('input', function(e) {
+            searchTerm = e.target.value.toLowerCase();
+            visibleCount = POSTS_PER_PAGE;
+            renderBlogs();
+          });
+
+          // Load More
+          document.getElementById('blogLoadMore').addEventListener('click', function() {
+            visibleCount += POSTS_PER_PAGE;
+            renderBlogs();
+          });
+
           fetchBlogs();
-          
+
           const oldNav = window.navigate;
           window.navigate = function(route) {
             if (route === 'blog' && allBlogData.length === 0) fetchBlogs();
@@ -7611,68 +8032,287 @@ window.cartCheckout = async function() {
 
     <!-- Blog Detail Section -->
     <div id="section-blog-detail" class="page-section" style="display: none;">
-      <section style="min-height: 80vh; padding: 100px 20px 60px; background: #fff;">
-        <div class="premium-news-container" style="max-width: 800px;">
-          <a href="javascript:void(0)" onclick="window.navigate('blog')" style="display: inline-flex; align-items: center; gap: 8px; color: #64748b; font-size: 14px; text-decoration: none; font-weight: 500; margin-bottom: 30px; padding: 8px 16px; background: #f8fafc; border-radius: 30px; transition: background 0.2s;">
-            <i class="fa-solid fa-arrow-left"></i> Back to Blog
-          </a>
-          
-          <div id="blogDetailLoading" style="text-align: center; padding: 40px;">
-            <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #cbd5e1;"></i>
+      <style>
+        .bd-wrapper {
+          max-width: 780px;
+          margin: 0 auto;
+          padding: 90px 20px 60px;
+        }
+        .bd-back {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          color: #64748b;
+          font-size: 14px;
+          text-decoration: none;
+          font-weight: 500;
+          margin-bottom: 32px;
+          padding: 8px 18px;
+          background: #f8fafc;
+          border-radius: 30px;
+          transition: all 0.2s;
+        }
+        .bd-back:hover { background: #e2e8f0; color: #334155; }
+        .bd-meta-row {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+          margin-bottom: 20px;
+          flex-wrap: wrap;
+        }
+        .bd-cat-badge {
+          font-size: 12px;
+          font-weight: 700;
+          color: #6366f1;
+          background: #eef2ff;
+          padding: 6px 16px;
+          border-radius: 20px;
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+        .bd-date-text {
+          font-size: 14px;
+          color: #94a3b8;
+          font-weight: 500;
+        }
+        .bd-title {
+          font-size: 38px;
+          font-weight: 800;
+          color: #0f172a;
+          margin-bottom: 28px;
+          line-height: 1.2;
+        }
+        .bd-cover {
+          width: 100%;
+          height: auto;
+          max-height: 440px;
+          object-fit: contain;
+          background: #f8fafc;
+          border-radius: 18px;
+          margin-bottom: 40px;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+        .bd-content {
+          font-size: 17px;
+          line-height: 1.9;
+          color: #334155;
+        }
+        .bd-content h1, .bd-content h2, .bd-content h3 {
+          color: #0f172a;
+          margin-top: 2em;
+          margin-bottom: 0.8em;
+          font-weight: 700;
+        }
+        .bd-content h2 { font-size: 24px; }
+        .bd-content h3 { font-size: 20px; }
+        .bd-content p { margin-bottom: 1.5em; }
+        .bd-content a { color: #6366f1; text-decoration: underline; }
+        .bd-content ul, .bd-content ol { padding-left: 1.5em; margin-bottom: 1.5em; }
+        .bd-content li { margin-bottom: 0.5em; }
+        .bd-content blockquote {
+          border-left: 4px solid #e2e8f0;
+          padding: 16px 20px;
+          color: #64748b;
+          font-style: italic;
+          margin: 1.5em 0;
+          background: #f8fafc;
+          border-radius: 0 12px 12px 0;
+        }
+        .bd-content img {
+          max-width: 100%;
+          border-radius: 12px;
+          margin: 1.5em 0;
+        }
+
+        /* Share bar */
+        .bd-share-bar {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 20px 0;
+          margin-top: 32px;
+          border-top: 1px solid #e2e8f0;
+          border-bottom: 1px solid #e2e8f0;
+          margin-bottom: 48px;
+        }
+        .bd-share-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: #334155;
+        }
+        .bd-share-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          color: #fff;
+          cursor: pointer;
+          border: none;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .bd-share-btn:hover {
+          transform: scale(1.1);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .bd-share-whatsapp { background: #25d366; }
+        .bd-share-twitter { background: #1da1f2; }
+        .bd-share-linkedin { background: #0077b5; }
+        .bd-share-copy { background: #64748b; }
+
+        /* Related Posts */
+        .bd-related-section {
+          margin-top: 0;
+        }
+        .bd-related-title {
+          font-size: 22px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 24px;
+        }
+        .bd-related-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+        .bd-related-card {
+          background: #fff;
+          border-radius: 14px;
+          overflow: hidden;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+          border: 1px solid rgba(0,0,0,0.06);
+          text-decoration: none;
+          color: inherit;
+          transition: transform 0.2s, box-shadow 0.2s;
+          cursor: pointer;
+        }
+        .bd-related-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        .bd-related-card img {
+          width: 100%;
+          height: 140px;
+          object-fit: cover;
+        }
+        .bd-related-card-body {
+          padding: 16px;
+        }
+        .bd-related-card-cat {
+          font-size: 10px;
+          font-weight: 700;
+          color: #6366f1;
+          background: #eef2ff;
+          padding: 3px 10px;
+          border-radius: 20px;
+          text-transform: uppercase;
+          display: inline-block;
+          margin-bottom: 8px;
+        }
+        .bd-related-card-title {
+          font-size: 14px;
+          font-weight: 600;
+          color: #0f172a;
+          line-height: 1.4;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+        @media (max-width: 768px) {
+          .bd-title { font-size: 26px; }
+          .bd-related-grid { grid-template-columns: 1fr; }
+          .bd-wrapper { padding: 80px 16px 40px; }
+        }
+      </style>
+
+      <div class="bd-wrapper">
+        <a href="javascript:void(0)" onclick="window.navigate('blog')" class="bd-back">
+          <i class="fa-solid fa-arrow-left"></i> Back to Blog
+        </a>
+
+        <div id="blogDetailLoading" style="text-align: center; padding: 60px;">
+          <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #cbd5e1;"></i>
+        </div>
+
+        <div id="blogDetailContent" style="display: none;">
+          <div class="bd-meta-row">
+            <span id="bd-category" class="bd-cat-badge"></span>
+            <span id="bd-date" class="bd-date-text"></span>
           </div>
-          
-          <div id="blogDetailContent" style="display: none;">
-            <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
-              <span id="bd-category" style="font-size: 13px; font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 6px 14px; border-radius: 20px;"></span>
-              <span id="bd-date" style="font-size: 14px; color: #64748b; font-weight: 500;"></span>
-            </div>
-            <h1 id="bd-title" style="font-size: 36px; font-weight: 800; color: #0f172a; margin-bottom: 24px; line-height: 1.2;"></h1>
-            
-            <img id="bd-image" src="" style="width: 100%; height: auto; border-radius: 16px; margin-bottom: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: none;">
-            
-            <div id="bd-html" style="font-size: 17px; line-height: 1.8; color: #334155;"></div>
+          <h1 id="bd-title" class="bd-title"></h1>
+          <img id="bd-image" src="" class="bd-cover" style="display:none;">
+          <div id="bd-html" class="bd-content"></div>
+
+          <!-- Share Bar -->
+          <div class="bd-share-bar">
+            <span class="bd-share-label">Share this article:</span>
+            <button class="bd-share-btn bd-share-whatsapp" id="bdShareWA" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on Twitter"><i class="fa-brands fa-x-twitter"></i></button>
+            <button class="bd-share-btn bd-share-linkedin" id="bdShareLI" title="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></button>
+            <button class="bd-share-btn bd-share-copy" id="bdShareCopy" title="Copy Link"><i class="fa-solid fa-link"></i></button>
           </div>
-          
-          <div id="blogDetailError" style="display: none; text-align: center; padding: 60px 20px;">
-            <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; color: #ef4444; margin-bottom: 15px;"></i>
-            <h3 style="font-size: 18px; color: #0f172a;">Article not found</h3>
-            <p style="color: #64748b; font-size: 14px;">The article you are looking for does not exist or has been removed.</p>
+
+          <!-- Related Posts -->
+          <div class="bd-related-section" id="bdRelatedSection" style="display:none;">
+            <h3 class="bd-related-title">Related Articles</h3>
+            <div class="bd-related-grid" id="bdRelatedGrid"></div>
           </div>
         </div>
-      </section>
-      <style>
-        #bd-html h1, #bd-html h2, #bd-html h3 { color: #0f172a; margin-top: 2em; margin-bottom: 1em; font-weight: 700; }
-        #bd-html p { margin-bottom: 1.5em; }
-        #bd-html a { color: #2563eb; text-decoration: underline; }
-        #bd-html ul { list-style: disc; padding-left: 1.5em; margin-bottom: 1.5em; }
-        #bd-html blockquote { border-left: 4px solid #e2e8f0; padding-left: 1rem; color: #64748b; font-style: italic; margin-left: 0; }
-      </style>
+
+        <div id="blogDetailError" style="display: none; text-align: center; padding: 60px 20px;">
+          <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; color: #ef4444; margin-bottom: 15px;"></i>
+          <h3 style="font-size: 18px; color: #0f172a;">Article not found</h3>
+          <p style="color: #64748b; font-size: 14px;">The article you are looking for does not exist or has been removed.</p>
+        </div>
+      </div>
+
       <script>
         document.addEventListener("DOMContentLoaded", function() {
+          // Share buttons
+          document.getElementById('bdShareWA').addEventListener('click', function() {
+            window.open('https://wa.me/?text=' + encodeURIComponent(document.title + ' ' + window.location.href), '_blank');
+          });
+          document.getElementById('bdShareTW').addEventListener('click', function() {
+            window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
+          });
+          document.getElementById('bdShareLI').addEventListener('click', function() {
+            window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank');
+          });
+          document.getElementById('bdShareCopy').addEventListener('click', function() {
+            navigator.clipboard.writeText(window.location.href).then(function() {
+              var btn = document.getElementById('bdShareCopy');
+              btn.innerHTML = '<i class="fa-solid fa-check"></i>';
+              setTimeout(function() { btn.innerHTML = '<i class="fa-solid fa-link"></i>'; }, 2000);
+            });
+          });
+
           const oldNav = window.navigate;
           window.navigate = async function(route) {
             if (oldNav) oldNav(route);
-            
+
             if (route.startsWith('blog/') && window.currentBlogSlug) {
               const slug = window.currentBlogSlug;
               document.getElementById('blogDetailContent').style.display = 'none';
               document.getElementById('blogDetailError').style.display = 'none';
               document.getElementById('blogDetailLoading').style.display = 'block';
-              
+
               try {
                 const { data, error } = await window.supabaseClient
                   .from('blog_posts')
                   .select('*')
                   .eq('slug', slug)
                   .single();
-                  
+
                 if (error || !data) throw new Error("Not found");
-                
+
                 document.getElementById('bd-title').textContent = data.title;
                 document.getElementById('bd-category').textContent = data.category || 'General';
                 document.getElementById('bd-date').textContent = new Date(data.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
                 document.getElementById('bd-html').innerHTML = data.content;
-                
+
                 const img = document.getElementById('bd-image');
                 if (data.image_url) {
                   img.src = data.image_url;
@@ -7680,9 +8320,41 @@ window.cartCheckout = async function() {
                 } else {
                   img.style.display = 'none';
                 }
-                
+
                 document.getElementById('blogDetailLoading').style.display = 'none';
                 document.getElementById('blogDetailContent').style.display = 'block';
+
+                // Fetch related posts (same category, different slug)
+                try {
+                  const { data: related } = await window.supabaseClient
+                    .from('blog_posts')
+                    .select('title, slug, image_url, category')
+                    .eq('is_published', true)
+                    .neq('slug', slug)
+                    .limit(3);
+
+                  const relSection = document.getElementById('bdRelatedSection');
+                  const relGrid = document.getElementById('bdRelatedGrid');
+                  if (related && related.length > 0) {
+                    relGrid.innerHTML = '';
+                    related.forEach(function(r) {
+                      var imgH = r.image_url
+                        ? '<img src="' + r.image_url + '" alt="' + r.title + '">'
+                        : '<div style="height:140px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="fa-solid fa-image fa-2x"></i></div>';
+                      var card = document.createElement('a');
+                      card.href = 'javascript:void(0)';
+                      card.className = 'bd-related-card';
+                      card.onclick = function() { window.navigate('blog/' + r.slug); };
+                      card.innerHTML = imgH + '<div class="bd-related-card-body"><div class="bd-related-card-cat">' + (r.category || 'General') + '</div><div class="bd-related-card-title">' + r.title + '</div></div>';
+                      relGrid.appendChild(card);
+                    });
+                    relSection.style.display = 'block';
+                  } else {
+                    relSection.style.display = 'none';
+                  }
+                } catch (e) {
+                  console.log('Could not load related posts');
+                }
               } catch (err) {
                 document.getElementById('blogDetailLoading').style.display = 'none';
                 document.getElementById('blogDetailError').style.display = 'block';
