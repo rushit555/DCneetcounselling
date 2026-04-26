@@ -614,23 +614,20 @@
                         var dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
                         var icon = item.icon || 'fa-bell';
 
-                        var card = document.createElement('a');
-                        card.href = 'javascript:void(0)';
+                        var card = document.createElement('div');
                         card.className = 'premium-news-card';
                         card.style.cursor = 'pointer';
 
+                        // Store navigation data on the element
                         if (item.link) {
-                          card.href = item.link;
-                          card.target = '_blank';
+                          card.setAttribute('data-link', item.link);
                         } else if (item.content) {
-                          card.addEventListener('click', (function(id) {
-                            return function(e) { if (!e._dragBlocked) window.navigate('news/' + id); };
-                          })(item.id));
+                          card.setAttribute('data-nav', 'news/' + item.id);
                         } else {
-                          card.addEventListener('click', function(e) { if (!e._dragBlocked) window.navigate('news'); });
+                          card.setAttribute('data-nav', 'news');
                         }
 
-                        var footerText = (item.link || item.content) ? 'Read Full Update' : 'Notice';
+                        var footerText = (item.link || item.content) ? 'Read Full Update' : 'Update';
 
                         card.innerHTML =
                           '<div class="card-header">' +
@@ -647,22 +644,6 @@
                       var originalCards = t.querySelectorAll('.premium-news-card');
                       originalCards.forEach(function(card) {
                         var clone = card.cloneNode(true);
-                        // Re-attach click listeners for clones
-                        var origTitle = card.querySelector('.card-title');
-                        if (origTitle) {
-                          var matchingItem = resp.data.find(function(d) { return d.title === origTitle.textContent; });
-                          if (matchingItem && !matchingItem.link) {
-                            clone.href = 'javascript:void(0)';
-                            clone.style.cursor = 'pointer';
-                            if (matchingItem.content) {
-                              clone.addEventListener('click', (function(id) {
-                                return function(e) { if (!e._dragBlocked) window.navigate('news/' + id); };
-                              })(matchingItem.id));
-                            } else {
-                              clone.addEventListener('click', function(e) { if (!e._dragBlocked) window.navigate('news'); });
-                            }
-                          }
-                        }
                         t.appendChild(clone);
                       });
                     }
@@ -803,24 +784,35 @@
                     if (!isDragging) pauseAndResume();
                   });
 
-                  // Prevent link clicks after drag (only if user actually dragged with mouse/touch)
-                  var actualDragDistance = 0;
+                  // Prevent link clicks after drag — use simple flag
+                  var wasDragged = false;
                   document.addEventListener('mouseup', function(e) {
-                    actualDragDistance = Math.abs(e.pageX - mouseStartX) + Math.abs(e.pageY - mouseStartY);
+                    wasDragged = (Math.abs(e.pageX - mouseStartX) + Math.abs(e.pageY - mouseStartY)) > 10;
                   });
                   t.addEventListener('touchend', function(e) {
                     if (e.changedTouches && e.changedTouches[0]) {
-                      actualDragDistance = Math.abs(e.changedTouches[0].clientX - touchStartX) + Math.abs(e.changedTouches[0].clientY - touchStartY);
+                      wasDragged = (Math.abs(e.changedTouches[0].clientX - touchStartX) + Math.abs(e.changedTouches[0].clientY - touchStartY)) > 10;
                     }
                   });
+
+                  // Handle card clicks via event delegation on the track
                   t.addEventListener('click', function(e) {
-                    if (actualDragDistance > 10) {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      e._dragBlocked = true;
+                    if (wasDragged) {
+                      wasDragged = false;
+                      return;
                     }
-                    actualDragDistance = 0;
-                  }, true);
+                    wasDragged = false;
+                    // Find the clicked card
+                    var card = e.target.closest('.premium-news-card');
+                    if (!card) return;
+                    var link = card.getAttribute('data-link');
+                    var nav = card.getAttribute('data-nav');
+                    if (link) {
+                      window.open(link, '_blank');
+                    } else if (nav) {
+                      window.navigate(nav);
+                    }
+                  });
 
                   // Prevent native image drag
                   t.addEventListener('dragstart', function(e) { e.preventDefault(); });
