@@ -211,6 +211,7 @@ router.post('/confirm-payment', async (req, res) => {
                     coupon_code: coupon.coupon_code,
                     order_id: updatedOrder.id.toString(),
                     user_email: updatedOrder.email || updatedOrder.user_email,
+                    user_mobile: updatedOrder.mobile,
                     plan_name: updatedOrder.product_name || 'Counselling Plan',
                     original_price: updatedOrder.amount,
                     discounted_price: updatedOrder.final_amount,

@@ -5,7 +5,9 @@ import {
   Users,
   Tag,
   LogOut,
-  GraduationCap
+  GraduationCap,
+  Bell,
+  Newspaper
 } from 'lucide-react';
 import { supabase } from '../../supabaseClient';
 
@@ -22,6 +24,8 @@ export default function Sidebar() {
     { path: '/admin/orders',    label: 'Orders',    icon: ShoppingBag },
     { path: '/admin/affiliates',label: 'Affiliates',icon: Users },
     { path: '/admin/coupons',   label: 'Coupons',   icon: Tag },
+    { path: '/admin/news',      label: 'News Updates', icon: Bell },
+    { path: '/admin/blogs',     label: 'Blog Posts',   icon: Newspaper },
   ];
 
   return (

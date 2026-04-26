@@ -128,7 +128,7 @@ router.post('/apply-coupon', async (req, res) => {
 // POST /payment-success
 router.post('/payment-success', async (req, res) => {
     try {
-        const { code, order_id, user_email, plan_name, original_price, discounted_price, discount_applied, payment_status } = req.body;
+        const { code, order_id, user_email, user_mobile, plan_name, original_price, discounted_price, discount_applied, payment_status } = req.body;
         
         // CRITICAL RULE: Only insert if payment_status is 'success'
         if (payment_status !== 'success') {
@@ -158,6 +158,7 @@ router.post('/payment-success', async (req, res) => {
                 coupon_code: uppercaseCode,
                 order_id: order_id.toString(),
                 user_email: user_email,
+                user_mobile: user_mobile,
                 plan_name: plan_name,
                 original_price: original_price,
                 discounted_price: discounted_price,

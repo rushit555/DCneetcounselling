@@ -8,5 +8,8 @@ export default defineConfig({
     port: 5174,
     host: true
   },
+  css: {
+    postcss: false
+  },
   base: './'
 });
