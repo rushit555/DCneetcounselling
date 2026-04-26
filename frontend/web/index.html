@@ -7338,6 +7338,138 @@ window.cartCheckout = async function() {
           50% { background-color: #e5e7eb; }
           100% { background-color: #f3f4f6; }
         }
+
+        /* Mobile Optimization for News Section */
+        @media(max-width: 768px) {
+          /* 1. Section Container */
+          #section-news .premium-news-section {
+            padding: 80px 16px 40px !important;
+            background-color: #f9fafb !important;
+          }
+          
+          /* 2. Header */
+          #section-news .premium-news-header {
+            gap: 8px !important;
+          }
+          #section-news .premium-news-title {
+            font-size: 18px !important;
+            font-weight: 600 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+          }
+          #section-news .premium-news-header p {
+            font-size: 13px !important;
+            color: #6b7280 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+          }
+
+          /* 3. Search Bar */
+          #newsSearchInput {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: 44px !important;
+            border-radius: 12px !important;
+            padding: 10px 16px 10px 40px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+            border: 1px solid #eee !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: 12px center !important;
+            background-size: 18px !important;
+          }
+
+          /* 4. Category Dropdown */
+          #newsCategoryFilter {
+            width: 100% !important;
+            height: 44px !important;
+            border-radius: 12px !important;
+            background-color: #fff !important;
+            border: 1px solid #eee !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02) !important;
+          }
+
+          /* Container for search/filter */
+          #section-news .premium-news-header + div {
+            gap: 12px !important;
+            margin-bottom: 24px !important;
+          }
+
+          /* 5. News Cards */
+          #newsGrid {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 0 !important;
+          }
+          #section-news .premium-news-card {
+            width: 100% !important;
+            border-radius: 16px !important;
+            padding: 14px !important;
+            background: #fff !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06) !important;
+            margin-bottom: 14px !important;
+            border: none !important;
+            transition: all 0.2s ease !important;
+          }
+          #section-news .premium-news-card:active {
+            transform: scale(0.98) !important;
+          }
+          #section-news .card-header {
+            margin-bottom: 10px !important;
+          }
+          #section-news .card-title {
+            font-size: 15px !important;
+            font-weight: 600 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            margin-bottom: 6px !important;
+            line-height: 1.4 !important;
+          }
+          #section-news .card-desc {
+            font-size: 13px !important;
+            color: #6b7280 !important;
+            display: -webkit-box !important;
+            -webkit-line-clamp: 2 !important;
+            -webkit-box-orient: vertical !important;
+            overflow: hidden !important;
+            margin-bottom: 12px !important;
+            line-height: 1.4 !important;
+          }
+          #section-news .card-date {
+            font-size: 11px !important;
+            padding: 4px 8px !important;
+            border-radius: 999px !important;
+            background: #f3f4f6 !important;
+            font-weight: 500 !important;
+            color: #4b5563 !important;
+          }
+          #section-news .card-icon {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 14px !important;
+          }
+
+          /* 6. Read More Button */
+          #section-news .card-footer {
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #2563eb !important;
+            text-decoration: none !important;
+            margin-top: auto !important;
+            display: flex !important;
+            align-items: center !important;
+          }
+          #section-news .card-footer i {
+            font-size: 12px !important;
+            margin-left: 4px !important;
+          }
+        }
       </style>
       <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -7405,8 +7537,8 @@ window.cartCheckout = async function() {
                     <div class="card-date">${dateStr}</div>
                   </div>
                   <div class="card-title">${item.title}</div>
-                  <div style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.description}</div>
-                  <div class="card-footer" style="margin-top: auto;">${footerText} <i class="fa-solid fa-chevron-right"></i></div>
+                  <div class="card-desc" style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.description}</div>
+                  <div class="card-footer" style="margin-top: auto;">${footerText} <i class="fa-solid fa-arrow-right"></i></div>
                 `;
                 grid.appendChild(card);
               });
