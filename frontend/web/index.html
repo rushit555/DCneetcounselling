@@ -5454,7 +5454,7 @@
               <h3 class="ec-title">Medical</h3>
               <p class="ec-courses">MBBS, BDS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹199
+                <i class="fas fa-tag"></i> Starts from ₹1
               </div>
               <button class="ec-btn" style="background: #2563eb;" onclick="event.stopPropagation(); window.navigate('medical-options')">
                 Buy eBooks
@@ -5471,9 +5471,9 @@
               <h3 class="ec-title">Dental</h3>
               <p class="ec-courses">BDS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹149
+                <i class="fas fa-tag"></i> Starts from ₹1
               </div>
-              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
+              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 1, 'Dental Cutoff eBooks')">
                 Buy eBooks
               </button>
               <button class="ec-cart-btn" data-ebook="dental" onclick="event.stopPropagation(); addToCart(this, 'dental')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -5488,9 +5488,9 @@
               <h3 class="ec-title">AYUSH</h3>
               <p class="ec-courses">BAMS, BHMS, BSMS, BUMS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹199
+                <i class="fas fa-tag"></i> Starts from ₹1
               </div>
-              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 199, 'AYUSH Cutoff eBooks')">
+              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 1, 'AYUSH Cutoff eBooks')">
                 Buy eBooks
               </button>
               <button class="ec-cart-btn" data-ebook="ayush" onclick="event.stopPropagation(); addToCart(this, 'ayush')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -5505,9 +5505,9 @@
               <h3 class="ec-title">Veterinary</h3>
               <p class="ec-courses">BVSc</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹199
+                <i class="fas fa-tag"></i> Starts from ₹1
               </div>
-              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 199, 'Veterinary Cutoff eBooks')">
+              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 1, 'Veterinary Cutoff eBooks')">
                 Buy eBooks
               </button>
               <button class="ec-cart-btn" data-ebook="veterinary" onclick="event.stopPropagation(); addToCart(this, 'veterinary')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -5625,7 +5625,7 @@
           <div class="mo-grid">
             
             <!-- AIQ Card -->
-            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
+            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 1, 'Medical AIQ eBooks')">
               <div class="mo-icon" style="color: #2563eb;">
                 <i class="fas fa-globe"></i>
               </div>
@@ -5635,15 +5635,15 @@
                 Top Colleges Included
               </div>
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i class="fas fa-tag"></i> Starts from ₹199
+                <i class="fas fa-tag"></i> Starts from ₹1
               </div>
-              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
+              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 1, 'Medical AIQ eBooks')">
                 Buy AIQ eBooks
               </button>
             </div>
 
             <!-- State Quota Card -->
-            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'State Quota', 199, 'Medical State Quota eBooks')">
+            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'State Quota', 1, 'Medical State Quota eBooks')">
               <div class="mo-icon" style="color: #16a34a;">
                 <i class="fas fa-map"></i>
               </div>
@@ -5653,9 +5653,9 @@
                 State-wise Detailed Data
               </div>
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i class="fas fa-tag"></i> Starts from ₹199
+                <i class="fas fa-tag"></i> Starts from ₹1
               </div>
-              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 199, 'Medical State Quota eBooks')">
+              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 1, 'Medical State Quota eBooks')">
                 Buy State eBooks
               </button>
             </div>
@@ -6875,7 +6875,8 @@ window.submitEbookPurchase = async function() {
           amount_paid: ctx.price,
           ebook_id: ctx.is_cart ? ctx.ebook_id : (ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_')),
           payment_status: 'initiated',
-          created_at: new Date()
+          created_at: new Date(),
+          timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true })
       };
 
       if (window.supabaseClient) {
@@ -7022,10 +7023,10 @@ window.submitEbookPurchase = async function() {
 
 // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Wishlist Logic Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 var EBOOK_META = {
-  'medical': { title: 'Medical', icon: 'fa-stethoscope', color: '#2563eb', price: 99, courses: 'MBBS, BDS', course: 'Medical', quota: 'All India Quota' },
-  'dental': { title: 'Dental', icon: 'fa-tooth', color: '#06b6d4', price: 149, courses: 'BDS', course: 'Dental', quota: 'All Courses' },
-  'ayush': { title: 'AYUSH', icon: 'fa-leaf', color: '#16a34a', price: 149, courses: 'BAMS, BHMS, BSMS, BUMS', course: 'AYUSH', quota: 'All Courses' },
-  'veterinary': { title: 'Veterinary', icon: 'fa-paw', color: '#f59e0b', price: 149, courses: 'BVSc', course: 'Veterinary', quota: 'All Courses' }
+  'medical': { title: 'Medical', icon: 'fa-stethoscope', color: '#2563eb', price: 1, courses: 'MBBS, BDS', course: 'Medical', quota: 'All India Quota' },
+  'dental': { title: 'Dental', icon: 'fa-tooth', color: '#06b6d4', price: 1, courses: 'BDS', course: 'Dental', quota: 'All Courses' },
+  'ayush': { title: 'AYUSH', icon: 'fa-leaf', color: '#16a34a', price: 1, courses: 'BAMS, BHMS, BSMS, BUMS', course: 'AYUSH', quota: 'All Courses' },
+  'veterinary': { title: 'Veterinary', icon: 'fa-paw', color: '#f59e0b', price: 1, courses: 'BVSc', course: 'Veterinary', quota: 'All Courses' }
 };
 
 window.toggleWishlist = async function(btn, ebookId) {
