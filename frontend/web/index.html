@@ -1,6 +1,14 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q9GTK3GP10"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q9GTK3GP10');
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -23,7 +31,7 @@
     />
     
     <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/main.css?v=2026.04.24.1" />
@@ -5478,9 +5486,9 @@
                 <i class="fas fa-stethoscope"></i>
               </div>
               <h3 class="ec-title">Medical</h3>
-              <p class="ec-courses">MBBS, BDS</p>
+              <p class="ec-courses">MBBS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from ₹99
               </div>
               <button class="ec-btn" style="background: #2563eb;" onclick="event.stopPropagation(); window.navigate('medical-options')">
                 Buy eBooks
@@ -5497,9 +5505,9 @@
               <h3 class="ec-title">Dental</h3>
               <p class="ec-courses">BDS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 1, 'Dental Cutoff eBooks')">
+              <button class="ec-btn" style="background: #06b6d4;" onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
                 Buy eBooks
               </button>
               <button class="ec-cart-btn" data-ebook="dental" onclick="event.stopPropagation(); addToCart(this, 'dental')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -5514,9 +5522,9 @@
               <h3 class="ec-title">AYUSH</h3>
               <p class="ec-courses">BAMS, BHMS, BSMS, BUMS</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from ₹199
               </div>
-              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 1, 'AYUSH Cutoff eBooks')">
+              <button class="ec-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 199, 'AYUSH Cutoff eBooks')">
                 Buy eBooks
               </button>
               <button class="ec-cart-btn" data-ebook="ayush" onclick="event.stopPropagation(); addToCart(this, 'ayush')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -5531,9 +5539,9 @@
               <h3 class="ec-title">Veterinary</h3>
               <p class="ec-courses">BVSc</p>
               <div class="ec-price">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from ₹149
               </div>
-              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 1, 'Veterinary Cutoff eBooks')">
+              <button class="ec-btn" style="background: #f59e0b;" onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 149, 'Veterinary Cutoff eBooks')">
                 Buy eBooks
               </button>
               <button class="ec-cart-btn" data-ebook="veterinary" onclick="event.stopPropagation(); addToCart(this, 'veterinary')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
@@ -5623,6 +5631,7 @@
           .mo-btn:hover {
             filter: brightness(1.1);
           }
+          .mo-price { font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; }
         </style>
 
         <div
@@ -5651,7 +5660,7 @@
           <div class="mo-grid">
             
             <!-- AIQ Card -->
-            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 1, 'Medical AIQ eBooks')">
+            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
               <div class="mo-icon" style="color: #2563eb;">
                 <i class="fas fa-globe"></i>
               </div>
@@ -5661,15 +5670,15 @@
                 Top Colleges Included
               </div>
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from ₹199
               </div>
-              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 1, 'Medical AIQ eBooks')">
+              <button class="mo-btn" style="background: #2563eb;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
                 Buy AIQ eBooks
               </button>
             </div>
 
             <!-- State Quota Card -->
-            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'State Quota', 1, 'Medical State Quota eBooks')">
+            <div class="mo-card scale-up" onclick="openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
               <div class="mo-icon" style="color: #16a34a;">
                 <i class="fas fa-map"></i>
               </div>
@@ -5679,9 +5688,9 @@
                 State-wise Detailed Data
               </div>
               <div style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                <i class="fas fa-tag"></i> Starts from ₹1
+                <i class="fas fa-tag"></i> Starts from ₹99
               </div>
-              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 1, 'Medical State Quota eBooks')">
+              <button class="mo-btn" style="background: #16a34a;" onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
                 Buy State eBooks
               </button>
             </div>
@@ -6925,7 +6934,7 @@ window.submitEbookPurchase = async function() {
           ebook_id: ctx.is_cart ? ctx.ebook_id : (ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_')),
           payment_status: 'initiated',
           created_at: new Date(),
-          timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true })
+          created_at_ist: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true })
       };
 
       if (window.supabaseClient) {
@@ -6967,7 +6976,7 @@ window.submitEbookPurchase = async function() {
 
       // 4. Initiate Razorpay Checkout window
       var options = {
-          "key": "rzp_live_SebrDtxMirg67M", // Live Key Passed In
+          "key": "rzp_live_ShlgHvLVwqmST2", // Live Key Passed In
           "amount": ctx.price * 100, // Razorpay amount in paise
           "currency": "INR",
           "name": "DC Neet Counselling",
@@ -7107,10 +7116,10 @@ window.submitEbookPurchase = async function() {
 
 // Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ Wishlist Logic Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬
 var EBOOK_META = {
-  'medical': { title: 'Medical', icon: 'fa-stethoscope', color: '#2563eb', price: 1, courses: 'MBBS, BDS', course: 'Medical', quota: 'All India Quota' },
-  'dental': { title: 'Dental', icon: 'fa-tooth', color: '#06b6d4', price: 1, courses: 'BDS', course: 'Dental', quota: 'All Courses' },
-  'ayush': { title: 'AYUSH', icon: 'fa-leaf', color: '#16a34a', price: 1, courses: 'BAMS, BHMS, BSMS, BUMS', course: 'AYUSH', quota: 'All Courses' },
-  'veterinary': { title: 'Veterinary', icon: 'fa-paw', color: '#f59e0b', price: 1, courses: 'BVSc', course: 'Veterinary', quota: 'All Courses' }
+  'medical': { title: 'Medical', icon: 'fa-stethoscope', color: '#2563eb', price: 99, courses: 'MBBS', course: 'Medical', quota: 'All India Quota' },
+  'dental': { title: 'Dental', icon: 'fa-tooth', color: '#06b6d4', price: 149, courses: 'BDS', course: 'Dental', quota: 'All Courses' },
+  'ayush': { title: 'AYUSH', icon: 'fa-leaf', color: '#16a34a', price: 199, courses: 'BAMS, BHMS, BSMS, BUMS', course: 'AYUSH', quota: 'All Courses' },
+  'veterinary': { title: 'Veterinary', icon: 'fa-paw', color: '#f59e0b', price: 149, courses: 'BVSc', course: 'Veterinary', quota: 'All Courses' }
 };
 
 window.toggleWishlist = async function(btn, ebookId) {
@@ -8608,7 +8617,9 @@ window.cartCheckout = async function() {
           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .bd-share-whatsapp { background: #25d366; }
-        .bd-share-twitter { background: #1da1f2; }
+        .bd-share-twitter { background: #000000; }
+        .bd-share-facebook { background: #1877f2; }
+        .bd-share-reddit { background: #ff4500; }
         .bd-share-linkedin { background: #0077b5; }
         .bd-share-copy { background: #64748b; }
 
@@ -8716,7 +8727,9 @@ window.cartCheckout = async function() {
             <div class="bd-share-bar">
               <span class="bd-share-label">Share this article:</span>
               <button class="bd-share-btn bd-share-whatsapp" id="bdShareWA" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
-              <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on Twitter"><i class="fa-brands fa-x-twitter"></i></button>
+              <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on X"><i class="fa-brands fa-x-twitter"></i></button>
+              <button class="bd-share-btn bd-share-facebook" id="bdShareFB" title="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></button>
+              <button class="bd-share-btn bd-share-reddit" id="bdShareRD" title="Share on Reddit"><i class="fa-brands fa-reddit-alien"></i></button>
               <button class="bd-share-btn bd-share-linkedin" id="bdShareLI" title="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></button>
               <button class="bd-share-btn bd-share-copy" id="bdShareCopy" title="Copy Link"><i class="fa-solid fa-link"></i></button>
             </div>
@@ -8787,6 +8800,12 @@ window.cartCheckout = async function() {
           });
           document.getElementById('bdShareTW').addEventListener('click', function() {
             window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
+          });
+          document.getElementById('bdShareFB').addEventListener('click', function() {
+            window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
+          });
+          document.getElementById('bdShareRD').addEventListener('click', function() {
+            window.open('https://www.reddit.com/submit?url=' + encodeURIComponent(window.location.href) + '&title=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
           });
           document.getElementById('bdShareLI').addEventListener('click', function() {
             window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank');
