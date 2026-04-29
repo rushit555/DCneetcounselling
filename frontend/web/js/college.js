@@ -2,6 +2,42 @@
 
 window.collegeDataCache = window.collegeDataCache || {};
 
+window.openGalleryLightbox = function(src) {
+  let lightbox = document.getElementById('college-gallery-lightbox');
+  if (!lightbox) {
+    lightbox = document.createElement('div');
+    lightbox.id = 'college-gallery-lightbox';
+    lightbox.style.cssText = 'display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); z-index: 999999; justify-content: center; align-items: center; cursor: zoom-out;';
+    lightbox.onclick = window.closeGalleryLightbox;
+    
+    const closeBtn = document.createElement('div');
+    closeBtn.style.cssText = 'position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; font-weight: bold; cursor: pointer; z-index: 1000000;';
+    closeBtn.innerHTML = '&times;';
+    lightbox.appendChild(closeBtn);
+    
+    const img = document.createElement('img');
+    img.id = 'college-gallery-lightbox-img';
+    img.style.cssText = 'max-width: 90%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); z-index: 1000000; position: relative;';
+    img.onclick = function(e) { e.stopPropagation(); };
+    lightbox.appendChild(img);
+    
+    document.body.appendChild(lightbox);
+  }
+  
+  const img = document.getElementById('college-gallery-lightbox-img');
+  img.src = src;
+  lightbox.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+};
+
+window.closeGalleryLightbox = function() {
+  const lightbox = document.getElementById('college-gallery-lightbox');
+  if (lightbox) {
+    lightbox.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+};
+
 // SVG placeholder – lightweight, always works, never breaks the UI
 var COLLEGE_PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='400' viewBox='0 0 1200 400'%3E%3Crect width='1200' height='400' fill='%23e2e8f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Poppins,sans-serif' font-size='28' fill='%2394a3b8'%3ENo Image Available%3C/text%3E%3C/svg%3E";
 
@@ -241,12 +277,10 @@ function renderAboutAndFees(college, fees) {
       <h2 style="font-size: 20px; font-weight: 700; color: #1e293b; margin-top: 0; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
         <i class="fa-solid fa-wallet" style="color: #10b981;"></i> Fees Structure
       </h2>
-      <div style="flex-grow: 1;">
-        ${feesRows}
-      </div>
-      <div style="margin-top: 16px; background: #ecfdf5; padding: 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #a7f3d0;">
-        <span style="font-weight: 700; color: #065f46;">Estimated Total</span>
-        <span style="font-size: 18px; font-weight: 800; color: #059669; background: #fff; padding: 4px 12px; border-radius: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">₹${total.toLocaleString('en-IN')}</span>
+      <div style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 100%; background: #ecfdf5; padding: 24px; border-radius: 12px; display: flex; justify-content: center; align-items: center; border: 1px solid #a7f3d0;">
+          <span style="font-size: 28px; font-weight: 800; color: #059669; background: #fff; padding: 12px 40px; border-radius: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">₹${total.toLocaleString('en-IN')}</span>
+        </div>
       </div>
     </div>
   `;
@@ -371,8 +405,8 @@ function renderThreeCardsGrid(cutoffs) {
                   <i class="fa-solid fa-user-tie" style="color: #be185d; font-size: 20px;"></i>
                </div>
                <div>
-                  <div style="font-weight: 700; color: #1e293b; font-size: 20px;">150+</div>
-                  <div style="font-size: 14px; color: #64748b; font-weight: 500;">Experienced Doctors</div>
+                  <div style="font-weight: 700; color: #1e293b; font-size: 20px;">600+</div>
+                  <div style="font-size: 14px; color: #64748b; font-weight: 500;">Experienced Faculty</div>
                </div>
             </div>
             <div style="display: flex; align-items: center; gap: 16px;">
@@ -380,8 +414,8 @@ function renderThreeCardsGrid(cutoffs) {
                   <i class="fa-solid fa-graduation-cap" style="color: #be185d; font-size: 20px;"></i>
                </div>
                <div>
-                  <div style="font-weight: 700; color: #1e293b; font-size: 20px;">12:1</div>
-                  <div style="font-size: 14px; color: #64748b; font-weight: 500;">Student-Faculty Ratio</div>
+                  <div style="font-weight: 700; color: #1e293b; font-size: 20px;">Strong</div>
+                  <div style="font-size: 14px; color: #64748b; font-weight: 500;">Faculty Support System</div>
                </div>
             </div>
         </div>
@@ -404,7 +438,7 @@ function renderGalleryGridUpdated(gallery) {
         ${images.map(function(img) {
           var imgSrc = img.image_url || COLLEGE_PLACEHOLDER_IMG;
           return `
-          <div style="border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+          <div style="border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); cursor: pointer;" onclick="window.openGalleryLightbox('${imgSrc}')">
             <img src="${imgSrc}"
                  alt="Campus photo"
                  loading="lazy"
