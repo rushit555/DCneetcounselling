@@ -8681,7 +8681,7 @@
           if (cached) {
             try {
               allBlogData = JSON.parse(cached);
-              renderFeatured();
+              try { renderFeatured(); } catch(e) { console.error('Featured err:', e); }
               renderBlogs();
             } catch(e) {}
           }
@@ -8701,7 +8701,7 @@
             allBlogData = data || [];
             try { sessionStorage.setItem('dc_blogs_cache', JSON.stringify(allBlogData)); } catch(e) {}
             
-            renderFeatured();
+            try { renderFeatured(); } catch(e) { console.error('Featured err:', e); }
             renderBlogs();
           } catch (err) {
             console.error('Blog fetch error:', err);
