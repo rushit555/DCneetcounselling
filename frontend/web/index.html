@@ -8757,8 +8757,8 @@
               if (activeCategory !== 'All' && item.category !== activeCategory) return false;
               if (searchTerm) {
                 const term = searchTerm.toLowerCase();
-                const titleMatch = item.title && item.title.toLowerCase().includes(term);
-                const descMatch = item.short_description && item.short_description.toLowerCase().includes(term);
+                const titleMatch = item.title && String(item.title).toLowerCase().includes(term);
+                const descMatch = item.short_description && String(item.short_description).toLowerCase().includes(term);
                 if (!titleMatch && !descMatch) return false;
               }
               return true;
@@ -8797,37 +8797,41 @@
             if (emptyState) emptyState.style.display = 'none';
 
             const toShow = filtered.slice(0, visibleCount);
-            toShow.forEach(function (item) {
-              const safeTitle = item.title || 'Untitled';
-              const safeDesc = item.short_description || '';
-              const safeCat = item.category || 'General';
-              let dateStr = 'Unknown';
-              if (item.created_at) {
-                try {
-                  const d = new Date(item.created_at);
-                  if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-                } catch(e) {}
-              }
-              
-              const imgHtml = item.image_url
-                ? '<img class="blog-card-img" src="' + item.image_url + '" alt="Blog">'
-                : '<div class="blog-card-img-placeholder"><i class="fa-solid fa-image"></i></div>';
+            toShow.forEach(function (item, idx) {
+              try {
+                const safeTitle = item.title || 'Untitled';
+                const safeDesc = item.short_description || '';
+                const safeCat = item.category || 'General';
+                let dateStr = 'Unknown';
+                if (item.created_at) {
+                  try {
+                    const d = new Date(item.created_at);
+                    if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                  } catch(e) {}
+                }
+                
+                const imgHtml = item.image_url
+                  ? '<img class="blog-card-img" src="' + item.image_url + '" alt="Blog">'
+                  : '<div class="blog-card-img-placeholder"><i class="fa-solid fa-image"></i></div>';
 
-              const card = document.createElement('a');
-              card.href = 'javascript:void(0)';
-              card.className = 'blog-card';
-              card.onclick = function () { window.navigate('blog/' + (item.slug||'')); };
-              card.innerHTML =
-                imgHtml +
-                '<div class="blog-card-body">' +
-                '<div class="blog-card-cat">' + safeCat + '</div>' +
-                '<div class="blog-card-title">' + safeTitle + '</div>' +
-                '<div class="blog-card-desc">' + safeDesc + '</div>' +
-                '<div class="blog-card-footer">' +
-                '<span class="blog-card-date">' + dateStr + '</span>' +
-                '<span class="blog-card-read">Read Article <i class="fa-solid fa-chevron-right"></i></span>' +
-                '</div></div>';
-              grid.appendChild(card);
+                const card = document.createElement('a');
+                card.href = 'javascript:void(0)';
+                card.className = 'blog-card';
+                card.onclick = function () { window.navigate('blog/' + (item.slug||'')); };
+                card.innerHTML =
+                  imgHtml +
+                  '<div class="blog-card-body">' +
+                  '<div class="blog-card-cat">' + safeCat + '</div>' +
+                  '<div class="blog-card-title">' + safeTitle + '</div>' +
+                  '<div class="blog-card-desc">' + safeDesc + '</div>' +
+                  '<div class="blog-card-footer">' +
+                  '<span class="blog-card-date">' + dateStr + '</span>' +
+                  '<span class="blog-card-read">Read Article <i class="fa-solid fa-chevron-right"></i></span>' +
+                  '</div></div>';
+                grid.appendChild(card);
+              } catch(e) {
+                console.error('Render error at', idx, e);
+              }
             });
 
             if (loadMore) loadMore.style.display = filtered.length > visibleCount ? 'block' : 'none';
