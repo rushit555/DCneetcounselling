@@ -23,7 +23,7 @@
     />
     
     <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/main.css?v=2026.04.22.5" />
@@ -7671,6 +7671,11 @@ window.cartCheckout = async function() {
               }
             }
           };
+
+          // If we landed here on page load, trigger the load
+          if (window.location.hash.startsWith('#news/') && window.currentNewsId) {
+            window.navigate(window.location.hash.substring(1));
+          }
         });
       </script>
     </div>
@@ -8538,8 +8543,10 @@ window.cartCheckout = async function() {
           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         .bd-share-whatsapp { background: #25d366; }
-        .bd-share-twitter { background: #1da1f2; }
+        .bd-share-facebook { background: #1877f2; }
+        .bd-share-twitter { background: #000; }
         .bd-share-linkedin { background: #0077b5; }
+        .bd-share-reddit { background: #ff4500; }
         .bd-share-copy { background: #64748b; }
 
         /* Related Posts */
@@ -8646,8 +8653,10 @@ window.cartCheckout = async function() {
             <div class="bd-share-bar">
               <span class="bd-share-label">Share this article:</span>
               <button class="bd-share-btn bd-share-whatsapp" id="bdShareWA" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
-              <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on Twitter"><i class="fa-brands fa-x-twitter"></i></button>
+              <button class="bd-share-btn bd-share-facebook" id="bdShareFB" title="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></button>
+              <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on X"><i class="fa-brands fa-x-twitter"></i></button>
               <button class="bd-share-btn bd-share-linkedin" id="bdShareLI" title="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></button>
+              <button class="bd-share-btn bd-share-reddit" id="bdShareReddit" title="Share on Reddit"><i class="fa-brands fa-reddit-alien"></i></button>
               <button class="bd-share-btn bd-share-copy" id="bdShareCopy" title="Copy Link"><i class="fa-solid fa-link"></i></button>
             </div>
 
@@ -8715,11 +8724,17 @@ window.cartCheckout = async function() {
           document.getElementById('bdShareWA').addEventListener('click', function() {
             window.open('https://wa.me/?text=' + encodeURIComponent(document.title + ' ' + window.location.href), '_blank');
           });
+          document.getElementById('bdShareFB').addEventListener('click', function() {
+            window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
+          });
           document.getElementById('bdShareTW').addEventListener('click', function() {
             window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
           });
           document.getElementById('bdShareLI').addEventListener('click', function() {
             window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank');
+          });
+          document.getElementById('bdShareReddit').addEventListener('click', function() {
+            window.open('https://reddit.com/submit?url=' + encodeURIComponent(window.location.href) + '&title=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
           });
           document.getElementById('bdShareCopy').addEventListener('click', function() {
             navigator.clipboard.writeText(window.location.href).then(function() {
@@ -8756,7 +8771,39 @@ window.cartCheckout = async function() {
                 document.getElementById('bd-title').textContent = data.title;
                 document.getElementById('bd-category').textContent = data.category || 'General';
                 document.getElementById('bd-date').textContent = new Date(data.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-                document.getElementById('bd-html').innerHTML = data.content;
+                let contentHtml = data.content || '';
+                const ctaHtml = `
+<div style="text-align:center; margin:30px 0; clear:both;">
+  <a href="https://chat.whatsapp.com/BTyidnuD0Qg2G2k5FsgedA?mode=gi_t" target="_blank"
+     style="background:#25D366;color:white;padding:12px 20px;margin:5px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;box-shadow:0 4px 10px rgba(37,211,102,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+     <i class="fa-brands fa-whatsapp" style="margin-right:6px;font-size:16px;"></i>Join WhatsApp Group
+  </a>
+  <a href="https://t.me/DCNEETCOUNSELLING2025" target="_blank"
+     style="background:#0088cc;color:white;padding:12px 20px;margin:5px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block;box-shadow:0 4px 10px rgba(0,136,204,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+     <i class="fa-brands fa-telegram" style="margin-right:6px;font-size:16px;"></i>Join Telegram Channel
+  </a>
+</div>`;
+
+                if (!contentHtml.includes('https://chat.whatsapp.com/BTyidnuD0Qg2G2k5FsgedA')) {
+                  let pCount = 0;
+                  let insertIndex = -1;
+                  let searchIdx = 0;
+                  while (pCount < 2) {
+                    let nextP = contentHtml.indexOf('</p>', searchIdx);
+                    if (nextP === -1) break;
+                    pCount++;
+                    searchIdx = nextP + 4; 
+                    insertIndex = searchIdx;
+                  }
+                  
+                  if (pCount >= 2 && insertIndex !== -1) {
+                    contentHtml = contentHtml.slice(0, insertIndex) + ctaHtml + contentHtml.slice(insertIndex);
+                  } else {
+                    contentHtml += ctaHtml;
+                  }
+                }
+                
+                document.getElementById('bd-html').innerHTML = contentHtml;
 
                 const img = document.getElementById('bd-image');
                 if (data.image_url) {
@@ -8843,6 +8890,11 @@ window.cartCheckout = async function() {
               }
             }
           };
+
+          // If we landed here on page load, trigger the load
+          if (window.location.hash.startsWith('#blog/') && window.currentBlogSlug) {
+            window.navigate(window.location.hash.substring(1));
+          }
         });
       </script>
     </div>
