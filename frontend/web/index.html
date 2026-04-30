@@ -8676,21 +8676,39 @@
         let visibleCount = POSTS_PER_PAGE;
 
         async function fetchBlogs() {
-          if (!window.supabaseClient) return;
+          let cached = null;
+          try { cached = sessionStorage.getItem('dc_blogs_cache'); } catch(e) {}
+          if (cached) {
+            try {
+              allBlogData = JSON.parse(cached);
+              renderFeatured();
+              renderBlogs();
+            } catch(e) {}
+          }
+
+          if (!window.supabaseClient) {
+            setTimeout(fetchBlogs, 500);
+            return;
+          }
           try {
             const { data, error } = await window.supabaseClient
               .from('blog_posts')
-              .select('*')
+              .select('id, title, slug, image_url, category, created_at, short_description')
               .eq('is_published', true)
               .order('created_at', { ascending: false });
 
             if (error) throw error;
             allBlogData = data || [];
+            try { sessionStorage.setItem('dc_blogs_cache', JSON.stringify(allBlogData)); } catch(e) {}
+            
             renderFeatured();
             renderBlogs();
           } catch (err) {
             console.error('Blog fetch error:', err);
-            document.getElementById('blogGrid2').innerHTML = '<p style="color:red;grid-column:1/-1;text-align:center;">Failed to load articles.</p>';
+            const grid = document.getElementById('blogGrid2');
+            if (grid && (!allBlogData || allBlogData.length === 0)) {
+              grid.innerHTML = '<p style="color:red;grid-column:1/-1;text-align:center;">Failed to load articles: ' + (err.message || err.toString()) + '</p>';
+            }
           }
         }
 
@@ -8727,16 +8745,19 @@
           const grid = document.getElementById('blogGrid2');
           const emptyState = document.getElementById('blogEmptyState2');
           const loadMore = document.getElementById('blogLoadMore');
-          const filtered = getFilteredBlogs();
-
+          
+          if (!grid) return;
           grid.innerHTML = '';
+          
+          try {
+            const filtered = getFilteredBlogs();
 
-          if (filtered.length === 0) {
-            emptyState.style.display = 'block';
-            loadMore.style.display = 'none';
-            return;
-          }
-          emptyState.style.display = 'none';
+            if (filtered.length === 0) {
+              if (emptyState) emptyState.style.display = 'block';
+              if (loadMore) loadMore.style.display = 'none';
+              return;
+            }
+            if (emptyState) emptyState.style.display = 'none';
 
           const toShow = filtered.slice(0, visibleCount);
           toShow.forEach(function (item) {
@@ -8763,7 +8784,11 @@
             grid.appendChild(card);
           });
 
-          loadMore.style.display = filtered.length > visibleCount ? 'block' : 'none';
+            if (loadMore) loadMore.style.display = filtered.length > visibleCount ? 'block' : 'none';
+          } catch(e) {
+            console.error('Blog render error:', e);
+            if (grid) grid.innerHTML = '<p style="color:red;grid-column:1/-1;text-align:center;">Failed to display articles: ' + e.message + '</p>';
+          }
         }
 
         // Category filter
@@ -9524,13 +9549,31 @@
             }
 
             try {
-              const { data, error } = await window.supabaseClient
+              let data;
+              let cached = null;
+              try { cached = sessionStorage.getItem('dc_blog_detail_' + slug); } catch(e) {}
+              if (cached) {
+                data = JSON.parse(cached);
+              }
+
+              const fetchPromise = window.supabaseClient
                 .from('blog_posts')
                 .select('*')
                 .eq('slug', slug)
                 .single();
 
-              if (error || !data) throw new Error("Not found");
+              if (!data) {
+                const res = await fetchPromise;
+                if (res.error || !res.data) throw new Error("Not found");
+                data = res.data;
+                try { sessionStorage.setItem('dc_blog_detail_' + slug, JSON.stringify(data)); } catch(e) {}
+              } else {
+                fetchPromise.then(res => {
+                  if (!res.error && res.data) {
+                    try { sessionStorage.setItem('dc_blog_detail_' + slug, JSON.stringify(res.data)); } catch(e) {}
+                  }
+                });
+              }
 
               document.getElementById('bd-title').textContent = data.title;
               document.getElementById('bd-category').textContent = data.category || 'General';
@@ -9611,12 +9654,33 @@
 
               // Fetch related posts (same category, different slug)
               try {
-                const { data: related } = await window.supabaseClient
-                  .from('blog_posts')
-                  .select('title, slug, image_url, category')
-                  .eq('is_published', true)
-                  .neq('slug', slug)
-                  .limit(3);
+                let related = [];
+                let latest = [];
+                let allCache = null;
+                try { allCache = sessionStorage.getItem('dc_blogs_cache'); } catch(e) {}
+                
+                if (allCache) {
+                  const all = JSON.parse(allCache);
+                  related = all.filter(p => p.slug !== slug).slice(0, 3);
+                  latest = all.filter(p => p.slug !== slug).slice(0, 5);
+                } else {
+                  const { data: relData } = await window.supabaseClient
+                    .from('blog_posts')
+                    .select('title, slug, image_url, category')
+                    .eq('is_published', true)
+                    .neq('slug', slug)
+                    .limit(3);
+                  related = relData;
+                  
+                  const { data: latData } = await window.supabaseClient
+                    .from('blog_posts')
+                    .select('id, title, image_url, created_at, slug')
+                    .eq('is_published', true)
+                    .neq('slug', slug)
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                  latest = latData;
+                }
 
                 const relSection = document.getElementById('bdRelatedSection');
                 const relGrid = document.getElementById('bdRelatedGrid');
@@ -9643,13 +9707,21 @@
 
               // Fetch latest posts for sidebar
               try {
-                const { data: latest } = await window.supabaseClient
-                  .from('blog_posts')
-                  .select('id, title, image_url, created_at, slug')
-                  .eq('is_published', true)
-                  .neq('slug', slug)
-                  .order('created_at', { ascending: false })
-                  .limit(5);
+                let latest = [];
+                const allCache = sessionStorage.getItem('dc_blogs_cache');
+                if (allCache) {
+                  const all = JSON.parse(allCache);
+                  latest = all.filter(p => p.slug !== slug).slice(0, 5);
+                } else {
+                  const { data: latData } = await window.supabaseClient
+                    .from('blog_posts')
+                    .select('id, title, image_url, created_at, slug')
+                    .eq('is_published', true)
+                    .neq('slug', slug)
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+                  latest = latData;
+                }
 
                 if (latestContainer) {
                   if (latest && latest.length > 0) {
