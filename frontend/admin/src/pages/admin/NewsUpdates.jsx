@@ -12,11 +12,14 @@ export default function NewsUpdates() {
     id: null,
     title: '',
     description: '',
+    content: '',
     date: new Date().toISOString().split('T')[0],
     category: '',
     icon: 'fa-bell',
     link: '',
-    is_featured: false
+    is_featured: false,
+    image_url: '',
+    youtube_url: ''
   });
 
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -103,7 +106,7 @@ export default function NewsUpdates() {
   const openNew = () => {
     setFormData({
       id: null, title: '', description: '', content: '', date: new Date().toISOString().split('T')[0],
-      category: '', icon: 'fa-bell', link: '', is_featured: false, image_url: ''
+      category: '', icon: 'fa-bell', link: '', is_featured: false, image_url: '', youtube_url: ''
     });
     setShowModal(true);
   };
@@ -221,6 +224,12 @@ export default function NewsUpdates() {
                   <input type="url" className="w-full border p-2 rounded" value={formData.link} onChange={e => setFormData({...formData, link: e.target.value})} placeholder="https://..." />
                 </div>
               </div>
+              
+              <div>
+                <label className="block text-sm font-medium mb-1">YouTube Video URL (Optional)</label>
+                <input type="text" className="w-full border p-2 rounded" value={formData.youtube_url || ''} onChange={e => setFormData({...formData, youtube_url: e.target.value})} placeholder="https://www.youtube.com/watch?v=..." />
+              </div>
+
               <div className="flex items-center gap-2 mt-4">
                 <input type="checkbox" id="is_feat" checked={formData.is_featured} onChange={e => setFormData({...formData, is_featured: e.target.checked})} />
                 <label htmlFor="is_feat">Featured Update</label>

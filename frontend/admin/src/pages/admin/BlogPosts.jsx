@@ -15,6 +15,7 @@ export default function BlogPosts() {
     short_description: '',
     content: '',
     image_url: '',
+    youtube_url: '',
     category: '',
     is_published: false
   });
@@ -192,6 +193,11 @@ export default function BlogPosts() {
                 <div>
                   <label className="block text-sm font-medium mb-1">Short Description</label>
                   <textarea rows="2" className="w-full border p-2 rounded" value={formData.short_description} onChange={e => setFormData({...formData, short_description: e.target.value})} />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1">YouTube Video URL</label>
+                  <input type="text" className="w-full border p-2 rounded" value={formData.youtube_url || ''} onChange={e => setFormData({...formData, youtube_url: e.target.value})} placeholder="https://www.youtube.com/watch?v=..." />
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
