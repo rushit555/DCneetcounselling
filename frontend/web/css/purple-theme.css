@@ -1,0 +1,195 @@
+/* ── Section Transparency: Aggressive Override ──────────────── */
+section, 
+.page-section, 
+.main-content, 
+.container, 
+.hero, 
+.premium-news-section, 
+.services-section, 
+.steps-section, 
+.pricing-section, 
+.testimonials-section, 
+.cta-section, 
+.updates-section,
+.animated-feature-section,
+.wcu2-stats,
+[style*="background:#fff"],
+[style*="background: #fff"],
+[style*="background:#ffffff"],
+[style*="background: #ffffff"],
+[style*="background: white"],
+[style*="background:white"],
+[style*="background: #FAFAFA"],
+[style*="background: #F9F9F9"],
+[style*="background: #FFF3D6"] {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* ── Content Readability: Global Text Overrides ───────────── */
+body {
+    color: #ffffff !important;
+}
+
+h1, h2, h3, h4, h5, h6, 
+.section-title, 
+.hero-title, 
+.card-title,
+.trust-title,
+.stat-card h2,
+.step h3,
+.price,
+.footer h3,
+.footer h4,
+.wcu2-heading,
+.wcu2-feat-text h4,
+.wcu2-stat-txt h4,
+.ps-json-hl1,
+.ps-json-hl2,
+.eb-json-heading-1,
+.eb-json-heading-2,
+.ps-json-ctitle,
+.eb-json-feature-title {
+    color: #ffffff !important;
+}
+
+p, span, li, 
+.hero-subtitle, 
+.trust-subtitle, 
+.stat-card p, 
+.step p, 
+.pricing-features li, 
+.footer p,
+.footer-links a,
+.card-date,
+.ps-json-cdesc,
+.eb-json-feature-desc {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.highlight, 
+.text-gradient,
+.card-footer,
+.trust-icon,
+.stat-card span,
+.carousel-btn,
+.popular-view-all,
+.news-view-all,
+.gold {
+    color: #FFD700 !important;
+}
+
+/* ── Specific Component Adjustments ────────────────────────── */
+
+/* Header: Glassmorphism */
+#header-container {
+    background: rgba(30, 10, 60, 0.8) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Nav Pills */
+.nav-pill-container {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.nav-pill-link {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Search bar: Keep dark glass feel */
+.search-bar {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 2px solid rgba(255, 215, 0, 0.4) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.search-bar input {
+    color: #fff !important;
+}
+
+/* Cards: Glassmorphism */
+.premium-news-card,
+.wcu-item,
+.wcu2-feat,
+.wcu2-stat,
+.stat-card,
+.step,
+.service-card,
+.pricing-card,
+.testimonial-card,
+.notif-card,
+.counselling-card,
+.med-pricing-card,
+.ayush-pricing-card,
+.vet-pricing-card,
+.combo-pricing-card,
+.ebook-card-v2,
+.mo-card,
+.premium-feature-card,
+.ps-json-card,
+.eb-json-feature-card {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.premium-news-card:hover,
+.stat-card:hover,
+.pricing-card:hover,
+.wcu2-feat:hover,
+.wcu2-stat:hover,
+.ps-json-card:hover,
+.eb-json-feature-card:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 215, 0, 0.3) !important;
+    transform: translateY(-5px) !important;
+}
+
+/* Footer: Deep Purple */
+.footer {
+    background: #150530 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ── Background Elements ───────────────────────────────────── */
+.main-bg-layer {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 60% 20%, rgba(255,255,255,0.06), transparent 40%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.noise-texture {
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 1; /* Place it slightly above content but below interactive elements if needed, or keep it at z-index: -1 for true background */
+}
+
+/* Adjust noise z-index to be just above the gradient but below sections if we want it to apply to the whole page */
+.noise-texture {
+    z-index: 9999; /* Higher z-index to apply noise over EVERYTHING for that film grain look */
+    opacity: 0.03;
+}
+
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar-track {
+    background: #1a0a3e;
+}
+::-webkit-scrollbar-thumb {
+    background: #4c1d95;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #6d28d9;
+}

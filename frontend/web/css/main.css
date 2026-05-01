@@ -107,16 +107,63 @@ html {
     width: 100%;
 }
 
+@keyframes floatGlow {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
 body {
     font-family: var(--font-main);
-    background: #ffffff;
+    background: linear-gradient(135deg, #2a0a5e, #4c1d95, #6d28d9);
+    background-attachment: fixed;
     min-height: 100dvh;
     color: var(--color-text);
     line-height: 1.6;
-    overflow-x: clip;
+    overflow-x: hidden;
     width: 100%;
     position: relative;
     scroll-behavior: smooth;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    filter: blur(100px);
+    z-index: -1;
+    border-radius: 50%;
+    animation: floatGlow 12s ease-in-out infinite;
+}
+
+body::before {
+    top: 10%;
+    left: 5%;
+    background: radial-gradient(circle, rgba(168,85,247,0.35), transparent);
+}
+
+body::after {
+    bottom: 10%;
+    right: 5%;
+    background: radial-gradient(circle, rgba(250,204,21,0.25), transparent);
+}
+
+.main-bg-layer {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 60% 20%, rgba(255,255,255,0.06), transparent 40%);
+    z-index: -1;
+}
+
+.noise-texture {
+    position: fixed;
+    inset: 0;
+    background: url('/noise.png');
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: -1;
 }
 
 /* Utilities */
