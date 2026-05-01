@@ -10767,9 +10767,6 @@
     .updates-section,
     .animated-feature-section,
     .wcu2-stats,
-    header,
-    #header-container,
-    .navbar,
     [style*="background:#fff"],
     [style*="background: #fff"],
     [style*="background:#ffffff"],
@@ -10784,38 +10781,41 @@
     }
 
     /* Force text to be readable */
-    h1, h2, h3, h4, h5, h6, 
-    .section-title, .hero-title, .card-title, .trust-title, .wcu2-heading,
-    .ps-json-hl1, .ps-json-hl2, .eb-json-heading-1, .eb-json-heading-2,
-    .ps-json-ctitle, .eb-json-feature-title, .rev-p-heading,
-    p, span, li, a:not(.btn-book-counselling):not(.md-cta-btn), .wcu2-feat-text h4, .wcu2-stat-txt h4 {
+    #app-root h1, #app-root h2, #app-root h3, #app-root h4, #app-root h5, #app-root h6, 
+    #app-root .section-title, #app-root .hero-title, #app-root .card-title, #app-root .trust-title, #app-root .wcu2-heading,
+    #app-root .ps-json-hl1, #app-root .ps-json-hl2, #app-root .eb-json-heading-1, #app-root .eb-json-heading-2,
+    #app-root .ps-json-ctitle, #app-root .eb-json-feature-title, #app-root .rev-p-heading, #app-root .premium-news-title, #app-root .card-date,
+    #app-root p, #app-root span, #app-root li, #app-root a:not(.btn-book-counselling):not(.md-cta-btn), #app-root .wcu2-feat-text h4, #app-root .wcu2-stat-txt h4 {
       color: #ffffff !important;
     }
 
     /* Lighter grey text for descriptions */
-    .ps-json-cdesc, .eb-json-feature-desc {
+    #app-root .ps-json-cdesc, #app-root .eb-json-feature-desc {
       color: rgba(255, 255, 255, 0.75) !important;
     }
 
-    .highlight, .text-gradient, .card-footer, .trust-icon, .highlight-text, .gold, .rev-p-heading-highlight {
+    #app-root .highlight, #app-root .text-gradient, #app-root .card-footer, #app-root .trust-icon, #app-root .highlight-text, #app-root .gold, #app-root .rev-p-heading-highlight {
       color: #FFD700 !important;
     }
 
-    /* Header Glassmorphism */
-    #header-container {
-      background: rgba(20, 5, 40, 0.85) !important;
-      backdrop-filter: blur(20px) !important;
-      -webkit-backdrop-filter: blur(20px) !important;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-    }
-
     /* Keep cards glassmorphic for readability */
-    .premium-news-card, .stat-card, .step, .service-card, .pricing-card, .testimonial-card, .notif-card, .wcu-item, .wcu2-feat, .wcu2-stat, .ebook-card-v2, .counselling-card, .ps-json-card, .eb-json-feature-card, .card-date {
+    .premium-news-card, .stat-card, .step, .service-card, .pricing-card, .testimonial-card, .notif-card, .wcu-item, .wcu2-feat, .wcu2-stat, .ebook-card-v2, .counselling-card, .ps-json-card, .eb-json-feature-card, .card-date, .premium-news-btn {
       background: rgba(255, 255, 255, 0.08) !important;
       backdrop-filter: blur(12px) !important;
       border: 1px solid rgba(255, 255, 255, 0.15) !important;
     }
     .wcu2-feat:hover, .wcu2-stat:hover, .ps-json-card:hover, .eb-json-feature-card:hover {
+      background: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    /* Golden Glowing Borders for News Cards */
+    .premium-news-card {
+      border: 1px solid rgba(244, 180, 0, 0.6) !important;
+      box-shadow: 0 0 15px rgba(244, 180, 0, 0.2) !important;
+    }
+    .premium-news-card:hover {
+      border: 1px solid rgba(244, 180, 0, 1) !important;
+      box-shadow: 0 0 25px rgba(244, 180, 0, 0.4) !important;
       background: rgba(255, 255, 255, 0.12) !important;
     }
 
