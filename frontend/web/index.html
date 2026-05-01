@@ -25,8 +25,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet" />
 
+  <!-- Preconnect to Backend APIs & Storage -->
+  <link rel="preconnect" href="https://rlqmdylbzapyepuwncwt.supabase.co" crossorigin />
+  <link rel="dns-prefetch" href="https://rlqmdylbzapyepuwncwt.supabase.co" />
+
   <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/main.css?v=2026.04.24.1" />
@@ -6945,6 +6949,9 @@
         ? 'http://localhost:3000/api'
         : 'https://dcneetcounselling.onrender.com/api';
 
+      let discount = 0;
+      let ctx = null;
+
       try {
         const response = await fetch(`${backendUrl}/validate-coupon`, {
           method: 'POST',
@@ -6952,17 +6959,12 @@
           body: JSON.stringify({ coupon: code })
         });
 
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
-        }
-
         const data = await response.json();
         console.log("Coupon Response:", data);
-        const error = !data.valid;
 
-        if (error || !data) {
+        if (!data || !data.valid) {
           msgBox.style.color = '#ef4444';
-          msgBox.innerText = "Invalid or expired coupon.";
+          msgBox.innerText = (data && data.message) ? data.message : "Invalid or expired coupon.";
           priceDisplay.style.display = 'none';
           if (window.activeEbookContext) {
             window.activeEbookContext.price = window.activeEbookContext.originalPrice || window.activeEbookContext.price;
@@ -6976,16 +6978,15 @@
         }
 
         // Valid Coupon
-        const ctx = prefix === 'eb' ? window.activeEbookContext : window.activeCounsellingContext;
+        ctx = prefix === 'eb' ? window.activeEbookContext : window.activeCounsellingContext;
         if (!ctx) return;
 
         if (!ctx.originalPrice) ctx.originalPrice = ctx.price;
 
-        let discount = 0;
         if (data.discount_type === 'percentage') {
-          discount = (ctx.originalPrice * data.discount_value) / 100;
+          discount = Math.round((ctx.originalPrice * data.discount_value) / 100);
         } else {
-          discount = data.discount_value;
+          discount = Math.round(data.discount_value);
         }
 
         ctx.price = Math.max(0, ctx.originalPrice - discount);
@@ -6998,7 +6999,7 @@
       } catch (err) {
         console.error(err);
         msgBox.style.color = '#ef4444';
-        msgBox.innerText = "Error validating coupon.";
+        msgBox.innerText = "Error validating coupon. Please try again.";
         return;
       }
 
@@ -8447,7 +8448,7 @@
           try {
             const { data, error } = await window.supabaseClient
               .from('blog_posts')
-              .select('id, title, slug, image_url, category, created_at, short_description')
+              .select('id, title, slug, image_url, category, created_at, short_description, primary_keyword, secondary_keywords, tags')
               .eq('is_published', true)
               .order('created_at', { ascending: false });
 
@@ -8491,11 +8492,37 @@
           } catch(e) { console.error('[renderFeatured] error:', e); container.style.display = 'none'; }
         }
 
+        let fuseInstance = null;
         function getFilteredBlogs() {
-          return allBlogData.filter(function (item, idx) {
-            if (activeCategory !== 'All' && item.category !== activeCategory) return false;
-            if (searchTerm && !item.title.toLowerCase().includes(searchTerm) && !(item.short_description && item.short_description.toLowerCase().includes(searchTerm))) return false;
-            return true;
+          let baseList = allBlogData;
+          if (activeCategory !== 'All') {
+            baseList = allBlogData.filter(item => item.category === activeCategory);
+          }
+          if (!searchTerm) return baseList;
+          
+          if (window.Fuse) {
+            fuseInstance = new window.Fuse(baseList, {
+              keys: [
+                { name: 'title', weight: 3 },
+                { name: 'primary_keyword', weight: 3 },
+                { name: 'tags', weight: 2 },
+                { name: 'secondary_keywords', weight: 2 },
+                { name: 'short_description', weight: 1 }
+              ],
+              threshold: 0.4,
+              ignoreLocation: true,
+              useExtendedSearch: true
+            });
+            return fuseInstance.search(searchTerm).map(r => r.item);
+          }
+
+          const st = searchTerm.toLowerCase().trim();
+          return baseList.filter(function (item) {
+            const combined = [
+              item.title, item.short_description, item.primary_keyword, 
+              ...(item.secondary_keywords||[]), ...(item.tags||[])
+            ].join(' ').toLowerCase();
+            return combined.includes(st);
           });
         }
 
@@ -9052,7 +9079,11 @@
       }
 
       .bd-share-twitter {
-        background: #1da1f2;
+        background: #000000;
+      }
+
+      .bd-share-facebook {
+        background: #1877f2;
       }
 
       .bd-share-linkedin {
@@ -9190,16 +9221,12 @@
           <!-- Share Bar -->
           <div class="bd-share-bar">
             <span class="bd-share-label">Share this article:</span>
-            <button class="bd-share-btn bd-share-whatsapp" id="bdShareWA" title="Share on WhatsApp"><i
-                class="fa-brands fa-whatsapp"></i></button>
-            <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on Twitter"><i
-                class="fa-brands fa-x-twitter"></i></button>
-            <button class="bd-share-btn bd-share-linkedin" id="bdShareLI" title="Share on LinkedIn"><i
-                class="fa-brands fa-linkedin-in"></i></button>
-            <button class="bd-share-btn bd-share-reddit" id="bdShareReddit" title="Share on Reddit"><i
-                class="fa-brands fa-reddit-alien"></i></button>
-            <button class="bd-share-btn bd-share-copy" id="bdShareCopy" title="Copy Link"><i
-                class="fa-solid fa-link"></i></button>
+            <button class="bd-share-btn bd-share-whatsapp" id="bdShareWA" title="Share on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+            <button class="bd-share-btn bd-share-twitter" id="bdShareTW" title="Share on X"><i class="fa-brands fa-x-twitter"></i></button>
+            <button class="bd-share-btn bd-share-facebook" id="bdShareFB" title="Share on Facebook"><i class="fa-brands fa-facebook-f"></i></button>
+            <button class="bd-share-btn bd-share-linkedin" id="bdShareLI" title="Share on LinkedIn"><i class="fa-brands fa-linkedin-in"></i></button>
+            <button class="bd-share-btn bd-share-reddit" id="bdShareReddit" title="Share on Reddit"><i class="fa-brands fa-reddit-alien"></i></button>
+            <button class="bd-share-btn bd-share-copy" id="bdShareCopy" title="Copy Link"><i class="fa-solid fa-link"></i></button>
           </div>
 
           <!-- Related Posts -->
@@ -9273,6 +9300,10 @@
         if (shareTW) shareTW.addEventListener('click', function () {
           window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
         });
+        var shareFB = document.getElementById('bdShareFB');
+        if (shareFB) shareFB.addEventListener('click', function () {
+          window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
+        });
         var shareLI = document.getElementById('bdShareLI');
         if (shareLI) shareLI.addEventListener('click', function () {
           window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank');
@@ -9283,11 +9314,38 @@
         });
         var shareCopy = document.getElementById('bdShareCopy');
         if (shareCopy) shareCopy.addEventListener('click', function () {
-          navigator.clipboard.writeText(window.location.href).then(function () {
-            var btn = document.getElementById('bdShareCopy');
+          var textToCopy = window.location.href;
+          var btn = document.getElementById('bdShareCopy');
+          
+          function showSuccess() {
             btn.innerHTML = '<i class="fa-solid fa-check"></i>';
             setTimeout(function () { btn.innerHTML = '<i class="fa-solid fa-link"></i>'; }, 2000);
-          });
+          }
+
+          if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textToCopy).then(showSuccess).catch(function() {
+              fallbackCopy(textToCopy);
+            });
+          } else {
+            fallbackCopy(textToCopy);
+          }
+
+          function fallbackCopy(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+              document.execCommand('copy');
+              showSuccess();
+            } catch (err) {
+              // If all fails, at least show it to the user
+            }
+            document.body.removeChild(textArea);
+          }
         });
 
         const oldNav = window.navigate;
@@ -9331,6 +9389,74 @@
                   }
                 });
               }
+
+              // --- SEO HEAD INJECTION ---
+              document.title = data.meta_title || data.title || "DC NEET Counselling Blog";
+              
+              let metaDesc = document.querySelector('meta[name="description"]');
+              if (!metaDesc) {
+                metaDesc = document.createElement('meta');
+                metaDesc.name = "description";
+                document.head.appendChild(metaDesc);
+              }
+              metaDesc.content = data.meta_description || data.short_description || "";
+
+              let metaKeywords = document.querySelector('meta[name="keywords"]');
+              if (!metaKeywords) {
+                metaKeywords = document.createElement('meta');
+                metaKeywords.name = "keywords";
+                document.head.appendChild(metaKeywords);
+              }
+              let kws = [];
+              if (data.primary_keyword) kws.push(data.primary_keyword);
+              if (data.tags && data.tags.length) kws = kws.concat(data.tags);
+              else if (data.keywords) kws.push(data.keywords);
+              if (kws.length > 0) metaKeywords.content = kws.join(", ");
+              // --------------------------
+
+              // --- JSON-LD STRUCTURED DATA ---
+              let oldSchema = document.getElementById('blog-schema');
+              if (oldSchema) oldSchema.remove();
+
+              const schemaData = {
+                "@context": "https://schema.org",
+                "@graph": [
+                  {
+                    "@type": "Article",
+                    "headline": data.title,
+                    "description": data.meta_description || data.short_description || "",
+                    "image": data.image_url || data.thumbnail_url || "https://dcneetcounselling.com/assets/logo.jpg",
+                    "author": {
+                      "@type": "Person",
+                      "name": data.author || "DC NEET Counselling"
+                    },
+                    "publisher": {
+                      "@type": "Organization",
+                      "name": "DC NEET Counselling",
+                      "logo": {
+                        "@type": "ImageObject",
+                        "url": "https://dcneetcounselling.com/assets/logo.jpg"
+                      }
+                    },
+                    "datePublished": data.published_at || data.created_at || new Date().toISOString(),
+                    "dateModified": data.updated_at || data.created_at || new Date().toISOString()
+                  }
+                ]
+              };
+
+              if (data.faq_schema && data.faq_schema.mainEntity) {
+                schemaData["@graph"].push({
+                  "@type": "FAQPage",
+                  "mainEntity": data.faq_schema.mainEntity
+                });
+              }
+
+              const scriptSchema = document.createElement('script');
+              scriptSchema.id = 'blog-schema';
+              scriptSchema.type = 'application/ld+json';
+              scriptSchema.text = JSON.stringify(schemaData);
+              document.head.appendChild(scriptSchema);
+              // -------------------------------
 
               document.getElementById('bd-title').textContent = data.title;
               document.getElementById('bd-category').textContent = data.category || 'General';
@@ -9396,11 +9522,66 @@
                 }
               }
 
+              // --- CONTENT SEO RENDERING RULES ---
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = contentHtml;
+
+              const pk = data.primary_keyword || '';
+              const sk = data.secondary_keywords && data.secondary_keywords.length > 0 ? data.secondary_keywords : [];
+
+              if (pk) {
+                let h1 = tempDiv.querySelector('h1');
+                if (!h1) {
+                  h1 = document.createElement('h1');
+                  tempDiv.prepend(h1);
+                }
+                if (!h1.textContent.toLowerCase().includes(pk.toLowerCase())) {
+                  h1.textContent = h1.textContent + " - " + pk;
+                }
+
+                const firstP = tempDiv.querySelector('p');
+                if (firstP && !firstP.textContent.toLowerCase().includes(pk.toLowerCase())) {
+                  firstP.innerHTML = `<strong>${pk}</strong>: ${firstP.innerHTML}`;
+                }
+              }
+
+              if (sk.length > 0) {
+                const headings = tempDiv.querySelectorAll('h2, h3');
+                headings.forEach((h, i) => {
+                  const kw = sk[i % sk.length];
+                  if (!h.textContent.toLowerCase().includes(kw.toLowerCase())) {
+                    h.textContent = h.textContent + " (" + kw + ")";
+                  }
+                });
+              }
+              
+              // --- IMAGE SEO OPTIMIZATION ---
+              const contentImages = tempDiv.querySelectorAll('img');
+              contentImages.forEach((imgTag, i) => {
+                imgTag.setAttribute('loading', 'lazy');
+                if (!imgTag.getAttribute('alt') || imgTag.getAttribute('alt').trim() === '') {
+                  imgTag.setAttribute('alt', `${pk} - Image ${i + 1}`);
+                }
+                let src = imgTag.getAttribute('src');
+                if (src && src.includes('/storage/v1/object/public/')) {
+                  imgTag.setAttribute('src', src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80');
+                }
+              });
+
+              contentHtml = tempDiv.innerHTML;
+              // -----------------------------------
+
               document.getElementById('bd-html').innerHTML = contentHtml;
 
               const img = document.getElementById('bd-image');
               if (data.image_url) {
-                img.src = data.image_url;
+                let finalImgUrl = data.image_url;
+                if (finalImgUrl.includes('/storage/v1/object/public/')) {
+                  finalImgUrl = finalImgUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80';
+                }
+                img.src = finalImgUrl;
+                img.setAttribute('alt', pk || data.title);
+                img.setAttribute('loading', 'eager');
                 img.style.display = 'block';
               } else {
                 img.style.display = 'none';
@@ -9409,7 +9590,7 @@
               document.getElementById('blogDetailLoading').style.display = 'none';
               document.getElementById('blogDetailContent').style.display = 'block';
 
-              // Fetch related posts (same category, different slug)
+              // Fetch related posts & Auto-inline links
               try {
                 let related = [];
                 let latest = [];
@@ -9418,15 +9599,42 @@
                 
                 if (allCache) {
                   const all = JSON.parse(allCache);
-                  related = all.filter(p => p.slug !== slug).slice(0, 3);
+                  
+                  // 1. Auto-Inline Links
+                  all.forEach(p => {
+                    if (p.slug !== slug && p.primary_keyword && p.primary_keyword.length > 4) {
+                      try {
+                        const regex = new RegExp(`(?<!<[^>]*)\\b(${p.primary_keyword})\\b(?![^<]*>)`, 'i');
+                        if (contentHtml.match(regex)) {
+                          contentHtml = contentHtml.replace(regex, `<a href="#blog/${p.slug}" style="color: #2563eb; text-decoration: underline; font-weight: 500;">$1</a>`);
+                        }
+                      } catch (regexErr) {
+                        // Older browser doesn't support lookbehind, skip inline linking
+                      }
+                    }
+                  });
+                  document.getElementById('bd-html').innerHTML = contentHtml; // Update with inline links
+                  
+                  // 2. Score Related Posts
+                  let scored = all.filter(p => p.slug !== slug).map(p => {
+                    let score = 0;
+                    if (data.tags && p.tags) {
+                       score += p.tags.filter(t => data.tags.includes(t)).length * 2;
+                    }
+                    if (data.primary_keyword && p.primary_keyword === data.primary_keyword) score += 3;
+                    if (data.category && p.category === data.category) score += 1;
+                    return { ...p, score };
+                  });
+                  scored.sort((a,b) => b.score - a.score);
+                  related = scored.slice(0, 5);
                   latest = all.filter(p => p.slug !== slug).slice(0, 5);
                 } else {
                   const { data: relData } = await window.supabaseClient
                     .from('blog_posts')
-                    .select('title, slug, image_url, category')
+                    .select('title, slug, image_url, category, tags, primary_keyword')
                     .eq('is_published', true)
                     .neq('slug', slug)
-                    .limit(3);
+                    .limit(5);
                   related = relData;
                   
                   const { data: latData } = await window.supabaseClient
@@ -9444,8 +9652,12 @@
                 if (related && related.length > 0) {
                   relGrid.innerHTML = '';
                   related.forEach(function (r) {
-                    var imgH = r.image_url
-                      ? '<img src="' + r.image_url + '" alt="' + r.title + '">'
+                    let rImg = r.image_url;
+                    if (rImg && rImg.includes('/storage/v1/object/public/')) {
+                      rImg = rImg.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80';
+                    }
+                    var imgH = rImg
+                      ? '<img src="' + rImg + '" alt="' + r.title + '" loading="lazy">'
                       : '<div style="height:140px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="fa-solid fa-image fa-2x"></i></div>';
                     var card = document.createElement('a');
                     card.href = 'javascript:void(0)';

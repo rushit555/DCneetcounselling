@@ -18,7 +18,7 @@ async function checkCouponValid(code, amount) {
     const start = Date.now();
     const { data: coupon, error } = await supabase
         .from('coupons')
-        .select('id, coupon_code, discount_type, discount_value, valid_from, valid_to, usage_limit, used_count')
+        .select('id, coupon_code, discount_type, discount_value, valid_from, valid_to, usage_limit, used_count, is_active')
         .eq('coupon_code', uppercaseCode)
         .single();
     const dur = Date.now() - start;
@@ -26,6 +26,10 @@ async function checkCouponValid(code, amount) {
 
     if (error || !coupon) {
         return { valid: false, message: "Invalid coupon" };
+    }
+
+    if (coupon.is_active === false) {
+        return { valid: false, message: "This coupon is no longer active" };
     }
 
     const now = new Date();
@@ -75,12 +79,14 @@ async function checkCouponValid(code, amount) {
 // POST /validate-coupon
 router.post('/validate-coupon', async (req, res) => {
     try {
-        const { code, amount } = req.body;
+        // Accept both 'code' and 'coupon' field names for compatibility
+        const code = req.body.code || req.body.coupon;
+        const amount = req.body.amount;
         
         const result = await checkCouponValid(code, amount);
         
         if (!result.valid) {
-            return res.status(400).json({ valid: false, message: result.message });
+            return res.json({ valid: false, message: result.message });
         }
 
         return res.json({
@@ -89,6 +95,10 @@ router.post('/validate-coupon', async (req, res) => {
             discount: result.discount,
             final_amount: result.final_amount,
             coupon: result.coupon.coupon_code,
+            // Include these fields for frontend compatibility
+            discount_type: result.coupon.discount_type,
+            discount_value: parseFloat(result.coupon.discount_value),
+            goaffpro_ref: result.coupon.goaffpro_ref || null,
             message: "Coupon is valid"
         });
 

@@ -85,6 +85,9 @@
 <IfModule mod_rewrite.c>
     RewriteRule "(^|/)\.(?!well-known)" - [F]
 
+    # Dynamic Sitemap Routing
+    RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
     # Universal SPA Routing: Redirect all non-file/folder requests to index.html
     # This ensures paths like /reset-password work perfectly in production
     RewriteCond %{REQUEST_FILENAME} !-f
