@@ -206,7 +206,7 @@
       if (gBtn) {
         gBtn.disabled = true;
         gBtn.innerHTML =
-          '<span style="display:inline-block;width:18px;height:18px;border:2px solid #ccc;border-top-color:#333;border-radius:50%;animation:spin 0.6s linear infinite;"></span> Connecting to Google├â┬ó├óΓÇÜ┬¼├é┬ª';
+          '<span style="display:inline-block;width:18px;height:18px;border:2px solid #ccc;border-top-color:#333;border-radius:50%;animation:spin 0.6s linear infinite;"></span> Connecting to Google&hellip;';
       }
 
       try {
@@ -923,254 +923,8 @@
             })();
           </script>
 
-          <!-- Premium College Search Bar -->
-          <div class="news-search-block">
-            <style>
-              .news-search-block {
-                margin-top: 24px;
-              }
 
-              .news-search-heading {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 5px;
-              }
 
-              .news-search-heading-icon {
-                width: 34px;
-                height: 34px;
-                border-radius: 50%;
-                background: #e8f5e9;
-                color: #2e7d32;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 15px;
-                flex-shrink: 0;
-              }
-
-              .news-search-heading h4 {
-                font-size: 24px;
-                font-weight: 600;
-                color: #1a1a1a;
-                margin: 0;
-              }
-
-              .news-search-subtext {
-                font-size: 13px;
-                color: #666;
-                margin: 0 0 14px 44px;
-              }
-
-              .news-search-bar {
-                background: linear-gradient(135deg, #fff9e6, #fff3cc);
-                border-radius: 16px;
-                padding: 12px;
-                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-                border: 1.5px solid #f0c030;
-              }
-
-              .news-search-row {
-                display: flex;
-                gap: 10px;
-                align-items: center;
-              }
-
-              .news-search-field {
-                flex: 1;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                background: #fff;
-                border-radius: 10px;
-                padding: 10px 12px;
-                border: 1px solid rgba(0, 0, 0, 0.12);
-              }
-
-              .news-search-field i {
-                color: #b0b0b0;
-                font-size: 14px;
-                flex-shrink: 0;
-              }
-
-              .news-search-field input,
-              .news-search-field select {
-                border: none;
-                outline: none;
-                background: transparent;
-                font-size: 14px;
-                color: #333;
-                width: 100%;
-                font-family: inherit;
-              }
-
-              .news-search-field input::placeholder {
-                color: #aaa;
-              }
-
-              .news-search-field select {
-                color: #aaa;
-                cursor: pointer;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-              }
-
-              .news-search-field select option {
-                color: #333;
-              }
-
-              .news-search-submit {
-                background: #ffc107;
-                color: #1a1a1a;
-                border: none;
-                border-radius: 10px;
-                padding: 12px 24px;
-                font-size: 14px;
-                font-weight: 700;
-                cursor: pointer;
-                white-space: nowrap;
-                transition: all 0.2s ease;
-                box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
-                flex-shrink: 0;
-              }
-
-              .news-search-submit:hover {
-                background: #ffb300;
-                box-shadow: 0 4px 14px rgba(255, 193, 7, 0.45);
-                transform: translateY(-1px);
-              }
-
-              @media(max-width: 768px) {
-                .news-search-block {
-                  margin-top: 18px;
-                }
-
-                .news-search-heading h4 {
-                  font-size: 20px;
-                }
-
-                .news-search-heading-icon {
-                  width: 30px;
-                  height: 30px;
-                  font-size: 13px;
-                }
-
-                .news-search-subtext {
-                  font-size: 12px;
-                  margin-left: 40px;
-                  margin-bottom: 10px;
-                }
-
-                .news-search-bar {
-                  padding: 10px;
-                  border-radius: 14px;
-                }
-
-                .news-search-row {
-                  flex-direction: column;
-                  gap: 8px;
-                }
-
-                .news-search-field {
-                  width: 100%;
-                  padding: 10px 12px;
-                  box-sizing: border-box;
-                }
-
-                .news-search-submit {
-                  width: 100%;
-                  padding: 12px;
-                  text-align: center;
-                }
-              }
-            </style>
-
-            <div class="news-search-heading">
-              <div class="news-search-heading-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-              <h4>Find Your Dream Medical College</h4>
-            </div>
-            <p class="news-search-subtext">Search, compare and choose the best college for your future</p>
-
-            <div class="news-search-bar">
-              <div class="news-search-row">
-                <div class="news-search-field" style="position: relative;">
-                  <i class="fa-solid fa-magnifying-glass"></i>
-                  <input type="text" id="collegeSearchInput" placeholder="Search College Name..." autocomplete="off" />
-                  <div id="collegeSearchResults"
-                    style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; z-index: 1000; max-height: 300px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-                  </div>
-                </div>
-                <div class="news-search-field">
-                  <i class="fa-solid fa-graduation-cap"></i>
-                  <select>
-                    <option value="" disabled selected>Select Course</option>
-                    <optgroup label="Medical">
-                      <option value="mbbs">MBBS</option>
-                      <option value="bds">BDS</option>
-                    </optgroup>
-                    <optgroup label="AYUSH">
-                      <option value="bams">BAMS (Ayurveda)</option>
-                      <option value="bhms">BHMS (Homeopathy)</option>
-                      <option value="bsms">BSMS (Siddha)</option>
-                      <option value="bums">BUMS (Unani)</option>
-                    </optgroup>
-                    <optgroup label="Veterinary">
-                      <option value="bvsc">BVSc &amp; AH</option>
-                    </optgroup>
-                  </select>
-                </div>
-                <div class="news-search-field">
-                  <i class="fa-solid fa-location-dot"></i>
-                  <select>
-                    <option value="" disabled selected>Select State</option>
-                    <optgroup label="States">
-                      <option value="andhra-pradesh">Andhra Pradesh</option>
-                      <option value="arunachal-pradesh">Arunachal Pradesh</option>
-                      <option value="assam">Assam</option>
-                      <option value="bihar">Bihar</option>
-                      <option value="chhattisgarh">Chhattisgarh</option>
-                      <option value="goa">Goa</option>
-                      <option value="gujarat">Gujarat</option>
-                      <option value="haryana">Haryana</option>
-                      <option value="himachal-pradesh">Himachal Pradesh</option>
-                      <option value="jharkhand">Jharkhand</option>
-                      <option value="karnataka">Karnataka</option>
-                      <option value="kerala">Kerala</option>
-                      <option value="madhya-pradesh">Madhya Pradesh</option>
-                      <option value="maharashtra">Maharashtra</option>
-                      <option value="manipur">Manipur</option>
-                      <option value="meghalaya">Meghalaya</option>
-                      <option value="mizoram">Mizoram</option>
-                      <option value="nagaland">Nagaland</option>
-                      <option value="odisha">Odisha</option>
-                      <option value="punjab">Punjab</option>
-                      <option value="rajasthan">Rajasthan</option>
-                      <option value="sikkim">Sikkim</option>
-                      <option value="tamil-nadu">Tamil Nadu</option>
-                      <option value="telangana">Telangana</option>
-                      <option value="tripura">Tripura</option>
-                      <option value="uttar-pradesh">Uttar Pradesh</option>
-                      <option value="uttarakhand">Uttarakhand</option>
-                      <option value="west-bengal">West Bengal</option>
-                    </optgroup>
-                    <optgroup label="Union Territories">
-                      <option value="andaman-nicobar">Andaman &amp; Nicobar Islands</option>
-                      <option value="chandigarh">Chandigarh</option>
-                      <option value="dadra-nagar-haveli">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
-                      <option value="delhi">Delhi (NCT)</option>
-                      <option value="jammu-kashmir">Jammu &amp; Kashmir</option>
-                      <option value="ladakh">Ladakh</option>
-                      <option value="lakshadweep">Lakshadweep</option>
-                      <option value="puducherry">Puducherry</option>
-                    </optgroup>
-                  </select>
-                </div>
-                <button class="news-search-submit">Search Now &rarr;</button>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- JavaScript for Smooth Infinite Auto-Scroll -->
@@ -2235,7 +1989,7 @@
             <!-- RIGHT CONTENT -->
             <!-- RIGHT CONTENT -->
             <div class="eb-json-content">
-              <div class="eb-json-label">├░┼╕ΓÇ£ΓÇô PREMIUM EBOOK GUIDE</div>
+              <div class="eb-json-label">&#128214; PREMIUM EBOOK GUIDE</div>
               <div class="eb-json-heading-1">Everything You Need</div>
               <div class="eb-json-heading-2">for NEET Counselling</div>
 
@@ -2260,7 +2014,7 @@
                   <div class="eb-json-feature-icon"><i class="fa-solid fa-chart-line"></i></div>
                   <div>
                     <p class="eb-json-feature-title">3-Year Trend Analysis</p>
-                    <p class="eb-json-feature-desc">Previous 3 years├óΓé¼Γäó cutoff data to help predict realistic admission
+                    <p class="eb-json-feature-desc">Previous 3 years' cutoff data to help predict realistic admission
                       chances</p>
                   </div>
                 </div>
@@ -2288,7 +2042,7 @@
                 </div>
               </div>
 
-              <a href="javascript:void(0)" class="eb-json-btn" onclick="window.navigate('ebooks'); return false;">├░┼╕ΓÇ£╦£
+              <a href="javascript:void(0)" class="eb-json-btn" onclick="window.navigate('ebooks'); return false;">&#128218;
                 Get eBook Now</a>
             </div>
           </div>
@@ -2666,10 +2420,10 @@
           style="max-width: 1000px; margin: 0 auto; border: 2px solid #f4b400; border-radius: 20px; padding: 40px 20px; text-align: center; position: relative;">
 
           <!-- LEFT DECOR -->
-          <div style="position: absolute; left: 20px; top: 20px; color: #f4b400;">├ó┼ô┬¿</div>
+          <div style="position: absolute; left: 20px; top: 20px; color: #f4b400;">&#10024;</div>
 
           <!-- RIGHT DECOR -->
-          <div style="position: absolute; right: 20px; top: 20px; color: #f4b400;">├ó┼ô┬¿</div>
+          <div style="position: absolute; right: 20px; top: 20px; color: #f4b400;">&#10024;</div>
 
           <div style="font-size: 32px; font-weight: 700; line-height: 1.3; margin-bottom: 25px;">
             <span style="color: #111; display: inline;">Start Your </span><span
@@ -2930,8 +2684,8 @@
 
       <div class="about-page-wrapper">
         <div class="about-header fade-up">
-          <div class="ah-subtitle"><span style="color:#f59e0b;">├óΓÇö┬Å</span> ABOUT US <span
-              style="color:#f59e0b;">├óΓÇö┬Å</span></div>
+          <div class="ah-subtitle"><span style="color:#f59e0b;">&#9670;</span> ABOUT US <span
+              style="color:#f59e0b;">&#9670;</span></div>
           <h1 class="ah-title">The People Behind<br><span>DC NEET Counselling</span></h1>
           <p class="ah-desc">A passionate team of experts dedicated to guiding NEET aspirants towards the right career
             and a successful future.</p>
@@ -2973,7 +2727,7 @@
         </div>
 
         <div class="team-divider fade-up">
-          <span style="color:#f59e0b;">├óΓÇö┬Å</span> OUR TEAM <span style="color:#f59e0b;">├óΓÇö┬Å</span>
+          <span style="color:#f59e0b;">&#9670;</span> OUR TEAM <span style="color:#f59e0b;">&#9670;</span>
         </div>
 
         <!-- Team Row -->
@@ -5784,7 +5538,7 @@
             <h3 class="ec-title">Medical</h3>
             <p class="ec-courses">MBBS</p>
             <div class="ec-price">
-              <i class="fas fa-tag"></i> Starts from Γé╣1
+              <i class="fas fa-tag"></i> Starts from &#8377;99
             </div>
             <button class="ec-btn" style="background: #2563eb;"
               onclick="event.stopPropagation(); window.navigate('medical-options')">
@@ -5805,7 +5559,7 @@
             <h3 class="ec-title">Dental</h3>
             <p class="ec-courses">BDS</p>
             <div class="ec-price">
-              <i class="fas fa-tag"></i> Starts from Γé╣1
+              <i class="fas fa-tag"></i> Starts from &#8377;149
             </div>
             <button class="ec-btn" style="background: #06b6d4;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
@@ -5826,7 +5580,7 @@
             <h3 class="ec-title">AYUSH</h3>
             <p class="ec-courses">BAMS, BHMS, BSMS, BUMS</p>
             <div class="ec-price">
-              <i class="fas fa-tag"></i> Starts from Γé╣1
+              <i class="fas fa-tag"></i> Starts from &#8377;199
             </div>
             <button class="ec-btn" style="background: #16a34a;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 199, 'AYUSH Cutoff eBooks')">
@@ -5848,7 +5602,7 @@
             <h3 class="ec-title">Veterinary</h3>
             <p class="ec-courses">BVSc</p>
             <div class="ec-price">
-              <i class="fas fa-tag"></i> Starts from Γé╣1
+              <i class="fas fa-tag"></i> Starts from &#8377;149
             </div>
             <button class="ec-btn" style="background: #f59e0b;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 149, 'Veterinary Cutoff eBooks')">
@@ -5996,7 +5750,7 @@
             </div>
             <div
               style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <i class="fas fa-tag"></i> Starts from Γé╣1
+              <i class="fas fa-tag"></i> Starts from &#8377;199
             </div>
             <button class="mo-btn" style="background: #2563eb;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
@@ -6017,7 +5771,7 @@
             </div>
             <div
               style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <i class="fas fa-tag"></i> Starts from Γé╣1
+              <i class="fas fa-tag"></i> Starts from &#8377;99
             </div>
             <button class="mo-btn" style="background: #16a34a;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
@@ -6041,7 +5795,7 @@
       <div style="max-width: 1100px; margin: 0 auto; padding-top: 80px; padding-bottom: 60px;">
         <!-- Header -->
         <div style="margin-bottom: 30px;">
-          <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Your Cart ├░┼╕ΓÇ║ΓÇÖ</h2>
+          <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Your Cart &#128722;</h2>
           <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Review your selected eBooks</p>
         </div>
 
@@ -6230,7 +5984,7 @@
             text-align: center;
           ">
         <div style="margin-bottom: 40px;">
-          <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">My Wishlist ├ó┬¥┬ñ├»┬╕┬Å</h2>
+          <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">My Wishlist &#10084;&#65039;</h2>
           <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Your saved ebooks</p>
         </div>
 
@@ -6241,7 +5995,7 @@
         <div id="wishlistEmpty" style="display: none; padding: 40px 20px; text-align: center;">
           <div style="font-size: 48px; color: #cbd5f5; margin-bottom: 16px;"><i class="fas fa-heart"></i></div>
           <h3 style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 8px 0;">Your Wishlist is Empty</h3>
-          <p style="font-size: 13px; color: #64748b; margin: 0 0 24px 0;">Save ebooks you like by tapping ├ó┬¥┬ñ├»┬╕┬Å</p>
+          <p style="font-size: 13px; color: #64748b; margin: 0 0 24px 0;">Save ebooks you like by tapping &#10084;&#65039;</p>
           <button onclick="window.navigate('ebooks')"
             style="background: #2563eb; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;">Browse
             eBooks</button>
@@ -6357,9 +6111,9 @@
 
           <div>
             <h2 style="font-size: 15px; font-weight: 600; margin-bottom: 8px; color: #111;">CONTACT DETAILS</h2>
-            <p style="color: #444; margin: 4px 0;">├░┼╕ΓÇ£┼╛ Phone/WhatsApp: <strong>8000258339</strong></p>
-            <p style="color: #444; margin: 4px 0;">├░┼╕┼Æ┬É Website: <strong>dcneetcounselling.com</strong></p>
-            <p style="color: #444; margin: 4px 0;">├░┼╕ΓÇ£┬º Email: <strong>support@dcneetcounselling.com</strong></p>
+            <p style="color: #444; margin: 4px 0;">&#128222; Phone/WhatsApp: <strong>8000258339</strong></p>
+            <p style="color: #444; margin: 4px 0;">&#127760; Website: <strong>dcneetcounselling.com</strong></p>
+            <p style="color: #444; margin: 4px 0;">&#128231; Email: <strong>support@dcneetcounselling.com</strong></p>
           </div>
 
           <hr style="border: none; border-top: 1px solid #eee; margin: 4px 0;">
@@ -6690,7 +6444,7 @@
 
     <div style="text-align: center; margin-bottom: 24px;">
       <h3 id="authModalTitle" style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">Welcome Back
-        ├â╞Æ├é┬░├âΓÇª├é┬╕├â┬ó├óΓÇÜ┬¼├ï┼ô├â┬ó├óΓÇÜ┬¼├é┬╣</h3>
+        &#128075;</h3>
       <p id="authModalSubtitle" style="font-size: 14px; color: #64748b; margin: 0;">Login to continue</p>
     </div>
 
@@ -7574,7 +7328,7 @@
           '<div style="width:50px; height:50px; border-radius:10px; background:#f1f5f9; display:flex; align-items:center; justify-content:center; font-size:26px; margin-bottom:12px; color:' + meta.color + ';"><i class="fas ' + meta.icon + '"></i></div>' +
           '<h3 style="font-size:15px; font-weight:600; color:#0f172a; margin:0 0 4px;">' + meta.title + '</h3>' +
           '<p style="font-size:12px; color:#64748b; margin:0 0 8px;">' + meta.courses + '</p>' +
-          '<div style="font-size:11px; font-weight:500; color:#16a34a; margin:0 0 14px; display:flex; align-items:center; gap:4px;"><i class="fas fa-tag"></i> ├óΓÇÜ┬╣' + meta.price + '</div>' +
+          '<div style="font-size:11px; font-weight:500; color:#16a34a; margin:0 0 14px; display:flex; align-items:center; gap:4px;"><i class="fas fa-tag"></i> &#8377;' + meta.price + '</div>' +
           '<button onclick="openEbookPurchaseModal(\'' + meta.course + '\', \'' + meta.quota + '\', ' + meta.price + ', \'' + meta.title + ' eBooks\')" style="width:100%; padding:8px; border-radius:8px; font-weight:600; font-size:13px; border:none; color:#ffffff; background:#2563eb; cursor:pointer;">Buy Now</button>' +
           '</div>';
       });
@@ -7617,14 +7371,14 @@
       var { data } = await window.supabaseClient.from('cart').select('id').eq('user_id', window._authUser.id).eq('ebook_id', ebookId).maybeSingle();
 
       if (data) {
-        showToast('Already in cart ├â╞Æ├é┬░├âΓÇª├é┬╕├â┬ó├óΓÇÜ┬¼├é┬║├â┬ó├óΓÇÜ┬¼├óΓÇ₧┬ó');
+        showToast('Already in cart &#128722;');
         btn.classList.add('in-cart');
         btn.innerHTML = '<i class="fas fa-check"></i> In Cart';
       } else {
         await window.supabaseClient.from('cart').insert({ user_id: window._authUser.id, ebook_id: ebookId });
         btn.classList.add('in-cart');
         btn.innerHTML = '<i class="fas fa-check"></i> In Cart';
-        showToast('Added to cart ├â╞Æ├é┬░├âΓÇª├é┬╕├â┬ó├óΓÇÜ┬¼├é┬║├â┬ó├óΓÇÜ┬¼├óΓÇ₧┬ó');
+        showToast('Added to cart &#128722;');
         updateCartBadge();
       }
     };
@@ -8160,7 +7914,7 @@
                 if (ytId) {
                   const ytHtml = `
 <div class="youtube-section" style="margin: 30px 0;">
-  <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 15px; color: #0f172a;">≡ƒô║ Watch Related Video</h3>
+  <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 15px; color: #0f172a;">&#128250; Watch Related Video</h3>
   <div class="video-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0;">
     <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px; border: none;" src="https://www.youtube.com/embed/${ytId}" title="YouTube video" allowfullscreen loading="lazy"></iframe>
   </div>
@@ -8620,7 +8374,7 @@
 
       <!-- Toolbar: Search + Category Filters -->
       <div class="blog-toolbar">
-        <input type="text" id="blogSearchInput2" class="blog-search-input" placeholder="├░┼╕ΓÇ¥┬ì  Search articles...">
+        <input type="text" id="blogSearchInput2" class="blog-search-input" placeholder="&#128269; Search articles...">
         <button class="blog-cat-btn active" data-cat="All">All</button>
         <button class="blog-cat-btn" data-cat="Counselling Guide">Counselling Guide</button>
         <button class="blog-cat-btn" data-cat="College List">College List</button>
@@ -9076,7 +8830,7 @@
       }
 
       .bd-ebooks-feature::before {
-        content: '├óΓé¼┬ó';
+        content: '\2022';
         color: #d97706;
         position: absolute;
         left: 0;
@@ -9510,29 +9264,25 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Share buttons
-        document.getElementById('bdShareWA').addEventListener('click', function () {
+        // Share buttons (null-safe to prevent crashes if elements are missing)
+        var shareWA = document.getElementById('bdShareWA');
+        if (shareWA) shareWA.addEventListener('click', function () {
           window.open('https://wa.me/?text=' + encodeURIComponent(document.title + ' ' + window.location.href), '_blank');
         });
-        document.getElementById('bdShareFB').addEventListener('click', function () {
-          window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
-        });
-        document.getElementById('bdShareTW').addEventListener('click', function () {
+        var shareTW = document.getElementById('bdShareTW');
+        if (shareTW) shareTW.addEventListener('click', function () {
           window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href) + '&text=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
         });
-        document.getElementById('bdShareFB').addEventListener('click', function () {
-          window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank');
-        });
-        document.getElementById('bdShareRD').addEventListener('click', function () {
-          window.open('https://www.reddit.com/submit?url=' + encodeURIComponent(window.location.href) + '&title=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
-        });
-        document.getElementById('bdShareLI').addEventListener('click', function () {
+        var shareLI = document.getElementById('bdShareLI');
+        if (shareLI) shareLI.addEventListener('click', function () {
           window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank');
         });
-        document.getElementById('bdShareReddit').addEventListener('click', function () {
+        var shareReddit = document.getElementById('bdShareReddit');
+        if (shareReddit) shareReddit.addEventListener('click', function () {
           window.open('https://reddit.com/submit?url=' + encodeURIComponent(window.location.href) + '&title=' + encodeURIComponent(document.getElementById('bd-title').textContent), '_blank');
         });
-        document.getElementById('bdShareCopy').addEventListener('click', function () {
+        var shareCopy = document.getElementById('bdShareCopy');
+        if (shareCopy) shareCopy.addEventListener('click', function () {
           navigator.clipboard.writeText(window.location.href).then(function () {
             var btn = document.getElementById('bdShareCopy');
             btn.innerHTML = '<i class="fa-solid fa-check"></i>';
@@ -9623,7 +9373,7 @@
                 if (ytId) {
                   const ytHtml = `
 <div class="youtube-section" style="margin: 30px 0;">
-  <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 15px; color: #0f172a;">≡ƒô║ Watch Related Video</h3>
+  <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 15px; color: #0f172a;">&#128250; Watch Related Video</h3>
   <div class="video-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0;">
     <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px; border: none;" src="https://www.youtube.com/embed/${ytId}" title="YouTube video" allowfullscreen loading="lazy"></iframe>
   </div>
