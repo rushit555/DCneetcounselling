@@ -5844,7 +5844,7 @@
 
     <!-- Cart Section -->
     <div id="section-cart" class="page-section" style="
-          background: #f8fafc;
+          background: transparent;
           padding: 20px;
           font-family: 'Poppins', var(--font-main);
           min-height: 100vh;
@@ -5852,14 +5852,14 @@
       <div style="max-width: 1100px; margin: 0 auto; padding-top: 80px; padding-bottom: 60px;">
         <!-- Header -->
         <div style="margin-bottom: 30px;">
-          <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Your Cart &#128722;</h2>
-          <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Review your selected eBooks</p>
+          <h2 style="font-size: 28px; font-weight: 800; color: #ffffff; margin: 0 0 6px 0;">Your Cart &#128722;</h2>
+          <p style="font-size: 14px; color: rgba(255,255,255,0.7); margin: 0; font-weight: 500;">Review your selected eBooks</p>
         </div>
 
         <!-- Empty State -->
         <div id="cartEmpty" style="display: none; text-align: center; padding: 60px 20px;">
           <div style="font-size: 56px; color: #cbd5e1; margin-bottom: 16px;"><i class="fas fa-shopping-cart"></i></div>
-          <h3 style="font-size: 18px; font-weight: 600; color: #0f172a; margin: 0 0 8px 0;">Your cart is empty</h3>
+          <h3 style="font-size: 18px; font-weight: 600; color: #ffffff; margin: 0 0 8px 0;">Your cart is empty</h3>
           <p style="font-size: 13px; color: #64748b; margin: 0 0 24px 0;">Add ebooks to continue</p>
           <button onclick="window.navigate('ebooks')"
             style="background: #2563eb; color: #fff; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit;">Browse
@@ -5900,10 +5900,12 @@
             }
 
             .cart-item-card {
-              background: #ffffff;
+              background: rgba(255, 255, 255, 0.08);
+              border: 1px solid rgba(244, 180, 0, 0.5);
               border-radius: 14px;
               padding: 12px;
-              box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+              backdrop-filter: blur(12px);
               display: flex;
               align-items: center;
               gap: 14px;
@@ -5913,7 +5915,7 @@
               width: 44px;
               height: 44px;
               border-radius: 10px;
-              background: #f1f5f9;
+              background: rgba(255,255,255,0.1);
               display: flex;
               align-items: center;
               justify-content: center;
@@ -5928,13 +5930,13 @@
             .cart-item-title {
               font-size: 14px;
               font-weight: 600;
-              color: #0f172a;
+              color: #ffffff;
               margin: 0 0 2px;
             }
 
             .cart-item-sub {
               font-size: 12px;
-              color: #64748b;
+              color: rgba(255,255,255,0.7);
               margin: 0;
             }
 
@@ -5955,10 +5957,12 @@
             }
 
             .cart-summary-card {
-              background: #fff;
+              background: rgba(255, 255, 255, 0.08);
+              border: 1px solid rgba(244, 180, 0, 0.5);
               border-radius: 14px;
               padding: 20px;
-              box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+              box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+              backdrop-filter: blur(12px);
               position: sticky;
               top: 80px;
             }
@@ -5966,7 +5970,7 @@
             .cart-summary-title {
               font-size: 16px;
               font-weight: 700;
-              color: #0f172a;
+              color: #ffffff;
               margin: 0 0 16px;
             }
 
@@ -5974,7 +5978,7 @@
               display: flex;
               justify-content: space-between;
               font-size: 14px;
-              color: #64748b;
+              color: rgba(255,255,255,0.7);
               margin-bottom: 10px;
             }
 
@@ -5983,9 +5987,9 @@
               justify-content: space-between;
               font-size: 16px;
               font-weight: 700;
-              color: #0f172a;
+              color: #ffffff;
               padding-top: 12px;
-              border-top: 1px solid #f1f5f9;
+              border-top: 1px solid rgba(255,255,255,0.1);
               margin-top: 4px;
             }
 
@@ -10402,6 +10406,41 @@
     #section-news-detail .card-date {
       color: #FFD700 !important;
       background: rgba(244, 180, 0, 0.15) !important;
+    }
+    /* Dashboard / Profile Section Fixes */
+    .dashboard-wrapper {
+      color: #ffffff !important;
+    }
+    .dashboard-sidebar, .dashboard-content {
+      background: rgba(255, 255, 255, 0.08) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      border: 1px solid rgba(244, 180, 0, 0.6) !important;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+      border-radius: 24px !important;
+    }
+    .sidebar-user-card, .menu-item {
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+    .menu-item:hover {
+      background: rgba(244, 180, 0, 0.15) !important;
+      border-color: rgba(244, 180, 0, 0.6) !important;
+    }
+    .sidebar-avatar {
+      background: linear-gradient(135deg, #facc15, #eab308) !important;
+      color: #000 !important;
+      border: 2px solid #facc15 !important;
+      box-shadow: 0 0 15px rgba(244, 180, 0, 0.3) !important;
+    }
+    .sidebar-user-name, .sidebar-title, .content-header h2 {
+      color: #ffffff !important;
+    }
+    .sidebar-user-email, .sidebar-user-mobile {
+      color: rgba(255, 255, 255, 0.6) !important;
+    }
+    .menu-icon i {
+      color: #facc15 !important;
     }
   </style>
 

@@ -488,17 +488,30 @@ async function renderDashboard() {
     mobileDisplay = window.sanitizeHTML(mobileDisplay);
 
     var localStyles = '<style>' +
-        '.dashboard-wrapper { display: flex !important; gap: 24px; padding: 120px 20px 60px; max-width: 1200px; margin: 0 auto; min-height: 80vh; }' +
-        '.dashboard-sidebar { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; }' +
-        '.dashboard-content { flex: 1; display: flex; flex-direction: column; gap: 32px; }' +
+        '.dashboard-wrapper { display: flex !important; gap: 32px; padding: 120px 20px 60px; max-width: 1200px; margin: 0 auto; min-height: 80vh; color: #fff; }' +
+        '.dashboard-sidebar { width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 24px; padding: 30px; background: rgba(255, 255, 255, 0.08) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(244, 180, 0, 0.6) !important; border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }' +
+        '.dashboard-content { flex: 1; display: flex; flex-direction: column; gap: 32px; padding: 40px; background: rgba(255, 255, 255, 0.08) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(244, 180, 0, 0.6) !important; border-radius: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }' +
+        '.sidebar-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; letter-spacing: 0.5px; }' +
+        '.sidebar-user-card { display: flex; align-items: center; gap: 16px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }' +
+        '.sidebar-avatar { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #facc15, #eab308); color: #000; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; border: 2px solid rgba(244, 180, 0, 1); box-shadow: 0 0 15px rgba(244, 180, 0, 0.3); }' +
+        '.sidebar-user-name { font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 2px; }' +
+        '.sidebar-user-email { font-size: 13px; color: rgba(255,255,255,0.6); }' +
+        '.sidebar-user-mobile { font-size: 13px; color: #facc15; font-weight: 600; margin-top: 4px; }' +
+        '.sidebar-menu { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }' +
+        '.menu-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 14px; text-decoration: none; color: #fff; transition: all 0.3s ease; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }' +
+        '.menu-item:hover { background: rgba(244, 180, 0, 0.15); transform: translateX(8px); border-color: rgba(244, 180, 0, 0.6); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }' +
+        '.menu-icon { color: #facc15; font-size: 18px; display: flex; align-items: center; }' +
+        '.content-header h2 { font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 8px; }' +
+        '.placeholder-section { text-align: center; padding: 60px 40px; background: rgba(255,255,255,0.03); border-radius: 24px; border: 2px dashed rgba(255,255,255,0.15); }' +
+        '.placeholder-icon { font-size: 48px; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(244,180,0,0.3)); }' +
         '@media (max-width: 900px) { .dashboard-wrapper { flex-direction: column !important; padding-top: 100px; } .dashboard-sidebar { width: 100%; } }' +
     '</style>';
 
     var placeholderHtml = '<div class="placeholder-section">' +
         '<div class="placeholder-icon">🚀</div>' +
-        '<h3>Your journey starts here</h3>' +
-        '<p style="color:var(--color-text-muted);margin:10px 0 20px;">Complete your profile or book a session to get started.</p>' +
-        '<button class="btn btn-primary" onclick="window.navigate(\'ebooks\')">Browse eBooks</button>' +
+        '<h3 style="color:#fff; font-size:22px; font-weight:700;">Your journey starts here</h3>' +
+        '<p style="color:rgba(255,255,255,0.6);margin:12px 0 24px; font-size:15px;">Complete your profile or book a session to get started.</p>' +
+        '<button class="btn" style="background:#facc15; color:#000; font-weight:700; padding:12px 32px; border-radius:99px;" onclick="window.navigate(\'ebooks\')">Browse eBooks</button>' +
     '</div>';
 
     return localStyles + 
@@ -523,10 +536,10 @@ async function renderDashboard() {
         '<div class="dashboard-content glass-panel">' +
             '<div class="content-header">' +
                 '<h2>Welcome back, ' + name + '! 👋</h2>' +
-                '<p style="color:var(--color-text-muted);margin-top:4px;">Manage your counselling journey and active orders here.</p>' +
+                '<p style="color:rgba(255,255,255,0.6);margin-top:4px;">Manage your counselling journey and active orders here.</p>' +
             '</div>' +
             '<div class="content-body">' +
-                '<h3 style="margin-bottom:10px;">Active Items</h3>' +
+                '<h3 style="margin-bottom:20px; color:#fff; font-size:20px; font-weight:700;">Active Items</h3>' +
                 placeholderHtml +
             '</div>' +
         '</div>' +
@@ -606,21 +619,21 @@ async function renderOrders() {
     }
 
     var html = '<div class="orders-page-wrapper" style="padding:120px 20px 60px; max-width: 1000px; margin: 0 auto; min-height: 80vh;">' +
-        '<div class="glass-panel" style="padding:40px; border-radius: 24px;">' +
+        '<div class="glass-panel" style="padding:40px; border-radius: 24px; background: rgba(255, 255, 255, 0.08) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(244, 180, 0, 0.6) !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">' +
             '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap: wrap; gap: 15px;">' +
                 '<div>' +
-                    '<h2 style="font-size: 28px; font-weight: 800; color: #1e40af;">Order History</h2>' +
-                    '<p style="color:#666; font-size: 14px;">Review all your purchases and transactions here.</p>' +
+                    '<h2 style="font-size: 32px; font-weight: 800; color: #fff;">Order History</h2>' +
+                    '<p style="color:rgba(255,255,255,0.6); font-size: 14px;">Review all your purchases and transactions here.</p>' +
                 '</div>' +
-                '<button class="btn btn-ghost" style="border: 1px solid #ddd;" onclick="window.navigate(\'dashboard\')">← Back to Dashboard</button>' +
+                '<button class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 99px; padding: 10px 20px;" onclick="window.navigate(\'dashboard\')">← Back to Dashboard</button>' +
             '</div>';
 
     if (orders.length === 0) {
-        html += '<div style="text-align:center; padding:80px 20px; background: rgba(0,0,0,0.02); border-radius: 16px; border: 2px dashed #ddd;">' +
-            '<div style="font-size: 48px; margin-bottom: 20px;">📦</div>' +
-            '<h3 style="font-weight: 600;">No orders yet</h3>' +
-            '<p style="color:#666; margin-top: 5px;">You haven\'t made any purchases yet.</p>' +
-            '<button class="btn btn-primary" style="margin-top:20px;" onclick="window.navigate(\'counselling\')">Browse Plans</button>' +
+        html += '<div style="text-align:center; padding:80px 20px; background: rgba(255,255,255,0.03); border-radius: 16px; border: 2px dashed rgba(255,255,255,0.15);">' +
+            '<div style="font-size: 48px; margin-bottom: 20px; filter: drop-shadow(0 0 10px rgba(244,180,0,0.3));">📦</div>' +
+            '<h3 style="font-weight: 700; color: #fff;">No orders yet</h3>' +
+            '<p style="color:rgba(255,255,255,0.6); margin-top: 5px;">You haven\'t made any purchases yet.</p>' +
+            '<button class="btn" style="margin-top:20px; background:#facc15; color:#000; font-weight:700;" onclick="window.navigate(\'counselling\')">Browse Plans</button>' +
         '</div>';
     } else {
         html += '<div style="display: flex; flex-direction: column; gap: 20px; margin-top: 20px;">';
@@ -646,37 +659,37 @@ async function renderOrders() {
                 }
             }
 
-            html += '<div style="background: rgba(255,255,255,0.8); border: 1px solid #eee; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">' +
+            html += '<div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">' +
                         
                         '<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">' +
                             '<div>' +
-                                '<div style="font-size: 12px; color: #94a3b8; font-family: monospace; margin-bottom: 4px; font-weight: 600;">ORDER ID: ' + (order.id || 'N/A').split('-')[0].toUpperCase() + '</div>' +
-                                '<h3 style="font-size: 18px; font-weight: 700; color: #1e293b; margin: 0;">' + typeIcon + ' ' + order.display_name + '</h3>' +
+                                '<div style="font-size: 12px; color: rgba(255,255,255,0.4); font-family: monospace; margin-bottom: 4px; font-weight: 600;">ORDER ID: ' + (order.id || 'N/A').split('-')[0].toUpperCase() + '</div>' +
+                                '<h3 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;">' + typeIcon + ' ' + order.display_name + '</h3>' +
                             '</div>' +
                             '<div style="text-align: right;">' +
                                 '<span style="display: inline-block; padding: 6px 12px; border-radius: 8px; background:' + badgeBg + '; color:#fff; font-weight:700; font-size:12px; text-transform:uppercase;">' + order.payment_status + '</span>' +
                             '</div>' +
                         '</div>' +
                         
-                        '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px; padding-top: 15px; border-top: 1px dashed #e2e8f0;">' +
+                        '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px; padding-top: 15px; border-top: 1px dashed rgba(255,255,255,0.1);">' +
                             '<div>' +
-                                '<div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Date</div>' +
-                                '<div style="font-size: 14px; color: #334155; font-weight: 500; margin-top: 4px;">' + dateStr + '</div>' +
+                                '<div style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 600;">Date</div>' +
+                                '<div style="font-size: 14px; color: #fff; font-weight: 500; margin-top: 4px;">' + dateStr + '</div>' +
                             '</div>' +
                             '<div>' +
-                                '<div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Amount</div>' +
-                                '<div style="font-size: 14px; color: #334155; font-weight: 700; margin-top: 4px;">₹' + order.display_amount + '</div>' +
+                                '<div style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 600;">Amount</div>' +
+                                '<div style="font-size: 14px; color: #facc15; font-weight: 700; margin-top: 4px;">₹' + order.display_amount + '</div>' +
                             '</div>' +
                             '<div style="display: flex; align-items: flex-end; gap: 8px;">' +
                                 '<div style="flex: 1;">' +
-                                    '<div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600;">Payment ID</div>' +
-                                    '<div style="font-size: 13px; color: #475569; font-family: monospace; font-weight: 500; margin-top: 4px;">' + (order.razorpay_payment_id || '—') + '</div>' +
+                                    '<div style="font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 600;">Payment ID</div>' +
+                                    '<div style="font-size: 13px; color: rgba(255,255,255,0.7); font-family: monospace; font-weight: 500; margin-top: 4px;">' + (order.razorpay_payment_id || '—') + '</div>' +
                                 '</div>' +
                             '</div>' +
                         '</div>' +
 
                         (postMessage ? 
-                        '<div style="margin-top: 5px; text-align: left; border-top: 1px dashed #e2e8f0; padding-top: 15px; font-size: 13.5px; color: #0284c7; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
+                        '<div style="margin-top: 5px; text-align: left; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 15px; font-size: 13.5px; color: #facc15; font-weight: 600; display: flex; align-items: center; gap: 8px;">' +
                             postMessage +
                         '</div>' : '') +
 

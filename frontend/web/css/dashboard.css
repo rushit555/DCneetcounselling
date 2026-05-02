@@ -1,51 +1,61 @@
-/* ─── Dashboard Premium Layout ─── */
+/* ─── Dashboard Premium Layout (Deep Purple Premium Dark Mode) ─── */
 .dashboard-wrapper {
     display: flex;
-    gap: 24px;
+    gap: 32px;
     padding: 120px 20px 60px;
     max-width: 1200px;
     margin: 0 auto;
     min-height: 80vh;
+    color: #ffffff;
 }
 
 .dashboard-sidebar {
-    width: 320px;
+    width: 340px;
     flex-shrink: 0;
-    padding: 24px;
+    padding: 30px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(244, 180, 0, 0.6) !important;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
 .sidebar-title {
     font-size: 1.25rem;
     font-weight: 800;
-    color: var(--color-text);
+    color: #ffffff;
     margin-bottom: 8px;
+    letter-spacing: 0.5px;
 }
 
 .sidebar-user-card {
     display: flex;
     align-items: center;
     gap: 16px;
-    padding: 16px;
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--glass-border);
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-avatar {
-    width: 50px;
-    height: 50px;
-    background: var(--color-primary);
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #facc15, #eab308);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
+    font-size: 28px;
     font-weight: 800;
-    color: #111;
+    color: #000;
     flex-shrink: 0;
+    border: 2px solid #facc15;
+    box-shadow: 0 0 15px rgba(244, 180, 0, 0.3);
 }
 
 .sidebar-user-info {
@@ -54,7 +64,8 @@
 
 .sidebar-user-name {
     font-weight: 700;
-    color: var(--color-text);
+    font-size: 1.1rem;
+    color: #ffffff;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -62,53 +73,64 @@
 
 .sidebar-user-email, .sidebar-user-mobile {
     font-size: 0.8rem;
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.6);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
 }
 
+.sidebar-user-mobile {
+    color: #facc15;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
 .sidebar-menu {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .menu-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 16px;
-    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    border-radius: 14px;
     text-decoration: none;
-    color: var(--color-text-muted);
+    color: #ffffff;
     font-weight: 600;
-    transition: all var(--transition-fast);
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .menu-item:hover {
-    background: rgba(255, 255, 255, 0.6);
-    color: var(--color-text);
-    transform: translateX(4px);
+    background: rgba(244, 180, 0, 0.15);
+    color: #ffffff;
+    transform: translateX(8px);
+    border-color: rgba(244, 180, 0, 0.6);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .menu-item.active {
-    background: var(--color-primary);
-    color: #111;
+    background: #facc15;
+    color: #000;
+    border-color: #facc15;
+}
+
+.menu-icon {
+    color: #facc15;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
 }
 
 .menu-divider {
     height: 1px;
-    background: var(--glass-border);
+    background: rgba(255, 255, 255, 0.1);
     margin: 8px 0;
-}
-
-.text-danger {
-    color: #DC2626 !important;
-}
-
-.text-danger:hover {
-    background: rgba(220, 38, 38, 0.1);
 }
 
 .dashboard-content {
@@ -117,29 +139,37 @@
     display: flex;
     flex-direction: column;
     gap: 32px;
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(244, 180, 0, 0.6) !important;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 
 .content-header h2 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 800;
     margin-bottom: 8px;
+    color: #ffffff;
 }
 
 .placeholder-section {
     text-align: center;
-    padding: 80px 20px;
+    padding: 60px 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: var(--radius-lg);
-    border: 1px dashed var(--glass-border);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 24px;
+    border: 2px dashed rgba(255, 255, 255, 0.15);
 }
 
 .placeholder-icon {
     font-size: 4.5rem;
     margin-bottom: 12px;
+    filter: drop-shadow(0 0 10px rgba(244, 180, 0, 0.3));
 }
 
 @media (max-width: 900px) {
