@@ -319,16 +319,13 @@
     transform: translate(-50%, -50%) scale(0.95);
     width: 85%;
     max-width: 320px;
-    background: rgba(42, 10, 94, 0.95) !important; 
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(244, 180, 0, 0.6) !important;
+    background: #ffffff !important; 
     z-index: 9999999;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    border-radius: 24px;
-    padding: 24px;
+    border-radius: 20px;
+    padding: 20px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.25s ease-in-out;
@@ -344,12 +341,15 @@
     position: absolute;
     top: 15px;
     right: 15px;
-    background: rgba(255,255,255,0.1);
+    background: transparent;
     border: none;
-    color: #fff;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    color: #333;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .md-content {
     display: flex;
@@ -361,7 +361,7 @@
 /* Mobile Links & Groupings */
 .md-link {
     text-decoration: none;
-    color: #fff;
+    color: #333333 !important;
     font-size: 16px;
     font-weight: 500;
     padding: 14px;
@@ -386,7 +386,7 @@
 
 .md-divider {
     height: 1px;
-    background: rgba(255,255,255,0.1);
+    background: #eeeeee !important;
     margin: 16px 0;
     width: 100%;
 }
