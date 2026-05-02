@@ -5427,7 +5427,7 @@
           border-radius: 8px;
           font-weight: 600;
           font-size: 12px;
-          border: 1.5px solid #2563eb;
+          border: 1.5px solid #facc15;
           color: #facc15;
           background: transparent;
           cursor: pointer;
@@ -5544,7 +5544,7 @@
             <div class="ec-price">
               <i class="fas fa-tag"></i> Starts from &#8377;99
             </div>
-            <button class="ec-btn" style="background: #2563eb;"
+            <button class="ec-btn" style="background: #facc15; color: #000;"
               onclick="event.stopPropagation(); window.navigate('medical-options')">
               Buy eBooks
             </button>
@@ -5565,7 +5565,7 @@
             <div class="ec-price">
               <i class="fas fa-tag"></i> Starts from &#8377;149
             </div>
-            <button class="ec-btn" style="background: #06b6d4;"
+            <button class="ec-btn" style="background: #facc15; color: #000;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
               Buy eBooks
             </button>
@@ -5586,7 +5586,7 @@
             <div class="ec-price">
               <i class="fas fa-tag"></i> Starts from &#8377;199
             </div>
-            <button class="ec-btn" style="background: #16a34a;"
+            <button class="ec-btn" style="background: #facc15; color: #000;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 199, 'AYUSH Cutoff eBooks')">
               Buy eBooks
             </button>
@@ -5608,7 +5608,7 @@
             <div class="ec-price">
               <i class="fas fa-tag"></i> Starts from &#8377;149
             </div>
-            <button class="ec-btn" style="background: #f59e0b;"
+            <button class="ec-btn" style="background: #facc15; color: #000;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 149, 'Veterinary Cutoff eBooks')">
               Buy eBooks
             </button>
@@ -8010,7 +8010,13 @@
         z-index: 0;
         pointer-events: none;
       }
-      
+
+      @media (max-width: 768px) {
+        #section-blog::before,
+        #section-blog::after {
+          display: none;
+        }
+      }
       /* 3. FEATURED BLOG CARD */
       .featured-card {
         display: flex;
@@ -8518,7 +8524,7 @@
 
       /* Blog Content Header & Text */
       .bd-back {
-        display: inline-flex; align-items: center; gap: 8px; color: #e2e8f0; font-size: 14px; text-decoration: none;
+        display: inline-flex; align-items: center; gap: 8px; color: #ffffff; font-size: 14px; text-decoration: none;
         font-weight: 500; margin-bottom: 32px; padding: 8px 18px; background: rgba(255,255,255,0.1); border-radius: 30px; transition: all 0.2s;
       }
       .bd-back:hover { background: rgba(250,204,21,0.8); color: #000; }
@@ -8535,24 +8541,24 @@
       }
 
       /* Core Content Typography */
-      .bd-content { font-size: 17px; line-height: 1.9; color: #e2e8f0; }
+      .bd-content { font-size: 17px; line-height: 1.9; color: #ffffff; }
       .bd-content h1, .bd-content h2, .bd-content h3, .bd-content h4, .bd-content h5 {
         color: #ffffff !important; margin-top: 2em; margin-bottom: 0.8em; font-weight: 700;
       }
       .bd-content h2 { font-size: 24px; }
       .bd-content h3 { font-size: 20px; }
-      .bd-content p, .bd-content li, .bd-content span, .bd-content div { color: #e2e8f0 !important; margin-bottom: 1.5em; }
-      .bd-content p > span { color: #e2e8f0 !important; background-color: transparent !important; }
+      .bd-content p, .bd-content li, .bd-content span, .bd-content div { color: #ffffff !important; margin-bottom: 1.5em; }
+      .bd-content p > span { color: #ffffff !important; background-color: transparent !important; }
       .bd-content a { color: #facc15 !important; text-decoration: underline; }
-      .bd-content ul, .bd-content ol { padding-left: 1.5em; margin-bottom: 1.5em; color: #e2e8f0; }
-      .bd-content li { margin-bottom: 0.5em; color: #e2e8f0; }
+      .bd-content ul, .bd-content ol { padding-left: 1.5em; margin-bottom: 1.5em; color: #ffffff; }
+      .bd-content li { margin-bottom: 0.5em; color: #ffffff; }
       .bd-content blockquote {
-        border-left: 4px solid #facc15; padding: 16px 20px; color: rgba(255,255,255,0.8) !important; font-style: italic;
+        border-left: 4px solid #facc15; padding: 16px 20px; color: #ffffff !important; font-style: italic;
         margin: 1.5em 0; background: rgba(255,255,255,0.05); border-radius: 0 12px 12px 0;
       }
-      .bd-content blockquote p { color: rgba(255,255,255,0.8) !important; margin-bottom: 0; }
+      .bd-content blockquote p { color: #ffffff !important; margin-bottom: 0; }
       .bd-content img { max-width: 100%; border-radius: 12px; margin: 1.5em 0; }
-      .bd-content table { width: 100%; color: #e2e8f0 !important; margin-bottom: 1.5em; border-collapse: collapse; }
+      .bd-content table { width: 100%; color: #ffffff !important; margin-bottom: 1.5em; border-collapse: collapse; }
       .bd-content th, .bd-content td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); }
       .bd-content th { background: rgba(255,255,255,0.1); color: #fff !important; }
 

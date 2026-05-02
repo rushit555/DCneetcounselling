@@ -150,6 +150,13 @@ body::after {
     background: radial-gradient(circle, rgba(250,204,21,0.25), transparent);
 }
 
+@media (max-width: 768px) {
+    body::before,
+    body::after {
+        display: none !important;
+    }
+}
+
 .main-bg-layer {
     position: fixed;
     inset: 0;
