@@ -557,7 +557,7 @@
 
           .icon-green {
             background: #dcfce7;
-            color: #16a34a;
+            color: #16a34a !important;
           }
 
           .icon-purple {
@@ -1288,12 +1288,12 @@
           @keyframes wcu-type-lines {
             0% {
               width: 0%;
-              border-right-color: #f59e0b;
+              border-right-color: #f59e0b !important;
             }
 
             99% {
               width: 100%;
-              border-right-color: #f59e0b;
+              border-right-color: #f59e0b !important;
             }
 
             100% {
@@ -2489,7 +2489,7 @@
           content: "";
           height: 1px;
           width: 50px;
-          background-color: #f59e0b;
+          background-color: #f59e0b !important;
         }
 
         .ah-title {
@@ -2501,7 +2501,7 @@
         }
 
         .ah-title span {
-          color: #f59e0b;
+          color: #f59e0b !important;
         }
 
         .ah-desc {
@@ -2589,7 +2589,7 @@
         }
 
         #app-root .tc-badge i {
-          color: #f59e0b;
+          color: #f59e0b !important;
         }
 
         #app-root .tc-name {
@@ -2618,7 +2618,7 @@
         }
 
         #app-root .tc-list li i {
-          color: #f59e0b;
+          color: #f59e0b !important;
           margin-top: 3px;
           width: 16px;
           text-align: center;
@@ -2661,7 +2661,7 @@
           content: "";
           height: 1px;
           width: 60px;
-          background-color: #f59e0b;
+          background-color: #f59e0b !important;
           opacity: 0.5;
         }
 
@@ -4578,7 +4578,7 @@
         .cp-left-footer p {
           margin: 0;
           font-size: 0.8rem;
-          color: #94a3b8;
+          color: #94a3b8 !important;
         }
 
         .cp-left-footer p strong {
@@ -4638,7 +4638,7 @@
           position: absolute;
           left: 20px;
           top: 18px;
-          color: #94a3b8;
+          color: #94a3b8 !important;
           font-size: 1.1rem;
         }
 
@@ -4962,7 +4962,7 @@
                   display: none;
                   background: #f0fdf4;
                   border: 1px solid #86efac;
-                  color: #16a34a;
+                  color: #16a34a !important;
                   padding: 12px 15px;
                   border-radius: 8px;
                   margin-bottom: 20px;
@@ -5199,7 +5199,7 @@
             style="width: 60px; height: 60px; background: #eff6ff; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #facc15; font-size: 24px;">
             <i class="fas fa-key"></i>
           </div>
-          <h2 style="font-size: 28px; font-weight: 800; color: #1e293b; margin-bottom: 10px;">Forgot Password?</h2>
+          <h2 style="font-size: 28px; font-weight: 800; color: #1e293b !important; margin-bottom: 10px;">Forgot Password?</h2>
           <p style="color: #64748b; font-size: 15px;">Enter your email and we'll send you a link to reset your password.
           </p>
         </div>
@@ -5352,23 +5352,23 @@
           margin-bottom: 12px;
         }
 
-        .ec-title {
+        #app-root .ec-title {
           font-size: 15px;
           font-weight: 600;
-          color: #0f172a;
+          color: #0f172a !important;
           margin: 0 0 4px 0;
         }
 
-        .ec-courses {
+        #app-root .ec-courses {
           font-size: 12px;
-          color: #64748b;
+          color: #64748b !important;
           margin: 0 0 8px 0;
         }
 
         .ec-price {
           font-size: 11px;
           font-weight: 500;
-          color: #16a34a;
+          color: #16a34a !important;
           margin: 0 0 14px 0;
           display: flex;
           align-items: center;
@@ -5455,7 +5455,7 @@
           justify-content: center;
           cursor: pointer;
           font-size: 16px;
-          color: #94a3b8;
+          color: #94a3b8 !important;
           transition: transform 0.2s, color 0.2s;
           z-index: 2;
         }
@@ -5496,7 +5496,7 @@
           ">
         <!-- Header -->
         <div style="margin-bottom: 30px;">
-          <h2 style="font-size: 28px; font-weight: 800; color: #1e293b; margin: 0 0 6px 0;">Explore eBooks</h2>
+          <h2 style="font-size: 28px; font-weight: 800; color: #1e293b !important; margin: 0 0 6px 0;">Explore eBooks</h2>
           <p style="font-size: 14px; color: #64748b; margin: 0; font-weight: 500;">Cutoff Data & Counselling Guides</p>
         </div>
 
@@ -5505,6 +5505,7 @@
 
           <!-- Medical -->
           <div class="ebook-card-v2 scale-up" onclick="window.navigate('medical-options')">
+            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
             <button class="ec-heart" data-ebook="medical"
               onclick="event.stopPropagation(); toggleWishlist(this, 'medical')"><i class="far fa-heart"></i></button>
             <div class="ec-badge">Popular</div>
@@ -5513,20 +5514,30 @@
             </div>
             <h3 class="ec-title">Medical</h3>
             <p class="ec-courses">MBBS</p>
-            <div class="ec-price">
-              <i class="fas fa-tag"></i> Starts from &#8377;99
+            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            <div style="margin: 8px 0 12px 0;">
+              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;198</span>
+                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;99</span>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
+                You save &#8377;99
+              </div>
             </div>
+            
             <button class="ec-btn" style="background: #facc15; color: #000;"
               onclick="event.stopPropagation(); window.navigate('medical-options')">
-              Buy eBooks
+              Buy Now at &#8377;99
             </button>
             <button class="ec-cart-btn" data-ebook="medical"
               onclick="event.stopPropagation(); addToCart(this, 'medical')"><i class="fas fa-cart-plus"></i> Add to
               Cart</button>
+            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
           </div>
 
           <!-- Dental -->
           <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: dental')">
+            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
             <button class="ec-heart" data-ebook="dental"
               onclick="event.stopPropagation(); toggleWishlist(this, 'dental')"><i class="far fa-heart"></i></button>
             <div class="ec-icon" style="color: #06b6d4;">
@@ -5534,59 +5545,88 @@
             </div>
             <h3 class="ec-title">Dental</h3>
             <p class="ec-courses">BDS</p>
-            <div class="ec-price">
-              <i class="fas fa-tag"></i> Starts from &#8377;149
+            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            <div style="margin: 8px 0 12px 0;">
+              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;298</span>
+                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;149</span>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
+                You save &#8377;149
+              </div>
             </div>
+            
             <button class="ec-btn" style="background: #facc15; color: #000;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Dental', 'All Courses', 149, 'Dental Cutoff eBooks')">
-              Buy eBooks
+              Buy Now at &#8377;149
             </button>
             <button class="ec-cart-btn" data-ebook="dental"
               onclick="event.stopPropagation(); addToCart(this, 'dental')"><i class="fas fa-cart-plus"></i> Add to
               Cart</button>
+            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
           </div>
 
           <!-- AYUSH -->
           <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: ayush')">
+            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
             <button class="ec-heart" data-ebook="ayush"
               onclick="event.stopPropagation(); toggleWishlist(this, 'ayush')"><i class="far fa-heart"></i></button>
-            <div class="ec-icon" style="color: #16a34a;">
+            <div class="ec-icon" style="color: #16a34a !important;">
               <i class="fas fa-leaf"></i>
             </div>
             <h3 class="ec-title">AYUSH</h3>
             <p class="ec-courses">BAMS, BHMS, BSMS, BUMS</p>
-            <div class="ec-price">
-              <i class="fas fa-tag"></i> Starts from &#8377;199
+            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            <div style="margin: 8px 0 12px 0;">
+              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;398</span>
+                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;199</span>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
+                You save &#8377;199
+              </div>
             </div>
+            
             <button class="ec-btn" style="background: #facc15; color: #000;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('AYUSH', 'All Courses', 199, 'AYUSH Cutoff eBooks')">
-              Buy eBooks
+              Buy Now at &#8377;199
             </button>
             <button class="ec-cart-btn" data-ebook="ayush"
               onclick="event.stopPropagation(); addToCart(this, 'ayush')"><i class="fas fa-cart-plus"></i> Add to
               Cart</button>
+            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
           </div>
 
           <!-- Veterinary -->
           <div class="ebook-card-v2 scale-up" onclick="console.log('open_category: veterinary')">
+            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
             <button class="ec-heart" data-ebook="veterinary"
               onclick="event.stopPropagation(); toggleWishlist(this, 'veterinary')"><i
                 class="far fa-heart"></i></button>
-            <div class="ec-icon" style="color: #f59e0b;">
+            <div class="ec-icon" style="color: #f59e0b !important;">
               <i class="fas fa-paw"></i>
             </div>
             <h3 class="ec-title">Veterinary</h3>
             <p class="ec-courses">BVSc</p>
-            <div class="ec-price">
-              <i class="fas fa-tag"></i> Starts from &#8377;149
+            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            <div style="margin: 8px 0 12px 0;">
+              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;298</span>
+                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;149</span>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
+                You save &#8377;149
+              </div>
             </div>
+            
             <button class="ec-btn" style="background: #facc15; color: #000;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Veterinary', 'All Courses', 149, 'Veterinary Cutoff eBooks')">
-              Buy eBooks
+              Buy Now at &#8377;149
             </button>
             <button class="ec-cart-btn" data-ebook="veterinary"
               onclick="event.stopPropagation(); addToCart(this, 'veterinary')"><i class="fas fa-cart-plus"></i> Add to
               Cart</button>
+            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
           </div>
 
         </div>
@@ -5639,16 +5679,16 @@
           margin-bottom: 16px;
         }
 
-        .mo-title {
+        #app-root .mo-title {
           font-size: 18px;
           font-weight: 700;
-          color: #0f172a;
+          color: #0f172a !important;
           margin: 0 0 6px 0;
         }
 
-        .mo-subtitle {
+        #app-root .mo-subtitle {
           font-size: 14px;
-          color: #64748b;
+          color: #64748b !important;
           margin: 0 0 16px 0;
         }
 
@@ -5680,7 +5720,7 @@
         .mo-price {
           font-size: 12px;
           font-weight: 600;
-          color: #16a34a;
+          color: #16a34a !important;
           margin-bottom: 20px;
           display: flex;
           align-items: center;
@@ -5706,7 +5746,7 @@
 
         <!-- Header -->
         <div style="margin-bottom: 40px;">
-          <h2 style="font-size: 32px; font-weight: 800; color: #1e293b; margin: 0 0 8px 0;">Medical eBooks</h2>
+          <h2 style="font-size: 32px; font-weight: 800; color: #1e293b !important; margin: 0 0 8px 0;">Medical eBooks</h2>
           <p style="font-size: 16px; color: #64748b; margin: 0; font-weight: 500;">Select Quota Type</p>
         </div>
 
@@ -5714,45 +5754,63 @@
         <div class="mo-grid">
 
           <!-- AIQ Card -->
-          <div class="mo-card scale-up"
+          <div class="mo-card scale-up" style="position: relative;"
             onclick="openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
+            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
             <div class="mo-icon" style="color: #facc15;">
               <i class="fas fa-globe"></i>
             </div>
             <h3 class="mo-title">All India Quota</h3>
             <p class="mo-subtitle">15% AIQ Counselling</p>
+            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            <div style="margin: 8px 0 12px 0;">
+              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;398</span>
+                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;199</span>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
+                You save &#8377;199
+              </div>
+            </div>
             <div class="mo-highlight" style="background: rgba(37,99,235,0.1); color: #facc15; margin-bottom: 12px;">
               Top Colleges Included
             </div>
-            <div
-              style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <i class="fas fa-tag"></i> Starts from &#8377;199
-            </div>
+            
             <button class="mo-btn" style="background: #2563eb;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'All India Quota', 199, 'Medical AIQ eBooks')">
-              Buy AIQ eBooks
+              Buy Now at &#8377;199
             </button>
+            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
           </div>
 
           <!-- State Quota Card -->
-          <div class="mo-card scale-up"
+          <div class="mo-card scale-up" style="position: relative;"
             onclick="openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
-            <div class="mo-icon" style="color: #16a34a;">
+            <div class="ec-discount-badge" style="position: absolute; top: -10px; left: -10px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">🔥 50% OFF</div>
+            <div class="mo-icon" style="color: #16a34a !important;">
               <i class="fas fa-map"></i>
             </div>
             <h3 class="mo-title">State Quota</h3>
             <p class="mo-subtitle">85% State Counselling</p>
-            <div class="mo-highlight" style="background: rgba(22,163,74,0.1); color: #16a34a; margin-bottom: 12px;">
+            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            <div style="margin: 8px 0 12px 0;">
+              <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;198</span>
+                <span style="font-size: 16px; font-weight: 800; color: #f59e0b !important;">&#8377;99</span>
+              </div>
+              <div style="font-size: 11px; font-weight: 700; color: #16a34a !important; margin-top: 2px;">
+                You save &#8377;99
+              </div>
+            </div>
+            <div class="mo-highlight" style="background: rgba(22,163,74,0.1); color: #16a34a !important; margin-bottom: 12px;">
               State-wise Detailed Data
             </div>
-            <div
-              style="font-size: 12px; font-weight: 600; color: #16a34a; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-              <i class="fas fa-tag"></i> Starts from &#8377;99
-            </div>
+            
             <button class="mo-btn" style="background: #16a34a;"
               onclick="event.stopPropagation(); openEbookPurchaseModal('Medical', 'State Quota', 99, 'Medical State Quota eBooks')">
-              Buy State eBooks
+              Buy Now at &#8377;99
             </button>
+            <div style="font-size: 11px; font-weight: 700; color: #ef4444; margin-top: 12px;">⏳ Limited Time Offer</div>
           </div>
 
         </div>
@@ -5860,7 +5918,7 @@
             .cart-item-price {
               font-size: 14px;
               font-weight: 700;
-              color: #16a34a;
+              color: #16a34a !important;
             }
 
             .cart-item-remove {
@@ -6185,7 +6243,7 @@
       style="padding: 20px; text-align: center; display: none; min-height: 100vh;">
       <div class="fade-up"
         style="max-width: 600px; margin: 100px auto; background: #ffffff; border-radius: 16px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
-        <div style="font-size: 60px; color: #16a34a; margin-bottom: 20px;">
+        <div style="font-size: 60px; color: #16a34a !important; margin-bottom: 20px;">
           <i class="fas fa-check-circle"></i>
         </div>
         <h1 style="font-size: 28px; font-weight: 700; color: #111; margin-bottom: 12px;">Payment Successful!</h1>
@@ -6419,7 +6477,7 @@
         class="fas fa-times"></i></button>
 
     <div style="text-align: center; margin-bottom: 24px;">
-      <h3 id="authModalTitle" style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 6px 0;">Welcome Back
+      <h3 id="authModalTitle" style="font-size: 22px; font-weight: 700; color: #1e293b !important; margin: 0 0 6px 0;">Welcome Back
         &#128075;</h3>
       <p id="authModalSubtitle" style="font-size: 14px; color: #64748b; margin: 0;">Login to continue</p>
     </div>
@@ -6464,7 +6522,7 @@
 
     <div style="display: flex; align-items: center; margin: 24px 0;">
       <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
-      <span style="padding: 0 12px; color: #94a3b8; font-size: 12px; font-weight: 600;">OR</span>
+      <span style="padding: 0 12px; color: #94a3b8 !important; font-size: 12px; font-weight: 600;">OR</span>
       <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
     </div>
 
@@ -6516,7 +6574,7 @@
         border: 1px solid #cbd5e1;
         font-size: 14px;
         font-family: inherit;
-        color: #1e293b;
+        color: #1e293b !important;
         box-sizing: border-box;
         outline: none;
         transition: border-color 0.2s, box-shadow 0.2s;
@@ -6570,14 +6628,14 @@
       }
 
       .close-eb-btn:hover {
-        color: #1e293b;
+        color: #1e293b !important;
       }
     </style>
 
     <button class="close-eb-btn" onclick="closeEbookPurchaseModal()"><i class="fas fa-times"></i></button>
 
     <div style="text-align: center; margin-bottom: 24px;">
-      <h3 style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0;">Complete Your Details</h3>
+      <h3 style="font-size: 22px; font-weight: 700; color: #1e293b !important; margin: 0 0 4px 0;">Complete Your Details</h3>
       <p style="font-size: 14px; color: #64748b; margin: 0;">Get personalized cutoff insights</p>
     </div>
 
@@ -6683,7 +6741,7 @@
 
     <div style="text-align: center; margin-top: 16px;">
       <p
-        style="font-size: 11px; color: #94a3b8; margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px;">
+        style="font-size: 11px; color: #94a3b8 !important; margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px;">
         <i class="fas fa-shield-alt"></i> Your data is 100% secure and used only for cutoff analysis.
       </p>
     </div>
@@ -6709,7 +6767,7 @@
     <button class="close-eb-btn" onclick="window.closeCounsellingBookingModal()"><i class="fas fa-times"></i></button>
 
     <div style="text-align: center; margin-bottom: 24px;">
-      <h2 style="font-size: 22px; font-weight: 700; color: #1e293b; margin: 0 0 4px 0;">Book Counselling</h2>
+      <h2 style="font-size: 22px; font-weight: 700; color: #1e293b !important; margin: 0 0 4px 0;">Book Counselling</h2>
       <p style="font-size: 14px; color: #64748b; margin: 0;">Fill details to confirm your slot</p>
     </div>
 
@@ -6787,7 +6845,7 @@
 
     <div style="text-align: center; margin-top: 16px;">
       <p
-        style="font-size: 11px; color: #94a3b8; margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px;">
+        style="font-size: 11px; color: #94a3b8 !important; margin: 0; display: flex; align-items: center; justify-content: center; gap: 4px;">
         <i class="fas fa-shield-alt"></i> Official counselling slot booking.
       </p>
     </div>
@@ -8137,7 +8195,7 @@
       .blog-empty {
         text-align: center;
         padding: 60px 20px;
-        color: #94a3b8;
+        color: #94a3b8 !important;
         grid-column: 1 / -1;
       }
 
@@ -8216,7 +8274,7 @@
       <div id="blogEmptyState2" class="blog-empty" style="display:none;">
         <i class="fa-solid fa-folder-open" style="font-size:48px;margin-bottom:16px;color:#cbd5e1;"></i>
         <h3 style="font-size: 18px; color: #f8fafc;">No articles found</h3>
-        <p style="color: #94a3b8;">Try adjusting your search or filter criteria.</p>
+        <p style="color: #94a3b8 !important;">Try adjusting your search or filter criteria.</p>
       </div>
       
       <button id="blogLoadMore" class="blog-load-more" style="display:none;">Load More Articles</button>
@@ -8449,7 +8507,7 @@
       .bd-latest-img-ph {
         width: 70px; height: 70px; border-radius: 12px;
         background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
-        color: #94a3b8; flex-shrink: 0;
+        color: #94a3b8 !important; flex-shrink: 0;
       }
       .bd-latest-info { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
       .bd-latest-title {
