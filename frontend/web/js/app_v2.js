@@ -619,7 +619,7 @@ async function renderOrders() {
     }
 
     var html = '<div class="orders-page-wrapper" style="padding:120px 20px 60px; max-width: 1000px; margin: 0 auto; min-height: 80vh;">' +
-        '<div class="glass-panel" style="padding:40px; border-radius: 24px; background: rgba(255, 255, 255, 0.08) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(244, 180, 0, 0.6) !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">' +
+        '<div class="orders-container-premium" style="padding:40px; border-radius: 24px; background: rgba(255, 255, 255, 0.08) !important; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(244, 180, 0, 0.6) !important; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">' +
             '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; flex-wrap: wrap; gap: 15px;">' +
                 '<div>' +
                     '<h2 style="font-size: 32px; font-weight: 800; color: #fff;">Order History</h2>' +
@@ -659,11 +659,11 @@ async function renderOrders() {
                 }
             }
 
-            html += '<div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">' +
+            html += '<div class="order-card-premium" style="background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">' +
                         
                         '<div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">' +
                             '<div>' +
-                                '<div style="font-size: 12px; color: rgba(255,255,255,0.4); font-family: monospace; margin-bottom: 4px; font-weight: 600;">ORDER ID: ' + (order.id || 'N/A').split('-')[0].toUpperCase() + '</div>' +
+                                '<div class="order-id-label" style="font-size: 12px; color: rgba(255,255,255,0.4); font-family: monospace; margin-bottom: 4px; font-weight: 600;">ORDER ID: ' + (order.id || 'N/A').split('-')[0].toUpperCase() + '</div>' +
                                 '<h3 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;">' + typeIcon + ' ' + order.display_name + '</h3>' +
                             '</div>' +
                             '<div style="text-align: right;">' +
