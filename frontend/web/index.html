@@ -2544,12 +2544,12 @@
 
         .team-card {
           background: #ffffff;
-          border: 1px solid #f1f5f9;
+          border: 1px solid rgba(244, 180, 0, 0.6);
           border-radius: 20px;
           padding: 20px;
           display: flex;
           gap: 25px;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+          box-shadow: 0 0 15px rgba(244, 180, 0, 0.2);
           position: relative;
         }
 
@@ -2822,10 +2822,10 @@
     </div>
 
     <!-- Counselling Selection Section -->
-    <div id="section-counselling" class="page-section" style="background: #ffffff">
+    <div id="section-counselling" class="page-section" style="background: transparent">
       <section style="
             padding: 120px 16px 80px;
-            background: #ffffff;
+            background: transparent;
             min-height: 80vh;
           ">
         <div class="container">
@@ -2834,14 +2834,14 @@
                 font-size: 28px;
                 font-weight: 700;
                 margin-bottom: 10px;
-                color: #222;
+                color: #ffffff;
               ">
             Book Your Counselling
           </h2>
           <p style="
                 text-align: center;
                 font-size: 15px;
-                color: #666;
+                color: rgba(255,255,255,0.7);
                 margin-bottom: 40px;
               ">
             Choose the right path for your career
@@ -2859,7 +2859,7 @@
                   background: linear-gradient(135deg, #fed700, #fed700);
                   padding: 24px;
                   border-radius: 16px;
-                  color: #000;
+                  color: #fff;
                   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
                   cursor: pointer;
                 " onclick="window.navigate('medical-pricing')">
@@ -2877,7 +2877,7 @@
                   background: linear-gradient(135deg, #a5d6a7, #66bb6a);
                   padding: 24px;
                   border-radius: 16px;
-                  color: #000;
+                  color: #fff;
                   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
                   cursor: pointer;
                 " onclick="window.navigate('ayush-pricing')">
@@ -2895,7 +2895,7 @@
                   background: linear-gradient(135deg, #90caf9, #42a5f5);
                   padding: 24px;
                   border-radius: 16px;
-                  color: #000;
+                  color: #fff;
                   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
                   cursor: pointer;
                   position: relative;
@@ -2955,7 +2955,7 @@
       <section style="padding: 120px 16px 80px">
         <div class="container fade-up">
           <button class="btn btn-ghost" onclick="window.navigate('counselling')"
-            style="margin-bottom: 20px; color: #4b5563; font-weight: 600">
+            style="margin-bottom: 20px; color: #ffffff; font-weight: 600">
             &#x2190; Back to Options
           </button>
           <h2 style="
@@ -3366,7 +3366,7 @@
       <section style="padding: 120px 16px 80px">
         <div class="container fade-up">
           <button class="btn btn-ghost" onclick="window.navigate('counselling')"
-            style="margin-bottom: 20px; color: #4b5563; font-weight: 600">
+            style="margin-bottom: 20px; color: #ffffff; font-weight: 600">
             &#x2190; Back to Options
           </button>
           <h2 style="
@@ -3751,7 +3751,7 @@
       <section style="padding: 120px 16px 80px">
         <div class="container fade-up">
           <button class="btn btn-ghost" onclick="window.navigate('counselling')"
-            style="margin-bottom: 20px; color: #4b5563; font-weight: 600">
+            style="margin-bottom: 20px; color: #ffffff; font-weight: 600">
             &#x2190; Back to Options
           </button>
           <h2 style="
@@ -4108,7 +4108,7 @@
       <section style="padding: 120px 16px 80px">
         <div class="container fade-up">
           <button class="btn btn-ghost" onclick="window.navigate('counselling')"
-            style="margin-bottom: 20px; color: #4b5563; font-weight: 600">
+            style="margin-bottom: 20px; color: #ffffff; font-weight: 600">
             &#x2190; Back to Options
           </button>
           <h2 style="
@@ -4501,8 +4501,9 @@
           position: relative;
           border-radius: 24px;
           margin: 10px;
-          box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
+          box-shadow: 0 0 15px rgba(244, 180, 0, 0.2);
           overflow: hidden;
+          border: 1px solid rgba(244, 180, 0, 0.6);
         }
 
         .cp-left::before {
@@ -4613,6 +4614,10 @@
           display: flex;
           flex-direction: column;
           justify-content: center;
+          border: 1px solid rgba(244, 180, 0, 0.6);
+          border-radius: 24px;
+          box-shadow: 0 0 15px rgba(244, 180, 0, 0.2);
+          margin: 10px;
         }
 
         .cp-right-header {
@@ -5373,7 +5378,7 @@
         #app-root .ec-title {
           font-size: 15px;
           font-weight: 600;
-          color: #0f172a !important;
+          color: #ffffff !important;
           margin: 0 0 4px 0;
         }
 
@@ -5672,8 +5677,8 @@
         }
 
         .mo-card {
-          background: #ffffff;
-          border: 1px solid #e2e8f0;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(244, 180, 0, 0.5);
           border-radius: 16px;
           padding: 18px;
           box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
@@ -5689,7 +5694,7 @@
           width: 60px;
           height: 60px;
           border-radius: 12px;
-          background: #f1f5f9;
+          background: rgba(255, 255, 255, 0.1);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -5757,15 +5762,15 @@
         <!-- Back Button -->
         <div style="text-align: left; margin-bottom: 20px;">
           <button onclick="window.navigate('ebooks')"
-            style="background: transparent; border: none; color: #64748b; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+            style="background: transparent; border: none; color: #ffffff; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
             <i class="fas fa-arrow-left"></i> Back to eBooks
           </button>
         </div>
 
         <!-- Header -->
         <div style="margin-bottom: 40px;">
-          <h2 style="font-size: 32px; font-weight: 800; color: #1e293b !important; margin: 0 0 8px 0;">Medical eBooks</h2>
-          <p style="font-size: 16px; color: #64748b; margin: 0; font-weight: 500;">Select Quota Type</p>
+          <h2 style="font-size: 32px; font-weight: 800; color: #ffffff !important; margin: 0 0 8px 0;">Medical eBooks</h2>
+          <p style="font-size: 16px; color: rgba(255,255,255,0.7); margin: 0; font-weight: 500;">Select Quota Type</p>
         </div>
 
         <!-- Options Grid -->
@@ -10311,19 +10316,19 @@
     }
 
     /* Keep cards glassmorphic for readability */
-    .premium-news-card, .stat-card, .step, .service-card, .pricing-card, .testimonial-card, .notif-card, .wcu-item, .wcu2-feat, .wcu2-stat, .ebook-card-v2, .counselling-card, .ps-json-card, .eb-json-feature-card, .rev-p-card, .card-date, .premium-news-btn {
+    .premium-news-card, .stat-card, .step, .service-card, .pricing-card, .testimonial-card, .notif-card, .wcu-item, .wcu2-feat, .wcu2-stat, .ebook-card-v2, .ps-json-card, .eb-json-feature-card, .rev-p-card, .card-date, .premium-news-btn {
       background: rgba(255, 255, 255, 0.08) !important;
       backdrop-filter: blur(12px) !important;
       border: 1px solid rgba(255, 255, 255, 0.15) !important;
     }
 
     /* Golden Glowing Borders for All Main Cards */
-    .premium-news-card, .stat-card, .step, .service-card, .pricing-card, .testimonial-card, .notif-card, .wcu-item, .wcu2-feat, .wcu2-stat, .ebook-card-v2, .counselling-card, .ps-json-card, .eb-json-feature-card, .rev-p-card {
+    .premium-news-card, .stat-card, .step, .service-card, .pricing-card, .testimonial-card, .notif-card, .wcu-item, .wcu2-feat, .wcu2-stat, .ebook-card-v2, .ps-json-card, .eb-json-feature-card, .rev-p-card {
       border: 1px solid rgba(244, 180, 0, 0.6) !important;
       box-shadow: 0 0 15px rgba(244, 180, 0, 0.2) !important;
     }
     
-    .premium-news-card:hover, .stat-card:hover, .step:hover, .service-card:hover, .pricing-card:hover, .testimonial-card:hover, .notif-card:hover, .wcu-item:hover, .wcu2-feat:hover, .wcu2-stat:hover, .ebook-card-v2:hover, .counselling-card:hover, .ps-json-card:hover, .eb-json-feature-card:hover, .rev-p-card:hover {
+    .premium-news-card:hover, .stat-card:hover, .step:hover, .service-card:hover, .pricing-card:hover, .testimonial-card:hover, .notif-card:hover, .wcu-item:hover, .wcu2-feat:hover, .wcu2-stat:hover, .ebook-card-v2:hover, .ps-json-card:hover, .eb-json-feature-card:hover, .rev-p-card:hover {
       border: 1px solid rgba(244, 180, 0, 1) !important;
       box-shadow: 0 0 25px rgba(244, 180, 0, 0.4) !important;
       background: rgba(255, 255, 255, 0.12) !important;
