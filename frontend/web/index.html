@@ -1089,7 +1089,7 @@
             gap: 16px;
             padding: 14px 18px;
             border-radius: 16px;
-            background: #FAFAFA;
+            background: transparent !important;
             border: 1.5px solid rgba(255, 215, 0, 0.5);
             box-shadow: 0 4px 15px rgba(255, 215, 0, 0.12);
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
@@ -1132,7 +1132,7 @@
           .wcu2-stats {
             max-width: 1200px;
             margin: 50px auto 0;
-            background: #F9F9F9;
+            background: transparent !important;
             border-radius: 50px;
             padding: 22px 40px;
             display: flex;
@@ -1227,7 +1227,20 @@
           }
 
           /* ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼ Responsive ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼ */
+          
           @media (max-width: 900px) {
+            .wcu2-wrap, .wcu2-left, .wcu2-right, .wcu2-stats, .wcu2-features, .wcu2-feat {
+              background: transparent !important;
+            }
+            .wcu2-stats {
+              background: transparent !important;
+              background-color: transparent !important;
+            }
+            /* If the image has a white background, try to blend it, or hide if it's broken */
+            .wcu2-dd-img {
+              background: transparent !important;
+            }
+
             .wcu2-wrap {
               flex-direction: column;
               gap: 40px;
@@ -1250,15 +1263,20 @@
             }
 
             .wcu2-stats {
-              flex-wrap: wrap;
+              display: grid;
+              grid-template-columns: 1fr 1fr;
               border-radius: 24px;
               padding: 20px;
               gap: 14px;
             }
 
             .wcu2-stat {
-              flex: 1 1 40%;
+              width: 100%;
+              min-height: 90px;
+              box-sizing: border-box;
               justify-content: flex-start;
+              align-items: center;
+              padding: 16px;
             }
 
             .wcu2-stat-divider {
@@ -5361,7 +5379,7 @@
 
         #app-root .ec-courses {
           font-size: 12px;
-          color: #64748b !important;
+          color: #ffffff !important;
           margin: 0 0 8px 0;
         }
 
@@ -5514,7 +5532,7 @@
             </div>
             <h3 class="ec-title">Medical</h3>
             <p class="ec-courses">MBBS</p>
-            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            
             <div style="margin: 8px 0 12px 0;">
               <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;198</span>
@@ -5545,7 +5563,7 @@
             </div>
             <h3 class="ec-title">Dental</h3>
             <p class="ec-courses">BDS</p>
-            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            
             <div style="margin: 8px 0 12px 0;">
               <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;298</span>
@@ -5576,7 +5594,7 @@
             </div>
             <h3 class="ec-title">AYUSH</h3>
             <p class="ec-courses">BAMS, BHMS, BSMS, BUMS</p>
-            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            
             <div style="margin: 8px 0 12px 0;">
               <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;398</span>
@@ -5608,7 +5626,7 @@
             </div>
             <h3 class="ec-title">Veterinary</h3>
             <p class="ec-courses">BVSc</p>
-            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            
             <div style="margin: 8px 0 12px 0;">
               <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;298</span>
@@ -5688,7 +5706,7 @@
 
         #app-root .mo-subtitle {
           font-size: 14px;
-          color: #64748b !important;
+          color: #ffffff !important;
           margin: 0 0 16px 0;
         }
 
@@ -5762,7 +5780,7 @@
             </div>
             <h3 class="mo-title">All India Quota</h3>
             <p class="mo-subtitle">15% AIQ Counselling</p>
-            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            
             <div style="margin: 8px 0 12px 0;">
               <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;398</span>
@@ -5792,7 +5810,7 @@
             </div>
             <h3 class="mo-title">State Quota</h3>
             <p class="mo-subtitle">85% State Counselling</p>
-            <p style="font-size: 11px; font-weight: 600; color: #1e293b !important; margin: 0 0 10px 0;">Cutoff + Counselling + College Guide</p>
+            
             <div style="margin: 8px 0 12px 0;">
               <div style="font-size: 13px; font-weight: 600; color: #1e293b !important; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <span style="color: #94a3b8 !important; text-decoration: line-through;">&#8377;198</span>
@@ -7543,15 +7561,15 @@
             <div class="title-icon"><i class="fa-solid fa-bullhorn"></i></div>
             All News & Updates
           </div>
-          <p style="color: #666; font-size: 15px;">Stay up to date with the latest announcements regarding NEET
+          <p style="color: rgba(255,255,255,0.7); font-size: 15px;">Stay up to date with the latest announcements regarding NEET
             counselling.</p>
         </div>
 
         <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
           <input type="text" id="newsSearchInput" placeholder="Search updates..."
-            style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 14px; width: 100%; max-width: 400px; outline: none; font-family: inherit;">
+            style="padding: 12px 20px; border: 1px solid rgba(244,180,0,0.5); border-radius: 30px; font-size: 14px; width: 100%; max-width: 400px; outline: none; font-family: inherit; background: rgba(255,255,255,0.08); color: #fff;">
           <select id="newsCategoryFilter"
-            style="padding: 12px 20px; border: 1px solid #ddd; border-radius: 30px; font-size: 14px; outline: none; font-family: inherit; background: #fff;">
+            style="padding: 12px 20px; border: 1px solid rgba(244,180,0,0.5); border-radius: 30px; font-size: 14px; outline: none; font-family: inherit; background: rgba(255,255,255,0.08); color: #fff;">
             <option value="All">All Categories</option>
             <option value="Admit Card">Admit Card</option>
             <option value="NEET">NEET</option>
@@ -7574,10 +7592,10 @@
         </div>
 
         <div id="newsEmptyState"
-          style="display: none; text-align: center; padding: 60px 20px; background: #f9fafb; border-radius: 16px;">
-          <i class="fa-solid fa-folder-open" style="font-size: 48px; color: #cbd5e1; margin-bottom: 15px;"></i>
-          <h3 style="font-size: 18px; color: #334155; margin-bottom: 8px;">No Updates Found</h3>
-          <p style="color: #64748b; font-size: 14px;">Try adjusting your search or filter criteria.</p>
+          style="display: none; text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.06); border-radius: 16px; border: 1px solid rgba(244,180,0,0.3);">
+          <i class="fa-solid fa-folder-open" style="font-size: 48px; color: rgba(255,255,255,0.4); margin-bottom: 15px;"></i>
+          <h3 style="font-size: 18px; color: #fff; margin-bottom: 8px;">No Updates Found</h3>
+          <p style="color: rgba(255,255,255,0.6); font-size: 14px;">Try adjusting your search or filter criteria.</p>
         </div>
       </div>
     </section>
@@ -7603,7 +7621,7 @@
         /* 1. Section Container */
         #section-news .premium-news-section {
           padding: 80px 16px 40px !important;
-          background-color: #f9fafb !important;
+          background-color: transparent !important;
         }
 
         /* 2. Header */
@@ -7621,7 +7639,7 @@
 
         #section-news .premium-news-header p {
           font-size: 13px !important;
-          color: #6b7280 !important;
+          color: rgba(255, 255, 255, 0.6) !important;
           display: -webkit-box !important;
           -webkit-line-clamp: 2 !important;
           -webkit-box-orient: vertical !important;
@@ -7649,7 +7667,7 @@
           width: 100% !important;
           height: 44px !important;
           border-radius: 12px !important;
-          background-color: #fff !important;
+          background-color: rgba(255,255,255,0.08) !important;
           border: 1px solid #eee !important;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
         }
@@ -7671,7 +7689,7 @@
           width: 100% !important;
           border-radius: 16px !important;
           padding: 14px !important;
-          background: #fff !important;
+          background: rgba(255, 255, 255, 0.08) !important;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
           margin-bottom: 14px !important;
           border: none !important;
@@ -7699,7 +7717,7 @@
 
         #section-news .card-desc {
           font-size: 13px !important;
-          color: #6b7280 !important;
+          color: rgba(255, 255, 255, 0.6) !important;
           display: -webkit-box !important;
           -webkit-line-clamp: 2 !important;
           -webkit-box-orient: vertical !important;
@@ -7712,9 +7730,9 @@
           font-size: 11px !important;
           padding: 4px 8px !important;
           border-radius: 999px !important;
-          background: #f3f4f6 !important;
+          background: rgba(244, 180, 0, 0.15) !important;
           font-weight: 500 !important;
-          color: #4b5563 !important;
+          color: #FFD700 !important;
         }
 
         #section-news .card-icon {
@@ -7806,7 +7824,7 @@
                     <div class="card-date">${dateStr}</div>
                   </div>
                   <div class="card-title">${item.title}</div>
-                  <div class="card-desc" style="font-size: 13px; color: #666; margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.description}</div>
+                  <div class="card-desc" style="font-size: 13px; color: rgba(255,255,255,0.65); margin-bottom: 16px; line-height: 1.5; flex-grow: 1;">${item.description}</div>
                   <div class="card-footer" style="margin-top: auto;">${footerText} <i class="fa-solid fa-arrow-right"></i></div>
                 `;
               grid.appendChild(card);
@@ -7847,10 +7865,10 @@
 
   <!-- News Detail Section -->
   <div id="section-news-detail" class="page-section" style="display: none;">
-    <section style="min-height: 80vh; padding: 100px 20px 60px; background: #fff;">
+    <section style="min-height: 80vh; padding: 100px 20px 60px; background: transparent;">
       <div class="premium-news-container" style="max-width: 800px;">
         <a href="javascript:void(0)" onclick="window.navigate('news')"
-          style="display: inline-flex; align-items: center; gap: 8px; color: #64748b; font-size: 14px; text-decoration: none; font-weight: 500; margin-bottom: 30px; padding: 8px 16px; background: #f8fafc; border-radius: 30px; transition: background 0.2s;">
+          style="display: inline-flex; align-items: center; gap: 8px; color: #FFD700; font-size: 14px; text-decoration: none; font-weight: 500; margin-bottom: 30px; padding: 8px 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(244,180,0,0.4); border-radius: 30px; transition: background 0.2s;">
           <i class="fa-solid fa-arrow-left"></i> Back to Updates
         </a>
 
@@ -7861,24 +7879,24 @@
         <div id="newsDetailContent" style="display: none;">
           <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 20px;">
             <span id="nd-category"
-              style="font-size: 13px; font-weight: 600; color: #0284c7; background: #e0f2fe; padding: 6px 14px; border-radius: 20px;"></span>
-            <span id="nd-date" style="font-size: 14px; color: #64748b; font-weight: 500;"></span>
+              style="font-size: 13px; font-weight: 600; color: #FFD700; background: rgba(244,180,0,0.15); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(244,180,0,0.3);"></span>
+            <span id="nd-date" style="font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500;"></span>
           </div>
           <h1 id="nd-title"
-            style="font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 24px; line-height: 1.2;"></h1>
+            style="font-size: 32px; font-weight: 800; color: #ffffff; margin-bottom: 24px; line-height: 1.2;"></h1>
 
           <img id="nd-image" src=""
             style="width: 100%; height: auto; max-height: 400px; object-fit: cover; border-radius: 16px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: none;">
 
           <div id="nd-html"
-            style="font-size: 16px; line-height: 1.8; color: #334155; border-top: 1px solid #e2e8f0; padding-top: 24px;">
+            style="font-size: 16px; line-height: 1.8; color: rgba(255,255,255,0.85); border-top: 1px solid rgba(255,255,255,0.15); padding-top: 24px;">
           </div>
         </div>
 
         <div id="newsDetailError" style="display: none; text-align: center; padding: 60px 20px;">
           <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; color: #ef4444; margin-bottom: 15px;"></i>
-          <h3 style="font-size: 18px; color: #0f172a;">Update not found</h3>
-          <p style="color: #64748b; font-size: 14px;">The update you are looking for does not exist or has been removed.
+          <h3 style="font-size: 18px; color: #ffffff;">Update not found</h3>
+          <p style="color: rgba(255,255,255,0.6); font-size: 14px;">The update you are looking for does not exist or has been removed.
           </p>
         </div>
       </div>
@@ -7887,22 +7905,44 @@
       #nd-html h1,
       #nd-html h2,
       #nd-html h3 {
-        color: #0f172a;
+        color: #ffffff !important;
         margin-top: 1.5em;
         margin-bottom: 0.5em;
         font-weight: 700;
+      }
+
+      #nd-html p,
+      #nd-html span,
+      #nd-html div,
+      #nd-html li,
+      #nd-html td,
+      #nd-html th,
+      #nd-html blockquote,
+      #nd-html figcaption {
+        color: rgba(255, 255, 255, 0.85) !important;
       }
 
       #nd-html p {
         margin-bottom: 1em;
       }
 
+      #nd-html strong,
+      #nd-html b {
+        color: #ffffff !important;
+      }
+
+      #nd-html em,
+      #nd-html i:not(.fa-solid):not(.fa-regular):not(.fa-brands) {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+
       #nd-html a {
-        color: #facc15;
+        color: #FFD700 !important;
         text-decoration: underline;
       }
 
-      #nd-html ul {
+      #nd-html ul,
+      #nd-html ol {
         list-style: none;
         padding-left: 0;
         margin-bottom: 1.5em;
@@ -7910,6 +7950,25 @@
 
       #nd-html li {
         margin-bottom: 0.5em;
+        color: rgba(255, 255, 255, 0.85) !important;
+      }
+
+      #nd-html h4,
+      #nd-html h5,
+      #nd-html h6 {
+        color: #ffffff !important;
+      }
+
+      #nd-html table {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+      }
+
+      #nd-html code,
+      #nd-html pre {
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #FFD700 !important;
+        border-radius: 6px;
+        padding: 2px 6px;
       }
     </style>
     <script>
@@ -10282,6 +10341,62 @@
     /* Top News Ticker */
     .top-news-ticker {
       background: rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* ===== NEWS SECTION DARK THEME FIXES ===== */
+    /* Card description text */
+    #section-news .card-desc {
+      color: rgba(255, 255, 255, 0.65) !important;
+    }
+
+    /* Card title - bright white */
+    #section-news .card-title {
+      color: #ffffff !important;
+    }
+
+    /* Card date badge */
+    #section-news .card-date {
+      color: #FFD700 !important;
+      background: rgba(244, 180, 0, 0.15) !important;
+      border: 1px solid rgba(244, 180, 0, 0.3) !important;
+    }
+
+    /* Card footer / Read Full Update link */
+    #section-news .card-footer {
+      color: #FFD700 !important;
+    }
+    #section-news .card-footer i {
+      color: #FFD700 !important;
+    }
+
+    /* Search input styling */
+    #section-news #newsSearchInput {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(244, 180, 0, 0.5) !important;
+      color: #fff !important;
+    }
+    #section-news #newsSearchInput::placeholder {
+      color: rgba(255, 255, 255, 0.45) !important;
+    }
+
+    /* Category dropdown */
+    #section-news #newsCategoryFilter {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(244, 180, 0, 0.5) !important;
+      color: #fff !important;
+    }
+    #section-news #newsCategoryFilter option {
+      background: #2a0a5e !important;
+      color: #fff !important;
+    }
+
+    /* News detail section */
+    #section-news-detail section {
+      background: transparent !important;
+    }
+    #section-news-detail .card-date {
+      color: #FFD700 !important;
+      background: rgba(244, 180, 0, 0.15) !important;
     }
   </style>
 </body>
