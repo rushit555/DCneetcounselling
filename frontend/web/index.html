@@ -8898,104 +8898,91 @@
 
             try {
               let data;
-              let cached = null;
-              try { cached = sessionStorage.getItem('dc_blog_detail_' + slug); } catch(e) {}
-              if (cached) {
-                data = JSON.parse(cached);
-              }
+              try {
+                const res = await window.supabaseClient
+                  .from('blog_posts')
+                  .select('*')
+                  .eq('slug', slug)
+                  .single();
 
-              const fetchPromise = window.supabaseClient
-                .from('blog_posts')
-                .select('*')
-                .eq('slug', slug)
-                .single();
-
-              if (!data) {
-                const res = await fetchPromise;
                 if (res.error || !res.data) throw new Error("Not found");
                 data = res.data;
-                try { sessionStorage.setItem('dc_blog_detail_' + slug, JSON.stringify(data)); } catch(e) {}
-              } else {
-                fetchPromise.then(res => {
-                  if (!res.error && res.data) {
-                    try { sessionStorage.setItem('dc_blog_detail_' + slug, JSON.stringify(res.data)); } catch(e) {}
-                  }
-                });
-              }
 
-              // --- SEO HEAD INJECTION ---
-              document.title = data.meta_title || data.title || "DC NEET Counselling Blog";
-              
-              let metaDesc = document.querySelector('meta[name="description"]');
-              if (!metaDesc) {
-                metaDesc = document.createElement('meta');
-                metaDesc.name = "description";
-                document.head.appendChild(metaDesc);
-              }
-              metaDesc.content = data.meta_description || data.short_description || "";
+                // --- SEO HEAD INJECTION ---
+                document.title = data.meta_title || data.title || "DC NEET Counselling Blog";
+                
+                let metaDesc = document.querySelector('meta[name="description"]');
+                if (!metaDesc) {
+                  metaDesc = document.createElement('meta');
+                  metaDesc.name = "description";
+                  document.head.appendChild(metaDesc);
+                }
+                metaDesc.content = data.meta_description || data.short_description || "";
 
-              let metaKeywords = document.querySelector('meta[name="keywords"]');
-              if (!metaKeywords) {
-                metaKeywords = document.createElement('meta');
-                metaKeywords.name = "keywords";
-                document.head.appendChild(metaKeywords);
-              }
-              let kws = [];
-              if (data.primary_keyword) kws.push(data.primary_keyword);
-              if (data.tags && data.tags.length) kws = kws.concat(data.tags);
-              else if (data.keywords) kws.push(data.keywords);
-              if (kws.length > 0) metaKeywords.content = kws.join(", ");
-              // --------------------------
+                let metaKeywords = document.querySelector('meta[name="keywords"]');
+                if (!metaKeywords) {
+                  metaKeywords = document.createElement('meta');
+                  metaKeywords.name = "keywords";
+                  document.head.appendChild(metaKeywords);
+                }
+                let kws = [];
+                if (data.primary_keyword) kws.push(data.primary_keyword);
+                if (data.tags && data.tags.length) kws = kws.concat(data.tags);
+                else if (data.keywords) kws.push(data.keywords);
+                if (kws.length > 0) metaKeywords.content = kws.join(", ");
 
-              // --- JSON-LD STRUCTURED DATA ---
-              let oldSchema = document.getElementById('blog-schema');
-              if (oldSchema) oldSchema.remove();
+                // --- JSON-LD STRUCTURED DATA ---
+                let oldSchema = document.getElementById('blog-schema');
+                if (oldSchema) oldSchema.remove();
 
-              const schemaData = {
-                "@context": "https://schema.org",
-                "@graph": [
-                  {
-                    "@type": "Article",
-                    "headline": data.title,
-                    "description": data.meta_description || data.short_description || "",
-                    "image": data.image_url || data.thumbnail_url || "https://dcneetcounselling.com/assets/logo.jpg",
-                    "author": {
-                      "@type": "Person",
-                      "name": data.author || "DC NEET Counselling"
-                    },
-                    "publisher": {
-                      "@type": "Organization",
-                      "name": "DC NEET Counselling",
-                      "logo": {
-                        "@type": "ImageObject",
-                        "url": "https://dcneetcounselling.com/assets/logo.jpg"
-                      }
-                    },
-                    "datePublished": data.published_at || data.created_at || new Date().toISOString(),
-                    "dateModified": data.updated_at || data.created_at || new Date().toISOString()
-                  }
-                ]
-              };
+                const schemaData = {
+                  "@context": "https://schema.org",
+                  "@graph": [
+                    {
+                      "@type": "Article",
+                      "headline": data.title,
+                      "description": data.meta_description || data.short_description || "",
+                      "image": data.image_url || data.thumbnail_url || "https://dcneetcounselling.com/assets/logo.jpg",
+                      "author": {
+                        "@type": "Person",
+                        "name": data.author || "DC NEET Counselling"
+                      },
+                      "publisher": {
+                        "@type": "Organization",
+                        "name": "DC NEET Counselling",
+                        "logo": {
+                          "@type": "ImageObject",
+                          "url": "https://dcneetcounselling.com/assets/logo.jpg"
+                        }
+                      },
+                      "datePublished": data.published_at || data.created_at || new Date().toISOString(),
+                      "dateModified": data.updated_at || data.created_at || new Date().toISOString()
+                    }
+                  ]
+                };
 
-              if (data.faq_schema && data.faq_schema.mainEntity) {
-                schemaData["@graph"].push({
-                  "@type": "FAQPage",
-                  "mainEntity": data.faq_schema.mainEntity
-                });
-              }
+                if (data.faq_schema && data.faq_schema.mainEntity) {
+                  schemaData["@graph"].push({
+                    "@type": "FAQPage",
+                    "mainEntity": data.faq_schema.mainEntity
+                  });
+                }
 
-              const scriptSchema = document.createElement('script');
-              scriptSchema.id = 'blog-schema';
-              scriptSchema.type = 'application/ld+json';
-              scriptSchema.text = JSON.stringify(schemaData);
-              document.head.appendChild(scriptSchema);
-              // -------------------------------
+                const scriptSchema = document.createElement('script');
+                scriptSchema.id = 'blog-schema';
+                scriptSchema.type = 'application/ld+json';
+                scriptSchema.text = JSON.stringify(schemaData);
+                document.head.appendChild(scriptSchema);
 
-              document.getElementById('bd-title').textContent = data.title;
-              document.getElementById('bd-category').textContent = data.category || 'General';
-              document.getElementById('bd-date').textContent = new Date(data.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-              let contentHtml = data.content || '';
-              const ctaHtml = `
+                document.getElementById('bd-title').textContent = data.title;
+                document.getElementById('bd-category').textContent = data.category || 'General';
+                document.getElementById('bd-date').textContent = new Date(data.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+                
+                let contentHtml = data.content || '';
+                // Safety fix: Remove literal \n characters from content
+                contentHtml = contentHtml.replace(/\\n/g, ' ');
+
+                const ctaHtml = `
 <div style="text-align:center; margin:30px 0; clear:both;">
   <a href="https://chat.whatsapp.com/BTyidnuD0Qg2G2k5FsgedA?mode=gi_t" target="_blank"
      style="background:#25D366;color:white !important;padding:12px 20px;margin:5px;border-radius:8px;text-decoration:none !important;font-weight:bold;display:inline-block;box-shadow:0 4px 10px rgba(37,211,102,0.3);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
@@ -9007,121 +8994,104 @@
   </a>
 </div>`;
 
-              if (!contentHtml.includes('https://chat.whatsapp.com/BTyidnuD0Qg2G2k5FsgedA')) {
-                let pCount = 0;
-                let insertIndex = -1;
-                let searchIdx = 0;
-                while (pCount < 2) {
-                  let nextP = contentHtml.indexOf('</p>', searchIdx);
-                  if (nextP === -1) break;
-                  pCount++;
-                  searchIdx = nextP + 4;
-                  insertIndex = searchIdx;
-                }
-
-                if (pCount >= 2 && insertIndex !== -1) {
-                  contentHtml = contentHtml.slice(0, insertIndex) + ctaHtml + contentHtml.slice(insertIndex);
-                } else {
-                  contentHtml += ctaHtml;
-                }
-              }
-
-              if (data.youtube_url) {
-                const match = data.youtube_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/);
-                const ytId = match ? match[1] : null;
-                if (ytId) {
-                  const ytHtml = `
-<div class="youtube-section" style="margin: 30px 0;">
-  <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 15px; color: #0f172a;">&#128250; Watch Related Video</h3>
-  <div class="video-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0;">
-    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px; border: none;" src="https://www.youtube.com/embed/${ytId}" title="YouTube video" allowfullscreen loading="lazy"></iframe>
-  </div>
-</div>`;
+                if (!contentHtml.includes('https://chat.whatsapp.com/BTyidnuD0Qg2G2k5FsgedA')) {
                   let pCount = 0;
                   let insertIndex = -1;
                   let searchIdx = 0;
-                  while (pCount < 3) {
+                  while (pCount < 2) {
                     let nextP = contentHtml.indexOf('</p>', searchIdx);
                     if (nextP === -1) break;
                     pCount++;
                     searchIdx = nextP + 4;
                     insertIndex = searchIdx;
                   }
-                  if (insertIndex !== -1) {
-                    contentHtml = contentHtml.slice(0, insertIndex) + ytHtml + contentHtml.slice(insertIndex);
+                  if (pCount >= 2 && insertIndex !== -1) {
+                    contentHtml = contentHtml.slice(0, insertIndex) + ctaHtml + contentHtml.slice(insertIndex);
                   } else {
-                    contentHtml += ytHtml;
+                    contentHtml += ctaHtml;
                   }
                 }
-              }
 
-              // --- CONTENT SEO RENDERING RULES ---
-              const tempDiv = document.createElement('div');
-              tempDiv.innerHTML = contentHtml;
-
-              const pk = data.primary_keyword || '';
-              const sk = data.secondary_keywords && data.secondary_keywords.length > 0 ? data.secondary_keywords : [];
-
-              if (pk) {
-                let h1 = tempDiv.querySelector('h1');
-                if (!h1) {
-                  h1 = document.createElement('h1');
-                  tempDiv.prepend(h1);
-                }
-                if (!h1.textContent.toLowerCase().includes(pk.toLowerCase())) {
-                  h1.textContent = h1.textContent + " - " + pk;
-                }
-
-                const firstP = tempDiv.querySelector('p');
-                if (firstP && !firstP.textContent.toLowerCase().includes(pk.toLowerCase())) {
-                  firstP.innerHTML = `<strong>${pk}</strong>: ${firstP.innerHTML}`;
-                }
-              }
-
-              if (sk.length > 0) {
-                const headings = tempDiv.querySelectorAll('h2, h3');
-                headings.forEach((h, i) => {
-                  const kw = sk[i % sk.length];
-                  if (!h.textContent.toLowerCase().includes(kw.toLowerCase())) {
-                    h.textContent = h.textContent + " (" + kw + ")";
+                if (data.youtube_url) {
+                  const match = data.youtube_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&]+)/);
+                  const ytId = match ? match[1] : null;
+                  if (ytId) {
+                    const ytHtml = `
+<div class="youtube-section" style="margin: 30px 0;">
+  <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 15px; color: #ffffff !important;">&#128250; Watch Related Video</h3>
+  <div class="video-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0;">
+    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px; border: none;" src="https://www.youtube.com/embed/${ytId}" title="YouTube video" allowfullscreen loading="lazy"></iframe>
+  </div>
+</div>`;
+                    let pCount = 0;
+                    let insertIndex = -1;
+                    let searchIdx = 0;
+                    while (pCount < 3) {
+                      let nextP = contentHtml.indexOf('</p>', searchIdx);
+                      if (nextP === -1) break;
+                      pCount++;
+                      searchIdx = nextP + 4;
+                      insertIndex = searchIdx;
+                    }
+                    if (insertIndex !== -1) {
+                      contentHtml = contentHtml.slice(0, insertIndex) + ytHtml + contentHtml.slice(insertIndex);
+                    } else {
+                      contentHtml += ytHtml;
+                    }
                   }
+                }
+
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = contentHtml;
+                const pk = data.primary_keyword || '';
+                const sk = data.secondary_keywords && data.secondary_keywords.length > 0 ? data.secondary_keywords : [];
+
+                if (pk) {
+                  let h1 = tempDiv.querySelector('h1');
+                  if (!h1) { h1 = document.createElement('h1'); tempDiv.prepend(h1); }
+                  if (!h1.textContent.toLowerCase().includes(pk.toLowerCase())) { h1.textContent = h1.textContent + " - " + pk; }
+                  const firstP = tempDiv.querySelector('p');
+                  if (firstP && !firstP.textContent.toLowerCase().includes(pk.toLowerCase())) { firstP.innerHTML = `<strong>${pk}</strong>: ${firstP.innerHTML}`; }
+                }
+
+                if (sk.length > 0) {
+                  const headings = tempDiv.querySelectorAll('h2, h3');
+                  headings.forEach((h, i) => {
+                    const kw = sk[i % sk.length];
+                    if (!h.textContent.toLowerCase().includes(kw.toLowerCase())) { h.textContent = h.textContent + " (" + kw + ")"; }
+                  });
+                }
+                
+                tempDiv.querySelectorAll('img').forEach((imgTag, i) => {
+                  imgTag.setAttribute('loading', 'lazy');
+                  if (!imgTag.getAttribute('alt') || imgTag.getAttribute('alt').trim() === '') { imgTag.setAttribute('alt', `${pk} - Image ${i + 1}`); }
+                  let src = imgTag.getAttribute('src');
+                  if (src && src.includes('/storage/v1/object/public/')) { imgTag.setAttribute('src', src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80'); }
                 });
-              }
-              
-              // --- IMAGE SEO OPTIMIZATION ---
-              const contentImages = tempDiv.querySelectorAll('img');
-              contentImages.forEach((imgTag, i) => {
-                imgTag.setAttribute('loading', 'lazy');
-                if (!imgTag.getAttribute('alt') || imgTag.getAttribute('alt').trim() === '') {
-                  imgTag.setAttribute('alt', `${pk} - Image ${i + 1}`);
-                }
-                let src = imgTag.getAttribute('src');
-                if (src && src.includes('/storage/v1/object/public/')) {
-                  imgTag.setAttribute('src', src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80');
-                }
-              });
 
-              contentHtml = tempDiv.innerHTML;
-              // -----------------------------------
+                contentHtml = tempDiv.innerHTML;
+                document.getElementById('bd-html').innerHTML = contentHtml;
 
-              document.getElementById('bd-html').innerHTML = contentHtml;
-
-              const img = document.getElementById('bd-image');
-              if (data.image_url) {
-                let finalImgUrl = data.image_url;
-                if (finalImgUrl.includes('/storage/v1/object/public/')) {
-                  finalImgUrl = finalImgUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80';
+                const img = document.getElementById('bd-image');
+                if (data.image_url) {
+                  let finalImgUrl = data.image_url;
+                  if (finalImgUrl.includes('/storage/v1/object/public/')) { finalImgUrl = finalImgUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80'; }
+                  img.src = finalImgUrl;
+                  img.setAttribute('alt', pk || data.title);
+                  img.setAttribute('loading', 'eager');
+                  img.style.display = 'block';
+                } else {
+                  img.style.display = 'none';
                 }
-                img.src = finalImgUrl;
-                img.setAttribute('alt', pk || data.title);
-                img.setAttribute('loading', 'eager');
-                img.style.display = 'block';
-              } else {
-                img.style.display = 'none';
+
+                document.getElementById('blogDetailLoading').style.display = 'none';
+                document.getElementById('blogDetailContent').style.display = 'block';
+              } catch (err) {
+                console.error("Fetch Error:", err);
+                document.getElementById('blogDetailLoading').style.display = 'none';
+                document.getElementById('blogDetailError').style.display = 'block';
               }
 
-              document.getElementById('blogDetailLoading').style.display = 'none';
-              document.getElementById('blogDetailContent').style.display = 'block';
 
               // Fetch related posts & Auto-inline links
               try {
