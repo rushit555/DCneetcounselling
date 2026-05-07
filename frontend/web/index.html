@@ -8671,6 +8671,7 @@
       .bd-content { font-size: 17px; line-height: 1.9; color: #ffffff; }
       .bd-content h1, .bd-content h2, .bd-content h3, .bd-content h4, .bd-content h5 {
         color: #ffffff !important; margin-top: 2em; margin-bottom: 0.8em; font-weight: 700;
+        scroll-margin-top: 120px;
       }
       .bd-content h2 { font-size: 24px; }
       .bd-content h3 { font-size: 20px; }
@@ -8685,9 +8686,50 @@
       }
       .bd-content blockquote p { color: #ffffff !important; margin-bottom: 0; }
       .bd-content img { max-width: 100%; border-radius: 12px; margin: 1.5em 0; }
-      .bd-content table { width: 100%; color: #ffffff !important; margin-bottom: 1.5em; border-collapse: collapse; }
-      .bd-content th, .bd-content td { padding: 10px; border: 1px solid rgba(255,255,255,0.2); }
-      .bd-content th { background: rgba(255,255,255,0.1); color: #fff !important; }
+      .bd-content table { 
+        width: 100%; 
+        color: #ffffff !important; 
+        margin-bottom: 1.5em; 
+        border-collapse: collapse; 
+        font-size: 14px;
+      }
+      .bd-content th, .bd-content td { 
+        padding: 8px 10px; 
+        border: 1px solid rgba(255,255,255,0.2); 
+        text-align: left;
+        line-height: 1.4;
+      }
+      .bd-content th { background: rgba(255,255,255,0.15); color: #fff !important; font-weight: 700; }
+      
+      @media (max-width: 600px) {
+        .bd-content table { font-size: 12px; }
+        .bd-content th, .bd-content td { padding: 6px 8px; }
+      }
+      
+      /* Responsive Table Wrapper */
+      .table-responsive-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* Custom Scrollbar for tables */
+      .table-responsive-wrapper::-webkit-scrollbar {
+        height: 6px;
+      }
+      .table-responsive-wrapper::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .table-responsive-wrapper::-webkit-scrollbar-thumb {
+        background: rgba(250, 204, 21, 0.3);
+        border-radius: 10px;
+      }
+      .table-responsive-wrapper::-webkit-scrollbar-thumb:hover {
+        background: rgba(250, 204, 21, 0.5);
+      }
 
       /* YouTube Section */
       .video-wrapper {
@@ -8747,6 +8789,126 @@
         .bd-related-grid { grid-template-columns: 1fr; }
         .bd-wrapper { padding: 80px 16px 40px; }
       }
+
+      /* Modern TOC Styles */
+      .bd-toc-wrapper {
+        background: linear-gradient(145deg, rgba(30, 10, 50, 0.6), rgba(15, 5, 25, 0.8));
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(124, 58, 237, 0.15);
+        overflow: hidden;
+      }
+      .bd-toc-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #FFFFFF;
+        margin-bottom: 20px;
+        line-height: 1.2;
+        font-family: inherit;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      
+      .toc-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        counter-reset: toc-counter;
+      }
+      .toc-item {
+        position: relative;
+        line-height: 1.6;
+        transition: all 0.25s ease-in-out;
+      }
+      
+      .toc-item:not(:last-child) {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .toc-level-2 {
+        font-size: 18px;
+        counter-increment: toc-counter;
+      }
+      
+      .toc-level-3 {
+        font-size: 16px;
+        margin-left: 24px;
+        border-left: 2px solid rgba(168, 85, 247, 0.5);
+        border-bottom: none !important; /* Remove bottom border for nested items */
+      }
+
+      .toc-link {
+        display: flex;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.75);
+        text-decoration: none;
+        padding: 10px 12px;
+        border-radius: 8px;
+        transition: all 0.25s ease-in-out;
+        border-left: 3px solid transparent;
+      }
+
+      .toc-level-2 > .toc-link::before {
+        content: counter(toc-counter) ". ";
+        margin-right: 8px;
+        font-weight: 600;
+        color: #A855F7;
+      }
+
+      .toc-level-3 > .toc-link {
+        padding-left: 16px;
+      }
+
+      .toc-link:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: #FFFFFF;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.02) inset;
+      }
+
+      .toc-link.active {
+        background: rgba(168, 85, 247, 0.18);
+        color: #FFFFFF;
+        border-left: 3px solid #A855F7;
+        font-weight: 600;
+      }
+      
+      .bd-toc-mobile-toggle {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        background: none;
+        border: none;
+        color: #FFFFFF;
+        font-size: 24px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0;
+        font-family: inherit;
+      }
+      .bd-toc-mobile-toggle i {
+        transition: transform 0.25s ease-in-out;
+        color: #7C3AED;
+      }
+      .bd-toc-mobile-toggle.open i {
+        transform: rotate(180deg);
+      }
+      #bd-toc-mobile-content {
+        display: none;
+        margin-top: 20px;
+      }
+      #bd-toc-mobile-content.open {
+        display: block;
+      }
+
+      @media (max-width: 992px) {
+        .bd-toc-wrapper { padding: 20px; border-radius: 16px; width: 100%; box-sizing: border-box; }
+      }
 </style>
 
     <div class="bd-wrapper">
@@ -8766,6 +8928,15 @@
           </div>
           <h1 id="bd-title" class="bd-title"></h1>
           <img id="bd-image" src="" class="bd-cover" style="display:none;">
+
+          <div id="bd-toc-mobile" class="bd-toc-wrapper bd-toc-mobile" style="display: none;">
+            <button class="bd-toc-mobile-toggle" aria-expanded="false" aria-controls="bd-toc-mobile-content">
+              <span>Table of Contents</span>
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="bd-toc-mobile-content"></div>
+          </div>
+
           <div id="bd-html" class="bd-content"></div>
 
           <!-- Share Bar -->
@@ -8841,6 +9012,20 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        // Mobile TOC toggle
+        document.body.addEventListener('click', function(e) {
+          const toggleBtn = e.target.closest('.bd-toc-mobile-toggle');
+          if (toggleBtn) {
+            const content = document.getElementById('bd-toc-mobile-content');
+            if (content) {
+              toggleBtn.classList.toggle('open');
+              content.classList.toggle('open');
+              const isExpanded = toggleBtn.classList.contains('open');
+              toggleBtn.setAttribute('aria-expanded', isExpanded);
+            }
+          }
+        });
+
         // Share buttons (null-safe to prevent crashes if elements are missing)
         var shareWA = document.getElementById('bdShareWA');
         if (shareWA) shareWA.addEventListener('click', function () {
@@ -8920,6 +9105,8 @@
             const slug = window.currentBlogSlug;
             document.getElementById('blogDetailError').style.display = 'none';
 
+            let gTocItems = [];
+            let gTocHtmlStr = '';
             const latestContainer = document.getElementById('bdLatestArticles');
             if (latestContainer) {
               latestContainer.innerHTML = '<div class="bd-latest-item" style="pointer-events:none;opacity:0.6;animation:pulse 1.5s infinite"><div class="bd-latest-img-ph" style="background:#eee;"></div><div class="bd-latest-info" style="flex:1"><div style="height:14px; background:#eee; border-radius:4px; margin-bottom:6px; width:90%;"></div><div style="height:14px; background:#eee; border-radius:4px; margin-bottom:6px; width:60%;"></div><div style="height:10px; background:#eee; border-radius:4px; width:40%;"></div></div></div>'.repeat(3);
@@ -9083,19 +9270,57 @@
                   if (firstP && !firstP.textContent.toLowerCase().includes(pk.toLowerCase())) { firstP.innerHTML = `<strong>${pk}</strong>: ${firstP.innerHTML}`; }
                 }
 
-                if (sk.length > 0) {
-                  const headings = tempDiv.querySelectorAll('h2, h3');
-                  headings.forEach((h, i) => {
-                    const kw = sk[i % sk.length];
-                    if (!h.textContent.toLowerCase().includes(kw.toLowerCase())) { h.textContent = h.textContent + " (" + kw + ")"; }
+                // Secondary keywords injection removed — was adding unwanted brackets to headings
+                
+                // TOC Generation
+                gTocItems = [];
+                const allHeadings = tempDiv.querySelectorAll('h2');
+                allHeadings.forEach((h, idx) => {
+                  if (!h.textContent.trim()) return;
+                  let id = h.getAttribute('id');
+                  if (!id) {
+                    id = 'section-' + h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                    if (id === 'section-') id = 'section-' + idx;
+                    let counter = 1;
+                    let uniqueId = id;
+                    while (tempDiv.querySelector('#' + uniqueId)) {
+                      uniqueId = id + '-' + counter++;
+                    }
+                    h.setAttribute('id', uniqueId);
+                  }
+                  gTocItems.push({
+                    id: h.getAttribute('id'),
+                    text: h.textContent.trim().replace(/^➤\s*/, ''), // Remove arrow from TOC if present
+                    level: h.tagName.toLowerCase() === 'h2' ? 2 : 3
                   });
+                });
+
+                function buildTocHTML(items) {
+                  if (items.length === 0) return '';
+                  let html = '<ul class="toc-list">';
+                  items.forEach(item => {
+                    html += `<li class="toc-item toc-level-${item.level}"><a href="#${item.id}" class="toc-link" data-target="${item.id}">${item.text}</a></li>`;
+                  });
+                  html += '</ul>';
+                  return html;
                 }
+                
+                gTocHtmlStr = buildTocHTML(gTocItems);
                 
                 tempDiv.querySelectorAll('img').forEach((imgTag, i) => {
                   imgTag.setAttribute('loading', 'lazy');
                   if (!imgTag.getAttribute('alt') || imgTag.getAttribute('alt').trim() === '') { imgTag.setAttribute('alt', `${pk} - Image ${i + 1}`); }
                   let src = imgTag.getAttribute('src');
                   if (src && src.includes('/storage/v1/object/public/')) { imgTag.setAttribute('src', src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80'); }
+                });
+
+                // Wrap tables for mobile responsiveness
+                tempDiv.querySelectorAll('table').forEach(table => {
+                  if (table.parentNode.classList.contains('table-responsive-wrapper')) return;
+                  const wrapper = document.createElement('div');
+                  wrapper.className = 'table-responsive-wrapper';
+                  table.parentNode.insertBefore(wrapper, table);
+                  wrapper.appendChild(table);
                 });
 
                 contentHtml = tempDiv.innerHTML;
@@ -9252,6 +9477,83 @@
                 console.log('Could not load latest articles');
                 if (latestContainer) latestContainer.innerHTML = '<p style="color:#777; font-size:14px;">No articles available</p>';
               }
+
+              // Inject TOC and attach observer globally
+              const mobileTocContainer = document.getElementById('bd-toc-mobile-content');
+              const mobileTocWrapper = document.getElementById('bd-toc-mobile');
+              
+              if (gTocItems && gTocItems.length > 0) {
+                if (mobileTocContainer) mobileTocContainer.innerHTML = gTocHtmlStr;
+                if (mobileTocWrapper) mobileTocWrapper.style.display = 'block';
+              } else {
+                if (mobileTocWrapper) mobileTocWrapper.style.display = 'none';
+              }
+
+              setTimeout(() => {
+                if (window.tocObserver) {
+                  window.tocObserver.disconnect();
+                }
+                const observerOptions = {
+                  root: null,
+                  rootMargin: '-100px 0px -60% 0px',
+                  threshold: 0
+                };
+                const activeTOCItem = (id) => {
+                  document.querySelectorAll('.toc-link').forEach(link => {
+                    if (link.getAttribute('data-target') === id) {
+                      link.classList.add('active');
+                    } else {
+                      link.classList.remove('active');
+                    }
+                  });
+                };
+                window.tocObserver = new IntersectionObserver((entries) => {
+                  let activeId = null;
+                  entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                      activeId = entry.target.id;
+                    }
+                  });
+                  if (activeId) activeTOCItem(activeId);
+                }, observerOptions);
+                
+                document.querySelectorAll('#bd-html h2').forEach(h => window.tocObserver.observe(h));
+                
+                document.querySelectorAll('.toc-link').forEach(link => {
+                  link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    const targetEl = document.getElementById(targetId);
+                    if (!targetEl) return;
+
+                    // Step 1: Collapse the TOC accordion FIRST
+                    const mobileToggle = document.querySelector('.bd-toc-mobile-toggle');
+                    const mobileContent = document.getElementById('bd-toc-mobile-content');
+                    if (mobileToggle && mobileContent) {
+                      mobileToggle.classList.remove('open');
+                      mobileContent.classList.remove('open');
+                      mobileToggle.setAttribute('aria-expanded', 'false');
+                    }
+
+                    // Step 2: Wait for DOM reflow after accordion collapse,
+                    // THEN calculate position and scroll
+                    requestAnimationFrame(() => {
+                      requestAnimationFrame(() => {
+                        const headerEl = document.getElementById('header-container');
+                        const headerHeight = headerEl ? headerEl.offsetHeight : 80;
+                        const extraSpacing = 20;
+                        const targetTop = targetEl.getBoundingClientRect().top + window.scrollY;
+
+                        window.scrollTo({
+                          top: targetTop - headerHeight - extraSpacing,
+                          behavior: 'smooth'
+                        });
+                      });
+                    });
+                  });
+                });
+              }, 150);
+
             } catch (err) {
               if (oldNav) oldNav(route);
               document.getElementById('blogDetailLoading').style.display = 'none';
