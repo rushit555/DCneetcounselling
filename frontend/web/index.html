@@ -38,6 +38,23 @@
   <link rel="stylesheet" href="css/header.css?v=2026.04.24.1" />
   <link rel="stylesheet" href="css/dashboard.css?v=2026.04.24.1" />
 
+  <!-- NProgress -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  <style>
+    #nprogress .bar {
+      background: #a855f7 !important;
+      height: 3px !important;
+    }
+    #nprogress .peg {
+      box-shadow: 0 0 10px #a855f7, 0 0 5px #a855f7 !important;
+    }
+    #nprogress .spinner-icon {
+      border-top-color: #a855f7 !important;
+      border-left-color: #a855f7 !important;
+    }
+  </style>
+
   <!-- Bulletproof Navigation Stub -->
   <script>
     window.navigate = function (route) {
@@ -8883,13 +8900,25 @@
 
         const oldNav = window.navigate;
         window.navigate = async function (route) {
-          if (oldNav) oldNav(route);
+          if (!route.startsWith('blog/')) {
+            if (oldNav) oldNav(route);
+            return;
+          }
+          const extractedSlug = route.split('/')[1];
+          if (!extractedSlug) {
+            if (oldNav) oldNav(route);
+            return;
+          }
+          window.currentBlogSlug = extractedSlug;
+
+          if (window.NProgress) {
+            NProgress.configure({ showSpinner: false });
+            NProgress.start();
+          }
 
           if (route.startsWith('blog/') && window.currentBlogSlug) {
             const slug = window.currentBlogSlug;
-            document.getElementById('blogDetailContent').style.display = 'none';
             document.getElementById('blogDetailError').style.display = 'none';
-            document.getElementById('blogDetailLoading').style.display = 'block';
 
             const latestContainer = document.getElementById('bdLatestArticles');
             if (latestContainer) {
@@ -9084,10 +9113,12 @@
                   img.style.display = 'none';
                 }
 
+                if (oldNav) oldNav(route);
                 document.getElementById('blogDetailLoading').style.display = 'none';
                 document.getElementById('blogDetailContent').style.display = 'block';
               } catch (err) {
                 console.error("Fetch Error:", err);
+                if (oldNav) oldNav(route);
                 document.getElementById('blogDetailLoading').style.display = 'none';
                 document.getElementById('blogDetailError').style.display = 'block';
               }
@@ -9222,9 +9253,11 @@
                 if (latestContainer) latestContainer.innerHTML = '<p style="color:#777; font-size:14px;">No articles available</p>';
               }
             } catch (err) {
+              if (oldNav) oldNav(route);
               document.getElementById('blogDetailLoading').style.display = 'none';
               document.getElementById('blogDetailError').style.display = 'block';
             }
+            if (window.NProgress) NProgress.done();
           }
         };
 
