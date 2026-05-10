@@ -20,8 +20,8 @@ window.loadGoAffPro();
 // ──────────────────────────────────────────────────────────────────────────────
 
 // ─── Supabase Configuration ───────────────────────────────────────────────────
-const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
+const SUPABASE_URL  = 'https://anqqmulbmeydetwpeudh.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFucXFtdWxibWV5ZGV0d3BldWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzODY1MTMsImV4cCI6MjA5Mzk2MjUxM30.AbfUID7hy1gg88C_j0OUk09G0XEW8uEqvJzD17u96ZA';
 
 const COUNSELLING_META = {
     'med_basic': { title: 'Medical - Basic Plan', price: 4999, type: 'Medical' },
