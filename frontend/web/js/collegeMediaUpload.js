@@ -17,7 +17,7 @@ window.CollegeMediaUpload = (function () {
   'use strict';
 
   var BUCKET = 'college-media';
-  var SUPABASE_URL = 'https://anqqmulbmeydetwpeudh.supabase.co';
+  var SUPABASE_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co';
 
   // ─── Helpers ──────────────────────────────────────────────────────────
 
