@@ -6766,9 +6766,19 @@
             if (tgBtn) tgBtn.href = 'https://t.me/share/url?url=' + encodedLink + '&text=' + encodeURIComponent('🎓 Get 10% OFF on NEET counselling plans using my referral link!');
 
             // 5. Fetch referral history (people I referred)
-            var { data: referrals, error: refErr } = await client
-              .from('referrals')
-              .select('referred_user_id, status, cashback_amount, created_at')
+            var referrals = [];
+            try {
+              var { data, error: refErr } = await client
+                .from('referrals')
+                .select('*') // Use * to be safe against missing columns in JS
+                .eq('referrer_id', userId)
+                .order('created_at', { ascending: false });
+              
+              if (refErr) throw refErr;
+              referrals = data || [];
+            } catch (e) {
+              console.warn('[Referral] History fetch failed, likely missing columns:', e);
+            }
               .eq('referrer_id', userId)
               .order('created_at', { ascending: false });
 
