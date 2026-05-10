@@ -1013,6 +1013,45 @@ window.handleEmailLogin = async function(e) {
             } else if (res.data && res.data.user && res.data.user.identities && res.data.user.identities.length === 0) {
                 showErr('⚠️ An account with this email already exists. Please switch to Sign In instead.');
             } else { 
+                // ── REFERRAL SYSTEM: Generate token & link referrer ──
+                try {
+                    if (res.data && res.data.user && res.data.user.id) {
+                        // Small delay to let trigger finish
+                        await new Promise(function(r) { setTimeout(r, 1200); });
+                        
+                        var newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
+                        var pendingRef = localStorage.getItem('pending_referral');
+                        var refId = null;
+                        
+                        if (pendingRef) {
+                            var { data: refData } = await window.supabaseClient
+                                .from('users')
+                                .select('id')
+                                .eq('referral_token', pendingRef)
+                                .maybeSingle();
+                            
+                            if (refData && refData.id && refData.id !== res.data.user.id) {
+                                refId = refData.id;
+                            }
+                        }
+                        
+                        var payload = { referral_token: newToken };
+                        if (refId) payload.referred_by = refId;
+                        
+                        await window.supabaseClient.from('users').update(payload).eq('id', res.data.user.id);
+                        
+                        if (refId) {
+                            await window.supabaseClient.from('referrals').insert({
+                                referrer_id: refId,
+                                referred_user_id: res.data.user.id,
+                                referral_token: pendingRef,
+                                status: 'joined'
+                            });
+                            localStorage.removeItem('pending_referral');
+                            console.log('[Referral] Linked to referrer:', refId);
+                        }
+                    }
+                } catch(refErr) { console.error('[Referral] Setup error:', refErr); }
                 if (res.data && res.data.session) {
                     showOk('✅ Account created successfully! Returning to home...');
                     if (window.updateNavForAuth) window.updateNavForAuth(res.data.session);
