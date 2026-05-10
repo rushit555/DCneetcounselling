@@ -6580,21 +6580,21 @@
               <div class="stat-icon" style="background: #e0e7ff; color: #4f46e5;"><i class="fa-solid fa-wallet"></i></div>
               <div class="stat-info">
                 <h3>Wallet Balance</h3>
-                <p>₹450</p>
+                <p id="wallet-balance-val">₹0</p>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon" style="background: #dcfce7; color: #16a34a;"><i class="fa-solid fa-users"></i></div>
               <div class="stat-info">
                 <h3>Successful Referrals</h3>
-                <p>12</p>
+                <p id="referral-count-val">0</p>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon" style="background: #fef3c7; color: #d97706;"><i class="fa-solid fa-arrow-trend-up"></i></div>
               <div class="stat-info">
                 <h3>Cashback Earned</h3>
-                <p>₹2,450</p>
+                <p id="cashback-earned-val">₹0</p>
               </div>
             </div>
           </div>
@@ -6650,7 +6650,7 @@
                     <th>Cashback</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody id="referral-history-body">
                   <tr>
                     <td>
                       <div class="student-cell">
@@ -6719,9 +6719,12 @@
         // ═══════════════════════════════════════════════════════════
         // DYNAMIC REFERRAL DATA LOADER
         // ═══════════════════════════════════════════════════════════
-        async function loadReferralPageData() {
+        window.loadReferralPageData = async function() {
           if (!window.supabaseClient || !window._authUser) {
-            console.log('[Referral] Waiting for auth...');
+            // If not logged in, show zeros and return
+            if (document.getElementById('wallet-balance-val')) document.getElementById('wallet-balance-val').textContent = '₹0';
+            if (document.getElementById('referral-count-val')) document.getElementById('referral-count-val').textContent = '0';
+            if (document.getElementById('cashback-earned-val')) document.getElementById('cashback-earned-val').textContent = '₹0';
             return;
           }
 
@@ -6734,7 +6737,7 @@
               .from('users')
               .select('referral_token, wallet_balance')
               .eq('id', userId)
-              .single();
+              .maybeSingle();
 
             if (userErr) throw userErr;
 
@@ -6765,20 +6768,13 @@
             var tgBtn = document.querySelector('.share-btn.btn-telegram');
             if (tgBtn) tgBtn.href = 'https://t.me/share/url?url=' + encodedLink + '&text=' + encodeURIComponent('🎓 Get 10% OFF on NEET counselling plans using my referral link!');
 
-            // 5. Fetch referral history (people I referred)
-            var referrals = [];
-            try {
-              var { data, error: refErr } = await client
-                .from('referrals')
-                .select('*') // Use * to be safe against missing columns in JS
-                .eq('referrer_id', userId)
-                .order('created_at', { ascending: false });
-              
-              if (refErr) throw refErr;
-              referrals = data || [];
-            } catch (e) {
-              console.warn('[Referral] History fetch failed, likely missing columns:', e);
-            }
+            // 5. Update stats cards using IDs (Much more reliable)
+            if (document.getElementById('wallet-balance-val')) document.getElementById('wallet-balance-val').textContent = '₹' + walletBalance.toLocaleString('en-IN');
+
+            // 6. Fetch referral history (people I referred)
+            var { data: referrals, error: refErr } = await client
+              .from('referrals')
+              .select('*')
               .eq('referrer_id', userId)
               .order('created_at', { ascending: false });
 
@@ -6787,7 +6783,9 @@
             var referralCount = referrals ? referrals.length : 0;
             var totalCashback = 0;
 
-            // 6. Fetch referred user names
+            if (document.getElementById('referral-count-val')) document.getElementById('referral-count-val').textContent = referralCount.toString();
+
+            // 7. Fetch referred user names
             var historyRows = [];
             if (referrals && referrals.length > 0) {
               var userIds = referrals.map(function(r) { return r.referred_user_id; });
@@ -6810,22 +6808,15 @@
                 historyRows.push({
                   name: displayName,
                   status: ref.status,
-                  cashback: cashback,
-                  date: ref.created_at
+                  cashback: cashback
                 });
               });
             }
 
-            // 7. Update stats cards
-            var statCards = document.querySelectorAll('#section-profile\\/refer-earn .stat-info p');
-            if (statCards.length >= 3) {
-              statCards[0].textContent = '₹' + walletBalance.toLocaleString('en-IN');
-              statCards[1].textContent = referralCount.toString();
-              statCards[2].textContent = '₹' + totalCashback.toLocaleString('en-IN');
-            }
+            if (document.getElementById('cashback-earned-val')) document.getElementById('cashback-earned-val').textContent = '₹' + totalCashback.toLocaleString('en-IN');
 
             // 8. Update referral history table
-            var tbody = document.querySelector('#section-profile\\/refer-earn .history-table tbody');
+            var tbody = document.getElementById('referral-history-body');
             if (tbody) {
               if (historyRows.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:30px; color:rgba(255,255,255,0.5); font-style:italic;">No referrals yet. Share your link to get started! 🚀</td></tr>';
@@ -6847,15 +6838,12 @@
                 tbody.innerHTML = rowsHtml;
               }
             }
-
-            console.log('[Referral] Page data loaded — Token:', token, '| Referrals:', referralCount);
-
           } catch (err) {
             console.error('[Referral] Error loading data:', err);
           }
-        }
+        };
 
-        // Auto-load data when the section becomes visible
+                // Auto-load data when the section becomes visible
         var _referralObserver = new MutationObserver(function(mutations) {
           mutations.forEach(function(m) {
             if (m.type === 'attributes' && m.attributeName === 'style') {
