@@ -241,6 +241,7 @@ export default function NewsUpdates() {
             </form>
           </div>
         </div>
+        </div>
       )}
     </div>
   );

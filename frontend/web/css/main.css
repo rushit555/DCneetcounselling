@@ -53,6 +53,7 @@
     opacity: 0.25;
     animation: blobMove 40s linear infinite alternate;
     will-change: transform;
+    contain: strict;
 }
 
 .blob-2 {
@@ -137,6 +138,8 @@ body::after {
     z-index: -1;
     border-radius: 50%;
     animation: floatGlow 12s ease-in-out infinite;
+    will-change: transform;
+    contain: strict;
 }
 
 body::before {

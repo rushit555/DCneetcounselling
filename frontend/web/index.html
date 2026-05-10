@@ -2,13 +2,26 @@
 <html lang="en">
 
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q9GTK3GP10"></script>
+  <!-- Google tag (gtag.js) - Deferred heavily for performance -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-Q9GTK3GP10');
+
+    // Load Google Analytics after initial page render (idle/interaction)
+    function loadGA() {
+      if (window.gaLoaded) return;
+      window.gaLoaded = true;
+      const ga = document.createElement('script');
+      ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-Q9GTK3GP10';
+      ga.async = true;
+      document.head.appendChild(ga);
+    }
+    
+    // Load on user interaction or fallback after 3 seconds
+    ['scroll', 'mousemove', 'touchstart', 'click'].forEach(e => window.addEventListener(e, loadGA, { once: true }));
+    setTimeout(loadGA, 3000);
   </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,30 +30,58 @@
   <meta name="keywords"
     content="NEET counselling, MBBS admission India, NEET college predictor, medical admission guidance" />
   <title>DC NEET Counselling - Expert Medical Admission Guidance</title>
-  <link rel="icon" type="image/jpeg" href="assets/logo.jpg" />
+  <link rel="icon" type="image/webp" href="assets/logo.webp" />
 
-  <!-- Google Fonts: Poppins -->
+  <!-- Preconnect to all critical origins FIRST -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet" />
-
-  <!-- Preconnect to Backend APIs & Storage -->
   <link rel="preconnect" href="https://rlqmdylbzapyepuwncwt.supabase.co" crossorigin />
   <link rel="dns-prefetch" href="https://rlqmdylbzapyepuwncwt.supabase.co" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
 
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- Preload critical above-the-fold assets -->
+  <link rel="preload" href="assets/logo.webp" as="image" type="image/webp" />
+  <link rel="preload" href="css/bundle.min.css?v=2026.04.24.2" as="style" />
 
-  <!-- Stylesheets -->
-  <link rel="stylesheet" href="css/main.css?v=2026.04.24.1" />
-  <link rel="stylesheet" href="css/home.css?v=2026.04.24.1" />
-  <link rel="stylesheet" href="css/header.css?v=2026.04.24.1" />
-  <link rel="stylesheet" href="css/dashboard.css?v=2026.04.24.1" />
+  <!-- Google Fonts: Poppins with font-display:swap -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
 
-  <!-- NProgress -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  <!-- Critical Stylesheets (Bundled & Minified) -->
+  <link rel="stylesheet" href="css/bundle.min.css?v=2026.04.24.2" />
+
+  <!-- Non-critical CSS: FontAwesome loaded async to not block render -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" /></noscript>
+
+  <!-- Deferred: Dashboard CSS (not needed for initial paint) -->
+  <link rel="stylesheet" href="css/dashboard.min.css?v=2026.04.24.2" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="css/dashboard.min.css?v=2026.04.24.2" /></noscript>
+
+  <!-- NProgress: loaded async -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" /></noscript>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  <!-- Critical inline CSS for instant above-the-fold rendering -->
+  <style>
+    /* Prevent FOIT (Flash of Invisible Text) - show system font immediately */
+    body { font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    
+    /* Ensure page section shows instantly */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+    
+    /* Above-the-fold skeleton: news section placeholder so LCP element paints fast */
+    .premium-news-section { contain: layout style; }
+    .premium-news-card { contain: layout style paint; }
+    
+    /* Reduce paint complexity on mobile */
+    @media (max-width: 768px) {
+      body::before, body::after { display: none !important; }
+      .blobs-bg { display: none !important; }
+      #cursor-glow { display: none !important; }
+    }
+  </style>
   <style>
     #nprogress .bar {
       background: #a855f7 !important;
@@ -405,7 +446,7 @@
       checkHash();
     })();
   </script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <script defer src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 </head>
 
@@ -698,7 +739,10 @@
 
           <div class="news-track-wrapper" id="newsTrackWrapper">
             <div class="news-track" id="newsTrack">
-              <!-- Dynamic cards loaded from Supabase -->
+              <!-- Static Skeleton to prevent CLS -->
+              <div class="premium-news-card" style="min-height:160px;opacity:0.5;pointer-events:none"><div style="width:40px;height:40px;background:#eee;border-radius:50%;margin-bottom:15px"></div><div style="width:60%;height:14px;background:#eee;border-radius:8px;margin-bottom:12px"></div><div style="width:90%;height:18px;background:#eee;border-radius:8px;margin-bottom:8px"></div><div style="width:70%;height:18px;background:#eee;border-radius:8px"></div></div>
+              <div class="premium-news-card" style="min-height:160px;opacity:0.5;pointer-events:none"><div style="width:40px;height:40px;background:#eee;border-radius:50%;margin-bottom:15px"></div><div style="width:60%;height:14px;background:#eee;border-radius:8px;margin-bottom:12px"></div><div style="width:90%;height:18px;background:#eee;border-radius:8px;margin-bottom:8px"></div><div style="width:70%;height:18px;background:#eee;border-radius:8px"></div></div>
+              <div class="premium-news-card" style="min-height:160px;opacity:0.5;pointer-events:none"><div style="width:40px;height:40px;background:#eee;border-radius:50%;margin-bottom:15px"></div><div style="width:60%;height:14px;background:#eee;border-radius:8px;margin-bottom:12px"></div><div style="width:90%;height:18px;background:#eee;border-radius:8px;margin-bottom:8px"></div><div style="width:70%;height:18px;background:#eee;border-radius:8px"></div></div>
             </div>
           </div>
 
@@ -708,9 +752,6 @@
                 var w = document.getElementById('newsTrackWrapper');
                 var t = document.getElementById('newsTrack');
                 if (!w || !t) return;
-
-                // Show skeleton while loading
-                t.innerHTML = '<div class="premium-news-card" style="min-height:160px;opacity:0.5;pointer-events:none"><div style="width:40px;height:40px;background:#eee;border-radius:50%;margin-bottom:15px"></div><div style="width:60%;height:14px;background:#eee;border-radius:8px;margin-bottom:12px"></div><div style="width:90%;height:18px;background:#eee;border-radius:8px;margin-bottom:8px"></div><div style="width:70%;height:18px;background:#eee;border-radius:8px"></div></div><div class="premium-news-card" style="min-height:160px;opacity:0.5;pointer-events:none"><div style="width:40px;height:40px;background:#eee;border-radius:50%;margin-bottom:15px"></div><div style="width:60%;height:14px;background:#eee;border-radius:8px;margin-bottom:12px"></div><div style="width:90%;height:18px;background:#eee;border-radius:8px;margin-bottom:8px"></div><div style="width:70%;height:18px;background:#eee;border-radius:8px"></div></div><div class="premium-news-card" style="min-height:160px;opacity:0.5;pointer-events:none"><div style="width:40px;height:40px;background:#eee;border-radius:50%;margin-bottom:15px"></div><div style="width:60%;height:14px;background:#eee;border-radius:8px;margin-bottom:12px"></div><div style="width:90%;height:18px;background:#eee;border-radius:8px;margin-bottom:8px"></div><div style="width:70%;height:18px;background:#eee;border-radius:8px"></div></div>';
 
                 // Fetch from Supabase
                 var colors = ['icon-blue', 'icon-green', 'icon-purple', 'icon-orange'];
@@ -1410,7 +1451,7 @@
               <div class="wcu2-feat">
                 <div class="wcu2-feat-icon">&#x1F3AF;</div>
                 <div class="wcu2-feat-text">
-                  <h4>Personalized Counseling</h4>
+                  <h3>Personalized Counseling</h3>
                   <p>Step-by-step guidance for your NEET journey</p>
                 </div>
               </div>
@@ -1418,7 +1459,7 @@
               <div class="wcu2-feat">
                 <div class="wcu2-feat-icon">&#x1F4CA;</div>
                 <div class="wcu2-feat-text">
-                  <h4>Accurate College Prediction</h4>
+                  <h3>Accurate College Prediction</h3>
                   <p>Advanced tools for accurate results</p>
                 </div>
               </div>
@@ -1426,7 +1467,7 @@
               <div class="wcu2-feat">
                 <div class="wcu2-feat-icon">&#x1F4D8;</div>
                 <div class="wcu2-feat-text">
-                  <h4>Guides &amp; eBooks</h4>
+                  <h3>Guides &amp; eBooks</h3>
                   <p>Curated study &amp; admission resources</p>
                 </div>
               </div>
@@ -1434,7 +1475,7 @@
               <div class="wcu2-feat">
                 <div class="wcu2-feat-icon">&#x1F465;</div>
                 <div class="wcu2-feat-text">
-                  <h4>Real Student Insights</h4>
+                  <h3>Real Student Insights</h3>
                   <p>Learn from students who've been there</p>
                 </div>
               </div>
@@ -1444,7 +1485,7 @@
 
           <!-- RIGHT -->
           <div class="wcu2-right">
-            <img src="assets/doctorsss-removebg-preview555.png" alt="Why Choose DC NEET Counselling" class="wcu2-dd-img" />
+            <img src="assets/doctorsss-removebg-preview555.webp" alt="Why Choose DC NEET Counselling" class="wcu2-dd-img" loading="lazy" />
           </div>
 
         </div><!-- /wcu2-wrap -->
@@ -1454,7 +1495,7 @@
           <div class="wcu2-stat">
             <div class="wcu2-stat-icon">&#x1F6E1;</div>
             <div class="wcu2-stat-txt">
-              <h4><span class="wcu-counter" data-target="10">0</span>K+</h4>
+              <h3><span class="wcu-counter" data-target="10">0</span>K+</h3>
               <p>Students Helped</p>
             </div>
           </div>
@@ -1462,7 +1503,7 @@
           <div class="wcu2-stat">
             <div class="wcu2-stat-icon">&#x23F0;</div>
             <div class="wcu2-stat-txt">
-              <h4><span class="wcu-counter" data-target="98">0</span>%</h4>
+              <h3><span class="wcu-counter" data-target="98">0</span>%</h3>
               <p>Success Rate</p>
             </div>
           </div>
@@ -1470,7 +1511,7 @@
           <div class="wcu2-stat">
             <div class="wcu2-stat-icon">&#x1F465;</div>
             <div class="wcu2-stat-txt">
-              <h4><span class="wcu-counter" data-target="24">0</span>/7</h4>
+              <h3><span class="wcu-counter" data-target="24">0</span>/7</h3>
               <p>Expert Support</p>
             </div>
           </div>
@@ -1478,7 +1519,7 @@
           <div class="wcu2-stat">
             <div class="wcu2-stat-icon">&#x1F3C5;</div>
             <div class="wcu2-stat-txt">
-              <h4><span class="wcu-counter" data-target="100">0</span>%</h4>
+              <h3><span class="wcu-counter" data-target="100">0</span>%</h3>
               <p>Guidance You Can Trust</p>
             </div>
           </div>
@@ -1863,7 +1904,7 @@
 
             <!-- RIGHT SIDE: IMAGE -->
             <div>
-              <img src="assets/dd transperent555.png" alt="Smart Counselling Illustration" class="ps-json-img" />
+              <img src="assets/dd transperent555.webp" alt="Smart Counselling Illustration" class="ps-json-img" loading="lazy" />
             </div>
           </div>
         </div>
@@ -2022,7 +2063,7 @@
           <div class="eb-json-grid">
             <!-- LEFT IMAGE -->
             <div>
-              <img src="assets/ebook transperent555.png" alt="NEET Counselling Ebook" class="eb-json-img" />
+              <img src="assets/ebook transperent555.webp" alt="NEET Counselling Ebook" class="eb-json-img" loading="lazy" />
             </div>
 
             <!-- RIGHT CONTENT -->
@@ -2367,8 +2408,7 @@
               <!-- Card New Review -->
               <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/1CM9rp1RWJg?autoplay=1')">
                 <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/1CM9rp1RWJg/maxresdefault.jpg" alt="Shubkarman Singh"
-                    class="rev-p-img" />
+                  <img src="https://img.youtube.com/vi/1CM9rp1RWJg/maxresdefault.jpg" alt="Shubkarman Singh" class="rev-p-img" loading="lazy" />
                   <div class="rev-p-play"></div>
                 </div>
                 <div class="rev-p-info">
@@ -2379,8 +2419,7 @@
               <!-- Card 1 -->
               <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/gg9jktcWyD4?autoplay=1')">
                 <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/gg9jktcWyD4/maxresdefault.jpg" alt="Pooja Singh"
-                    class="rev-p-img" />
+                  <img src="https://img.youtube.com/vi/gg9jktcWyD4/maxresdefault.jpg" alt="Pooja Singh" class="rev-p-img" loading="lazy" />
                   <div class="rev-p-play"></div>
                 </div>
                 <div class="rev-p-info">
@@ -2391,8 +2430,7 @@
               <!-- Card 2 -->
               <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/rtYtKhuwZWs?autoplay=1')">
                 <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/rtYtKhuwZWs/maxresdefault.jpg" alt="Sumit Pahadiya"
-                    class="rev-p-img" />
+                  <img src="https://img.youtube.com/vi/rtYtKhuwZWs/maxresdefault.jpg" alt="Sumit Pahadiya" class="rev-p-img" loading="lazy" />
                   <div class="rev-p-play"></div>
                 </div>
                 <div class="rev-p-info">
@@ -2403,7 +2441,7 @@
               <!-- Card 3 -->
               <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/IL0JsOlMDQg?autoplay=1')">
                 <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/IL0JsOlMDQg/maxresdefault.jpg" alt="Jivida" class="rev-p-img" />
+                  <img src="https://img.youtube.com/vi/IL0JsOlMDQg/maxresdefault.jpg" alt="Jivida" class="rev-p-img" loading="lazy" />
                   <div class="rev-p-play"></div>
                 </div>
                 <div class="rev-p-info">
@@ -2414,8 +2452,7 @@
               <!-- Card 4 -->
               <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/O2LEjloy1xQ?autoplay=1')">
                 <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/O2LEjloy1xQ/maxresdefault.jpg" alt="Aishwarya Pandey"
-                    class="rev-p-img" />
+                  <img src="https://img.youtube.com/vi/O2LEjloy1xQ/maxresdefault.jpg" alt="Aishwarya Pandey" class="rev-p-img" loading="lazy" />
                   <div class="rev-p-play"></div>
                 </div>
                 <div class="rev-p-info">
@@ -2426,8 +2463,7 @@
               <!-- Card 5 -->
               <div class="rev-p-card" onclick="openVideoModal('https://www.youtube.com/embed/8A7G4tTo9_U?autoplay=1')">
                 <div class="rev-p-img-wrap">
-                  <img src="https://img.youtube.com/vi/8A7G4tTo9_U/maxresdefault.jpg" alt="Lokendra"
-                    class="rev-p-img" />
+                  <img src="https://img.youtube.com/vi/8A7G4tTo9_U/maxresdefault.jpg" alt="Lokendra" class="rev-p-img" loading="lazy" />
                   <div class="rev-p-play"></div>
                 </div>
                 <div class="rev-p-info">
@@ -2747,7 +2783,7 @@
           <!-- Founder 1 -->
           <div class="team-card">
             <div class="tc-image-placeholder has-image"
-              style="background-image: url('assets/Founder.jpeg'); background-size: cover; background-position: center top;">
+              style="background-image: url('assets/Founder.webp'); background-size: cover; background-position: center top;">
             </div>
             <div class="tc-content">
               <div class="tc-badge"><i class="fa-solid fa-crown"></i> FOUNDER & CEO</div>
@@ -2763,7 +2799,7 @@
           <!-- Founder 2 -->
           <div class="team-card">
             <div class="tc-image-placeholder has-image"
-              style="background-image: url('assets/Co%20founder.jpeg'); background-size: cover; background-position: center top;">
+              style="background-image: url('assets/Co%20founder.webp'); background-size: cover; background-position: center top;">
             </div>
             <div class="tc-content">
               <div class="tc-badge"><i class="fa-solid fa-user"></i> CO-FOUNDER</div>
@@ -2786,7 +2822,7 @@
           <!-- Member 1 -->
           <div class="team-card">
             <div class="tc-image-placeholder has-image"
-              style="background-image: url('assets/Senior%20Counsellor.jpeg'); background-size: cover; background-position: center top;">
+              style="background-image: url('assets/Senior%20Counsellor.webp'); background-size: cover; background-position: center top;">
             </div>
             <div class="tc-content">
               <div class="tc-badge"><i class="fa-solid fa-user"></i> SENIOR COUNSELLOR</div>
@@ -2804,7 +2840,7 @@
           <!-- Member 2 -->
           <div class="team-card">
             <div class="tc-image-placeholder has-image"
-              style="background-image: url('assets/Manager.jpeg'); background-size: cover; background-position: center top;">
+              style="background-image: url('assets/Manager.webp'); background-size: cover; background-position: center top;">
             </div>
             <div class="tc-content">
               <div class="tc-badge"><i class="fa-solid fa-user"></i> MANAGER</div>
@@ -4856,21 +4892,21 @@
               <div class="cp-info-item">
                 <div class="cp-info-icon"><i class="fa-solid fa-phone"></i></div>
                 <div class="cp-info-text">
-                  <h4>Call Us</h4>
+                  <h3>Call Us</h3>
                   <p>+91 9694673555</p>
                 </div>
               </div>
               <div class="cp-info-item">
                 <div class="cp-info-icon"><i class="fa-solid fa-envelope"></i></div>
                 <div class="cp-info-text">
-                  <h4>Email Us</h4>
+                  <h3>Email Us</h3>
                   <p>support@dcneetcounselling.com</p>
                 </div>
               </div>
               <div class="cp-info-item">
                 <div class="cp-info-icon"><i class="fa-regular fa-clock"></i></div>
                 <div class="cp-info-text">
-                  <h4>Working Hours</h4>
+                  <h3>Working Hours</h3>
                   <p>Mon - Sat: 9:00 AM - 8:00 PM</p>
                 </div>
               </div>
@@ -6487,9 +6523,9 @@
 
 
   <!-- Scripts -->
-  <script src="js/supabase.js?v=2026.04.24.1"></script>
-  <script src="js/supabaseClient.js?v=2026.04.24.1"></script>
-  <script src="js/app_v2.js?v=2026.04.26.1"></script>
+  <script defer src="js/supabase.js?v=2026.04.24.1"></script>
+  <script defer src="js/supabaseClient.js?v=2026.04.24.1"></script>
+  <script defer src="js/app_v2.js?v=2026.04.26.1"></script>
 
   <!-- Auth Popup Modal -->
   <div id="authModal" style="
@@ -8430,8 +8466,13 @@
             let dateStr = 'Unknown';
             try { const d = new Date(feat.created_at); if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }); } catch(e) {}
             const safeTitle = feat.title || 'Untitled';
+            
+            const optimizedFeatImg = feat.image_url && feat.image_url.includes('/storage/v1/object/public/') 
+              ? feat.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=1000'
+              : feat.image_url;
+
             const imgHtml = feat.image_url
-              ? '<img src="' + feat.image_url + '" alt="Featured">'
+              ? '<img src="' + optimizedFeatImg + '" alt="Featured" onerror="if(this.src!==\'' + feat.image_url + '\'){this.src=\'' + feat.image_url + '\';}">'
               : '<div style="width:300px;background:#333;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;"><i class="fa-solid fa-image"></i></div>';
 
             container.innerHTML = '<a href="javascript:void(0)" class="featured-card" onclick="window.navigate(\'blog/' + (feat.slug || '') + '\')">' +
@@ -8504,8 +8545,13 @@
               let dateStr = 'Unknown';
               try { const d = new Date(item.created_at); if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); } catch(e) {}
               const safeTitle = item.title || 'Untitled';
+              
+              const optimizedBlogImg = item.image_url && item.image_url.includes('/storage/v1/object/public/') 
+                ? item.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=600'
+                : item.image_url;
+
               const imgHtml = item.image_url
-                ? '<img src="' + item.image_url + '" alt="Blog">'
+                ? '<img src="' + optimizedBlogImg + '" alt="Blog" loading="lazy" onerror="if(this.src!==\'' + item.image_url + '\'){this.src=\'' + item.image_url + '\';}">'
                 : '<div style="width:100%;height:180px;background:#333;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;"><i class="fa-solid fa-image"></i></div>';
 
               const card = document.createElement('a');
@@ -8663,8 +8709,15 @@
       .bd-date-text { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 500; }
       .bd-title { font-size: 38px; font-weight: 800; color: #ffffff; margin-bottom: 28px; line-height: 1.2; }
       .bd-cover {
-        width: 100%; height: auto; max-height: 440px; object-fit: contain;
-        background: rgba(0,0,0,0.3); border-radius: 18px; margin-bottom: 40px;
+        width: 100%; 
+        height: auto; 
+        min-height: 200px;
+        display: block;
+        border-radius: 18px; 
+        margin-bottom: 40px;
+        background: rgba(255,255,255,0.05);
+        position: relative;
+        z-index: 1;
       }
 
       /* Core Content Typography */
@@ -8685,7 +8738,13 @@
         margin: 1.5em 0; background: rgba(255,255,255,0.05); border-radius: 0 12px 12px 0;
       }
       .bd-content blockquote p { color: #ffffff !important; margin-bottom: 0; }
-      .bd-content img { max-width: 100%; border-radius: 12px; margin: 1.5em 0; }
+      .bd-content img { 
+        display: block;
+        max-width: 100%; 
+        height: auto;
+        border-radius: 12px; 
+        margin: 2em auto; 
+      }
       .bd-content table { 
         width: 100%; 
         color: #ffffff !important; 
@@ -8781,6 +8840,7 @@
       /* Responsive */
       @media (max-width: 992px) {
         .bd-wrapper { flex-direction: column; gap: 20px; }
+        .bd-main { width: 100%; max-width: 100%; position: static; }
         .bd-sidebar { width: 100%; position: static; margin-top: 20px; }
         .bd-sidebar-title, #bdLatestArticles { display: none !important; }
       }
@@ -8927,7 +8987,7 @@
             <span id="bd-date" class="bd-date-text"></span>
           </div>
           <h1 id="bd-title" class="bd-title"></h1>
-          <img id="bd-image" src="" class="bd-cover" style="display:none;">
+          <img id="bd-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="bd-cover">
 
           <div id="bd-toc-mobile" class="bd-toc-wrapper bd-toc-mobile" style="display: none;">
             <button class="bd-toc-mobile-toggle" aria-expanded="false" aria-controls="bd-toc-mobile-content">
@@ -9158,7 +9218,7 @@
                       "@type": "Article",
                       "headline": data.title,
                       "description": data.meta_description || data.short_description || "",
-                      "image": data.image_url || data.thumbnail_url || "https://dcneetcounselling.com/assets/logo.jpg",
+                      "image": data.image_url || data.thumbnail_url || "https://dcneetcounselling.com/assets/logo.webp",
                       "author": {
                         "@type": "Person",
                         "name": data.author || "DC NEET Counselling"
@@ -9168,7 +9228,7 @@
                         "name": "DC NEET Counselling",
                         "logo": {
                           "@type": "ImageObject",
-                          "url": "https://dcneetcounselling.com/assets/logo.jpg"
+                          "url": "https://dcneetcounselling.com/assets/logo.webp"
                         }
                       },
                       "datePublished": data.published_at || data.created_at || new Date().toISOString(),
@@ -9311,7 +9371,11 @@
                   imgTag.setAttribute('loading', 'lazy');
                   if (!imgTag.getAttribute('alt') || imgTag.getAttribute('alt').trim() === '') { imgTag.setAttribute('alt', `${pk} - Image ${i + 1}`); }
                   let src = imgTag.getAttribute('src');
-                  if (src && src.includes('/storage/v1/object/public/')) { imgTag.setAttribute('src', src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80'); }
+                  if (src && src.includes('/storage/v1/object/public/')) { 
+                    const optimizedSrc = src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=800';
+                    imgTag.setAttribute('src', optimizedSrc);
+                    imgTag.setAttribute('onerror', `if(this.src!=='${src}'){this.src='${src}';}`);
+                  }
                 });
 
                 // Wrap tables for mobile responsiveness
@@ -9329,10 +9393,39 @@
                 const img = document.getElementById('bd-image');
                 if (data.image_url) {
                   let finalImgUrl = data.image_url;
-                  if (finalImgUrl.includes('/storage/v1/object/public/')) { finalImgUrl = finalImgUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80'; }
+                  // Optimize with Supabase Image Transformation if applicable
+                  if (finalImgUrl.includes('/storage/v1/object/public/')) { 
+                    const separator = finalImgUrl.includes('?') ? '&' : '?';
+                    finalImgUrl = finalImgUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + separator + 'format=webp&quality=80&width=1000'; 
+                  }
+                  
+                  // Preload for superfast LCP
+                  const existingPreload = document.getElementById('blog-hero-preload');
+                  if (existingPreload) existingPreload.remove();
+                  const preload = document.createElement('link');
+                  preload.id = 'blog-hero-preload';
+                  preload.rel = 'preload';
+                  preload.as = 'image';
+                  preload.href = finalImgUrl;
+                  preload.setAttribute('fetchpriority', 'high');
+                  document.head.appendChild(preload);
+
                   img.src = finalImgUrl;
                   img.setAttribute('alt', pk || data.title);
+                  img.setAttribute('fetchpriority', 'high');
                   img.setAttribute('loading', 'eager');
+                  
+                  // Fallback if transformation fails
+                  img.onerror = function() {
+                    if (this.src !== data.image_url) {
+                      console.warn("Image transformation failed, falling back to original");
+                      this.src = data.image_url;
+                    } else {
+                      // Even original failed, hide it to avoid broken icon
+                      this.style.display = 'none';
+                    }
+                  };
+                  
                   img.style.display = 'block';
                 } else {
                   img.style.display = 'none';
@@ -9411,12 +9504,12 @@
                 if (related && related.length > 0) {
                   relGrid.innerHTML = '';
                   related.forEach(function (r) {
-                    let rImg = r.image_url;
-                    if (rImg && rImg.includes('/storage/v1/object/public/')) {
-                      rImg = rImg.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80';
-                    }
-                    var imgH = rImg
-                      ? '<img src="' + rImg + '" alt="' + r.title + '" loading="lazy">'
+                    const optimizedRImg = r.image_url && r.image_url.includes('/storage/v1/object/public/') 
+                      ? r.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=400'
+                      : r.image_url;
+
+                    var imgH = r.image_url
+                      ? '<img src="' + optimizedRImg + '" alt="' + r.title + '" loading="lazy" onerror="if(this.src!==\'' + r.image_url + '\'){this.src=\'' + r.image_url + '\';}">'
                       : '<div style="height:140px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="fa-solid fa-image fa-2x"></i></div>';
                     var card = document.createElement('a');
                     card.href = 'javascript:void(0)';
@@ -9456,8 +9549,13 @@
                     latestContainer.innerHTML = '';
                     latest.forEach(function (r) {
                       const dateStr = new Date(r.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                      
+                      const optimizedLatImg = r.image_url && r.image_url.includes('/storage/v1/object/public/') 
+                        ? r.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=150'
+                        : r.image_url;
+
                       const imgHtml = r.image_url
-                        ? '<img src="' + r.image_url + '" loading="lazy" class="bd-latest-img" alt="' + r.title + '">'
+                        ? '<img src="' + optimizedLatImg + '" loading="lazy" class="bd-latest-img" alt="' + r.title + '" onerror="if(this.src!==\'' + r.image_url + '\'){this.src=\'' + r.image_url + '\';}">'
                         : '<div class="bd-latest-img-ph"><i class="fa-solid fa-image"></i></div>';
 
                       const itemHtml = '<a href="javascript:void(0)" class="bd-latest-item" onclick="window.navigate(\'blog/' + r.slug + '\')">' +
@@ -9470,12 +9568,12 @@
                       latestContainer.insertAdjacentHTML('beforeend', itemHtml);
                     });
                   } else {
-                    latestContainer.innerHTML = '<p style="color:#777; font-size:14px;">No articles available</p>';
+                    latestContainer.innerHTML = '<p style="color:#757575; font-size:14px;">No articles available</p>';
                   }
                 }
               } catch (e) {
                 console.log('Could not load latest articles');
-                if (latestContainer) latestContainer.innerHTML = '<p style="color:#777; font-size:14px;">No articles available</p>';
+                if (latestContainer) latestContainer.innerHTML = '<p style="color:#757575; font-size:14px;">No articles available</p>';
               }
 
               // Inject TOC and attach observer globally
@@ -9813,7 +9911,7 @@
       <div class="dc-ft-col">
         <div
           style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; color: #111; justify-content: inherit;">
-          <img src="assets/logo.jpg" alt="Logo" style="height: 40px; border-radius: 50%;">
+          <img src="assets/logo.webp" alt="Logo" style="height: 40px; width: 40px; border-radius: 50%;" />
           DC NEET COUNSELLING
         </div>
         <div class="dc-ft-text">Your trusted partner for NEET counselling. Expert guidance, better choices, brighter
@@ -9886,15 +9984,15 @@
       <div class="dc-ft-col">
         <div class="dc-ft-title">Follow Us</div>
         <div class="dc-ft-socials">
-          <a href="#" class="dc-ft-social"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" class="dc-ft-social"><i class="fa-brands fa-twitter"></i></a>
+          <a href="#" class="dc-ft-social" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="dc-ft-social" aria-label="Twitter"><i class="fa-brands fa-twitter"></i></a>
           <a href="https://www.instagram.com/dcneetcounselling?igsh=NThhZXFhbHQzODJ5" target="_blank" rel="noopener"
-            class="dc-ft-social"><i class="fa-brands fa-instagram"></i></a>
+            class="dc-ft-social" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
           <a href="https://youtube.com/@drchetan_sen?si=iHunHyVvHKmxwuyW" target="_blank" rel="noopener"
-            class="dc-ft-social"><i class="fa-brands fa-youtube"></i></a>
-          <a href="https://wa.me/919694673555" target="_blank" rel="noopener" class="dc-ft-social"><i
+            class="dc-ft-social" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="https://wa.me/919694673555" target="_blank" rel="noopener" class="dc-ft-social" aria-label="WhatsApp"><i
               class="fa-brands fa-whatsapp"></i></a>
-          <a href="https://t.me/DCNEETCOUNSELLING2025" target="_blank" rel="noopener" class="dc-ft-social"><i
+          <a href="https://t.me/DCNEETCOUNSELLING2025" target="_blank" rel="noopener" class="dc-ft-social" aria-label="Telegram"><i
               class="fa-brands fa-telegram"></i></a>
         </div>
 
@@ -10100,7 +10198,7 @@
           });
         });
 
-        // ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼ Slide-in from left (Heavy): Main Headings ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼
+        // Slide-in from left (Heavy): Main Headings
         var slideLeftHeavySelectors = [
           '.hero-title',
           '.wcu2-heading'
@@ -10116,7 +10214,7 @@
           });
         });
 
-        // ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼ Scale-up: Key Images ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼
+        // Scale-up: Key Images
         var scaleUpSelectors = [
           '.doctor-image-full', // hero doctor
           '.wcu2-dd-img'        // WCU dd image
@@ -10133,7 +10231,7 @@
           });
         });
 
-        // ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼ Slide-in from left (Fast) ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼
+        // Slide-in from left (Fast)
         var slideLeftFastSelectors = [
           '.popular-searches', // chips row (snappy entrance)
           '.wcu2-badge'        // WCU badge (snappy entrance)
@@ -10151,7 +10249,7 @@
         });
       }
 
-      /* ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼ 2. Observe & reveal ├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼├â┬ó├óΓé¼┬¥├óΓÇÜ┬¼ */
+      /* 2. Observe & reveal */
       function observe() {
         var io = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
@@ -10170,7 +10268,7 @@
         });
       }
 
-      /* ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ 3. Init ├óΓÇ¥Γé¼├óΓÇ¥Γé¼ */
+      /* ☰ 3. Init ☰ */
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
           tagElements();
@@ -10316,9 +10414,9 @@
     });
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
-  <script src="js/college.js?v=2026.04.29.2"></script>
-  <script src="js/collegeMediaUpload.js?v=2026.04.29"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+  <script defer src="js/college.js?v=2026.04.29.2"></script>
+  <script defer src="js/collegeMediaUpload.js?v=2026.04.29"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const searchInput = document.getElementById('collegeSearchInput');
@@ -10428,7 +10526,7 @@
           '<div style="width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#e0f2fe,#bae6fd);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;color:#0284c7;margin-top:2px;"><i class="fa-solid fa-building-columns"></i></div>' +
           '<div style="flex:1;min-width:0;">' +
           '<div style="font-weight:600;color:#1a1a1a;font-size:14px;line-height:1.3;display:flex;align-items:center;flex-wrap:wrap;">' + highlightedName + typeTag + '</div>' +
-          '<div style="font-size:12px;color:#888;margin-top:3px;"><i class="fa-solid fa-location-dot" style="margin-right:4px;font-size:10px;"></i>' + escapeHtml(c.location || '') + (c.location && c.state ? ', ' : '') + escapeHtml(c.state || '') + '</div>' +
+          '<div style="font-size:12px;color:#757575;margin-top:3px;"><i class="fa-solid fa-location-dot" style="margin-right:4px;font-size:10px;"></i>' + escapeHtml(c.location || '') + (c.location && c.state ? ', ' : '') + escapeHtml(c.state || '') + '</div>' +
           '</div>' +
           '<i class="fa-solid fa-chevron-right" style="color:#ccc;font-size:11px;margin-top:10px;flex-shrink:0;"></i>' +
           '</div>';
@@ -10462,7 +10560,7 @@
             return;
           }
 
-          searchResults.innerHTML = '<div style="padding:18px;text-align:center;color:#888;font-size:13px;"><i class="fa-solid fa-circle-notch fa-spin" style="margin-right:6px;"></i> Searching colleges...</div>';
+          searchResults.innerHTML = '<div style="padding:18px;text-align:center;color:#757575;font-size:13px;"><i class="fa-solid fa-circle-notch fa-spin" style="margin-right:6px;"></i> Searching colleges...</div>';
           searchResults.style.display = 'block';
 
           searchTimeout = setTimeout(async function () {
@@ -10505,7 +10603,7 @@
                 '<div style="padding:24px 16px;text-align:center;">' +
                 '<div style="font-size:32px;margin-bottom:8px;color:#ccc;"><i class="fa-solid fa-magnifying-glass"></i></div>' +
                 '<div style="color:#555;font-size:14px;font-weight:500;margin-bottom:6px;">No colleges found</div>' +
-                '<div style="font-size:12px;color:#999;">Try searching by college name, city, or state</div>' +
+                '<div style="font-size:12px;color:#757575;">Try searching by college name, city, or state</div>' +
                 '</div>';
             }
           }, 300);
@@ -10751,45 +10849,46 @@
         }
     });
     </script>
-    <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/919694673555?text=Hello,%20I%20want%20to%20enquire%20about%20counselling" class="floating-whatsapp" target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
-      <i class="fa-brands fa-whatsapp"></i>
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919694673555?text=Hello,%20I%20want%20to%20enquire%20about%20counselling" class="whatsapp_float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
     </a>
     <style>
-      .floating-whatsapp {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        width: 60px;
-        height: 60px;
-        background-color: #25d366;
-        color: #fff;
-        border-radius: 50%;
-        text-align: center;
-        font-size: 35px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 999999;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-decoration: none;
-        transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
-      }
-      .floating-whatsapp:hover {
-        transform: scale(1.1);
-        box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-        color: #fff;
-        background-color: #20ba56;
-      }
-      @media (max-width: 768px) {
-        .floating-whatsapp {
-          width: 54px;
-          height: 54px;
-          bottom: 20px;
-          right: 20px;
-          font-size: 32px;
+        .whatsapp_float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 24px;
+            right: 24px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 34px;
+            box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+            z-index: 1000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-      }
+        .whatsapp_float:hover {
+            transform: scale(1.1);
+            color: #FFF;
+            box-shadow: 0 6px 16px rgba(37,211,102,0.4);
+        }
+        @media (max-width: 768px) {
+            .whatsapp_float {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 28px;
+            }
+        }
+    </style>
+        }
     </style>
 </body>
 

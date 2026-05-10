@@ -204,7 +204,7 @@
 
 .search-icon {
   font-size: 18px;
-  color: #888;
+  color: #666;
   margin-right: 12px;
 }
 
@@ -219,7 +219,7 @@
 }
 
 .search-bar input::placeholder {
-  color: #999;
+  color: #757575;
 }
 
 .search-bar button {
