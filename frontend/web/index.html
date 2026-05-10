@@ -8466,8 +8466,13 @@
             let dateStr = 'Unknown';
             try { const d = new Date(feat.created_at); if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' }); } catch(e) {}
             const safeTitle = feat.title || 'Untitled';
+            
+            const optimizedFeatImg = feat.image_url && feat.image_url.includes('/storage/v1/object/public/') 
+              ? feat.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=1000'
+              : feat.image_url;
+
             const imgHtml = feat.image_url
-              ? '<img src="' + feat.image_url + '" alt="Featured">'
+              ? '<img src="' + optimizedFeatImg + '" alt="Featured" onerror="if(this.src!==\'' + feat.image_url + '\'){this.src=\'' + feat.image_url + '\';}">'
               : '<div style="width:300px;background:#333;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;"><i class="fa-solid fa-image"></i></div>';
 
             container.innerHTML = '<a href="javascript:void(0)" class="featured-card" onclick="window.navigate(\'blog/' + (feat.slug || '') + '\')">' +
@@ -8540,8 +8545,13 @@
               let dateStr = 'Unknown';
               try { const d = new Date(item.created_at); if (!isNaN(d.getTime())) dateStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); } catch(e) {}
               const safeTitle = item.title || 'Untitled';
+              
+              const optimizedBlogImg = item.image_url && item.image_url.includes('/storage/v1/object/public/') 
+                ? item.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=600'
+                : item.image_url;
+
               const imgHtml = item.image_url
-                ? '<img src="' + item.image_url + '" alt="Blog">'
+                ? '<img src="' + optimizedBlogImg + '" alt="Blog" loading="lazy" onerror="if(this.src!==\'' + item.image_url + '\'){this.src=\'' + item.image_url + '\';}">'
                 : '<div style="width:100%;height:180px;background:#333;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;"><i class="fa-solid fa-image"></i></div>';
 
               const card = document.createElement('a');
@@ -8699,8 +8709,15 @@
       .bd-date-text { font-size: 14px; color: rgba(255,255,255,0.7); font-weight: 500; }
       .bd-title { font-size: 38px; font-weight: 800; color: #ffffff; margin-bottom: 28px; line-height: 1.2; }
       .bd-cover {
-        width: 100%; height: auto; max-height: 440px; object-fit: contain;
-        background: rgba(0,0,0,0.3); border-radius: 18px; margin-bottom: 40px;
+        width: 100%; 
+        height: auto; 
+        min-height: 200px;
+        display: block;
+        border-radius: 18px; 
+        margin-bottom: 40px;
+        background: rgba(255,255,255,0.05);
+        position: relative;
+        z-index: 1;
       }
 
       /* Core Content Typography */
@@ -8721,7 +8738,13 @@
         margin: 1.5em 0; background: rgba(255,255,255,0.05); border-radius: 0 12px 12px 0;
       }
       .bd-content blockquote p { color: #ffffff !important; margin-bottom: 0; }
-      .bd-content img { max-width: 100%; border-radius: 12px; margin: 1.5em 0; }
+      .bd-content img { 
+        display: block;
+        max-width: 100%; 
+        height: auto;
+        border-radius: 12px; 
+        margin: 2em auto; 
+      }
       .bd-content table { 
         width: 100%; 
         color: #ffffff !important; 
@@ -8817,6 +8840,7 @@
       /* Responsive */
       @media (max-width: 992px) {
         .bd-wrapper { flex-direction: column; gap: 20px; }
+        .bd-main { width: 100%; max-width: 100%; position: static; }
         .bd-sidebar { width: 100%; position: static; margin-top: 20px; }
         .bd-sidebar-title, #bdLatestArticles { display: none !important; }
       }
@@ -8963,7 +8987,7 @@
             <span id="bd-date" class="bd-date-text"></span>
           </div>
           <h1 id="bd-title" class="bd-title"></h1>
-          <img id="bd-image" src="" class="bd-cover" style="display:none;">
+          <img id="bd-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="bd-cover">
 
           <div id="bd-toc-mobile" class="bd-toc-wrapper bd-toc-mobile" style="display: none;">
             <button class="bd-toc-mobile-toggle" aria-expanded="false" aria-controls="bd-toc-mobile-content">
@@ -9347,7 +9371,11 @@
                   imgTag.setAttribute('loading', 'lazy');
                   if (!imgTag.getAttribute('alt') || imgTag.getAttribute('alt').trim() === '') { imgTag.setAttribute('alt', `${pk} - Image ${i + 1}`); }
                   let src = imgTag.getAttribute('src');
-                  if (src && src.includes('/storage/v1/object/public/')) { imgTag.setAttribute('src', src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80'); }
+                  if (src && src.includes('/storage/v1/object/public/')) { 
+                    const optimizedSrc = src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=800';
+                    imgTag.setAttribute('src', optimizedSrc);
+                    imgTag.setAttribute('onerror', `if(this.src!=='${src}'){this.src='${src}';}`);
+                  }
                 });
 
                 // Wrap tables for mobile responsiveness
@@ -9365,10 +9393,39 @@
                 const img = document.getElementById('bd-image');
                 if (data.image_url) {
                   let finalImgUrl = data.image_url;
-                  if (finalImgUrl.includes('/storage/v1/object/public/')) { finalImgUrl = finalImgUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80'; }
+                  // Optimize with Supabase Image Transformation if applicable
+                  if (finalImgUrl.includes('/storage/v1/object/public/')) { 
+                    const separator = finalImgUrl.includes('?') ? '&' : '?';
+                    finalImgUrl = finalImgUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + separator + 'format=webp&quality=80&width=1000'; 
+                  }
+                  
+                  // Preload for superfast LCP
+                  const existingPreload = document.getElementById('blog-hero-preload');
+                  if (existingPreload) existingPreload.remove();
+                  const preload = document.createElement('link');
+                  preload.id = 'blog-hero-preload';
+                  preload.rel = 'preload';
+                  preload.as = 'image';
+                  preload.href = finalImgUrl;
+                  preload.setAttribute('fetchpriority', 'high');
+                  document.head.appendChild(preload);
+
                   img.src = finalImgUrl;
                   img.setAttribute('alt', pk || data.title);
+                  img.setAttribute('fetchpriority', 'high');
                   img.setAttribute('loading', 'eager');
+                  
+                  // Fallback if transformation fails
+                  img.onerror = function() {
+                    if (this.src !== data.image_url) {
+                      console.warn("Image transformation failed, falling back to original");
+                      this.src = data.image_url;
+                    } else {
+                      // Even original failed, hide it to avoid broken icon
+                      this.style.display = 'none';
+                    }
+                  };
+                  
                   img.style.display = 'block';
                 } else {
                   img.style.display = 'none';
@@ -9447,12 +9504,12 @@
                 if (related && related.length > 0) {
                   relGrid.innerHTML = '';
                   related.forEach(function (r) {
-                    let rImg = r.image_url;
-                    if (rImg && rImg.includes('/storage/v1/object/public/')) {
-                      rImg = rImg.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80';
-                    }
-                    var imgH = rImg
-                      ? '<img src="' + rImg + '" alt="' + r.title + '" loading="lazy">'
+                    const optimizedRImg = r.image_url && r.image_url.includes('/storage/v1/object/public/') 
+                      ? r.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=400'
+                      : r.image_url;
+
+                    var imgH = r.image_url
+                      ? '<img src="' + optimizedRImg + '" alt="' + r.title + '" loading="lazy" onerror="if(this.src!==\'' + r.image_url + '\'){this.src=\'' + r.image_url + '\';}">'
                       : '<div style="height:140px;background:linear-gradient(135deg,#f1f5f9,#e2e8f0);display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="fa-solid fa-image fa-2x"></i></div>';
                     var card = document.createElement('a');
                     card.href = 'javascript:void(0)';
@@ -9492,8 +9549,13 @@
                     latestContainer.innerHTML = '';
                     latest.forEach(function (r) {
                       const dateStr = new Date(r.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+                      
+                      const optimizedLatImg = r.image_url && r.image_url.includes('/storage/v1/object/public/') 
+                        ? r.image_url.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?format=webp&quality=80&width=150'
+                        : r.image_url;
+
                       const imgHtml = r.image_url
-                        ? '<img src="' + r.image_url + '" loading="lazy" class="bd-latest-img" alt="' + r.title + '">'
+                        ? '<img src="' + optimizedLatImg + '" loading="lazy" class="bd-latest-img" alt="' + r.title + '" onerror="if(this.src!==\'' + r.image_url + '\'){this.src=\'' + r.image_url + '\';}">'
                         : '<div class="bd-latest-img-ph"><i class="fa-solid fa-image"></i></div>';
 
                       const itemHtml = '<a href="javascript:void(0)" class="bd-latest-item" onclick="window.navigate(\'blog/' + r.slug + '\')">' +
@@ -10787,42 +10849,44 @@
         }
     });
     </script>
-    <!-- Botpress Lazy Loading -->
-    <script>
-      function loadBotpress() {
-        if (window.bpLoaded) return;
-        window.bpLoaded = true;
-        
-        var bpInject = document.createElement('script');
-        bpInject.src = 'https://cdn.botpress.cloud/webchat/v3.6/inject.js';
-        bpInject.onload = function() {
-          var bpConfig = document.createElement('script');
-          bpConfig.src = 'https://files.bpcontent.cloud/2026/05/08/14/20260508145325-5J1UN6NT.js';
-          document.body.appendChild(bpConfig);
-        };
-        document.body.appendChild(bpInject);
-      }
-      
-      // Load on user interaction or fallback after 5 seconds to keep main thread completely clear
-      ['scroll', 'mousemove', 'touchstart', 'click'].forEach(e => window.addEventListener(e, loadBotpress, { once: true }));
-      setTimeout(loadBotpress, 5000);
-    </script>
-    
-    <!-- Botpress Custom Positioning Override -->
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919694673555" class="whatsapp_float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
     <style>
-      #bp-web-widget-container,
-      #bp-web-widget {
-        bottom: 24px !important;
-        right: 24px !important;
-        z-index: 10000000 !important;
-      }
-      @media (max-width: 768px) {
-        #bp-web-widget-container,
-        #bp-web-widget {
-          bottom: 20px !important;
-          right: 20px !important;
+        .whatsapp_float {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            bottom: 24px;
+            right: 24px;
+            background-color: #25d366;
+            color: #FFF;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 34px;
+            box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+            z-index: 1000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-      }
+        .whatsapp_float:hover {
+            transform: scale(1.1);
+            color: #FFF;
+            box-shadow: 0 6px 16px rgba(37,211,102,0.4);
+        }
+        @media (max-width: 768px) {
+            .whatsapp_float {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+                font-size: 28px;
+            }
+        }
     </style>
 </body>
 
