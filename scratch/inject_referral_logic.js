@@ -77,9 +77,16 @@ const referralLogic = `
                         
                         // 4. Create referral record if referred
                         if (referrerId) {
+                          // Fetch referrer details to store in referral record
+                          const { data: rInfo } = await client.from('users').select('email, full_name, name').eq('id', referrerId).single();
+
                           await client.from('referrals').insert({
                             referrer_id: referrerId,
                             referred_user_id: newUserId,
+                            referrer_email: rInfo?.email || null,
+                            referrer_name: rInfo?.full_name || rInfo?.name || null,
+                            referred_user_email: email,
+                            referred_user_name: name || null,
                             referral_token: pendingReferralToken,
                             status: 'joined'
                           });

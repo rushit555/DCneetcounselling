@@ -75,25 +75,13 @@ router.post('/payment-summary', async (req, res) => {
         subtotal = originalPrice - discountAmount;
         if (subtotal < 0) subtotal = 0;
         
-        let walletUsed = 0;
-        let walletBalance = 0;
-        if (wallet_enabled && user_id) {
-            const { data: userData } = await supabase.from('users').select('wallet_balance').eq('id', user_id).single();
-            if (userData) {
-                walletBalance = parseFloat(userData.wallet_balance) || 0;
-                walletUsed = Math.min(walletBalance, subtotal);
-            }
-        }
-
-        const finalAmount = subtotal - walletUsed;
+        const finalAmount = subtotal;
 
         res.json({
             success: true,
             original_price: originalPrice,
             discount: discountAmount,
             subtotal: subtotal,
-            wallet_used: walletUsed,
-            wallet_balance: walletBalance,
             final_amount: finalAmount
         });
     } catch (err) {
@@ -191,23 +179,7 @@ router.post('/create-order', async (req, res) => {
             }
         }
 
-        // 3. Apply Wallet Balance
-        let walletUsed = 0;
-        if (wallet_enabled && user_id) {
-            const { data: userData, error: userErr } = await supabase
-                .from('users')
-                .select('wallet_balance')
-                .eq('id', user_id)
-                .single();
-            
-            if (userData && !userErr) {
-                const availableBalance = parseFloat(userData.wallet_balance) || 0;
-                walletUsed = Math.min(availableBalance, subtotal);
-                if (walletUsed < 0) walletUsed = 0;
-            }
-        }
-
-        const finalAmount = subtotal - walletUsed;
+        const finalAmount = subtotal;
 
         const options = {
             amount: Math.round(finalAmount * 100),
@@ -228,8 +200,6 @@ router.post('/create-order', async (req, res) => {
             amount: parsedAmount,
             amount_paid: finalAmount,
             discount: discount,
-            referral_discount: validReferralCoupon ? discount : 0,
-            wallet_used: walletUsed,
             final_amount: finalAmount,
             coupon_code: validReferralCoupon ? validReferralCoupon.code : (validCoupon ? validCoupon.coupon_code : null),
             affiliate_ref: affiliate_ref,
@@ -258,10 +228,8 @@ router.post('/create-order', async (req, res) => {
                 plan_name: product_name,
                 plan_price: parsedAmount,
                 discounted_price: finalAmount,
-                wallet_used: walletUsed,
-                referral_discount: discount,
                 counselling_type: counselling_type || null,
-                coupon_code: validCoupon ? validCoupon.coupon_code : null,
+                coupon_code: validReferralCoupon ? validReferralCoupon.code : (validCoupon ? validCoupon.coupon_code : null),
                 payment_status: 'pending',
                 order_id: newOrder.id.toString()
             });
@@ -343,30 +311,7 @@ router.post('/confirm-payment', async (req, res) => {
  
         // Note: referral discount is effectively marked as used by the order status becoming 'paid'
 
-        // 3. Wallet Deduction Logic
-        if (updatedOrder.wallet_used > 0 && updatedOrder.user_id) {
-            const { data: userData } = await supabase
-                .from('users')
-                .select('wallet_balance')
-                .eq('id', updatedOrder.user_id)
-                .single();
-            
-            if (userData) {
-                const newBalance = Math.max(0, (parseFloat(userData.wallet_balance) || 0) - parseFloat(updatedOrder.wallet_used));
-                await supabase.from('users').update({ wallet_balance: newBalance }).eq('id', updatedOrder.user_id);
-
-                // Log Wallet Transaction
-                await supabase.from('wallet_transactions').insert({
-                    user_id: updatedOrder.user_id,
-                    amount: -updatedOrder.wallet_used,
-                    type: 'wallet_usage',
-                    description: `Used wallet balance for ${updatedOrder.product_name}`,
-                    order_id: order_id.toString()
-                });
-            }
-        }
-
-        // 4. Referral Reward Logic (Credit cashback to referrer wallet)
+        // 3. Referral Reward Logic (Credit cashback to referrer wallet)
         if (updatedOrder.user_id) {
             const { data: userProfile } = await supabase
                 .from('users')
