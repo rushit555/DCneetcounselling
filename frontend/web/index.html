@@ -94,10 +94,17 @@
       border-top-color: #a855f7 !important;
       border-left-color: #a855f7 !important;
     }
+    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider:before { transform: translateX(20px); }
   </style>
 
   <!-- Bulletproof Navigation Stub -->
   <script>
+    window.BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:3000/api' 
+        : 'https://dcneetcounselling.onrender.com/api';
+
     window.navigate = function (route) {
       console.log("Navigating to:", route);
       // Immediate UI update
@@ -6533,6 +6540,47 @@
           .mobile-sticky-share .share-btn { width: 100%; justify-content: center; }
           .history-table th:nth-child(2), .history-table td:nth-child(2) { display: none; }
         }
+
+        /* Premium Reward Coupon Card Styles */
+        .reward-coupon-card {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border: 1px solid rgba(99, 102, 241, 0.5);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.2);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .reward-coupon-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6, #3b82f6);
+        }
+        .reward-coupon-card::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            animation: spin 15s linear infinite; pointer-events: none;
+        }
+        .rc-header { display: flex; justify-content: space-between; align-items: flex-start; z-index: 1; position: relative; }
+        .rc-title { display: flex; align-items: center; gap: 12px; }
+        .rc-icon { width: 48px; height: 48px; background: rgba(139, 92, 246, 0.2); border-radius: 12px; display: flex; justify-content: center; align-items: center; color: #a78bfa; font-size: 24px; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .rc-title h3 { font-size: 22px; font-weight: 800; color: #ffffff !important; margin: 0; }
+        .rc-title p { font-size: 14px; color: #c7d2fe; margin: 0; }
+        .rc-status { background: rgba(34, 197, 94, 0.2); color: #4ade80; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .rc-body { display: flex; flex-direction: column; gap: 16px; background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 16px; border: 1px dashed rgba(255, 255, 255, 0.2); z-index: 1; position: relative; }
+        .rc-code-container { display: flex; justify-content: space-between; align-items: center; }
+        .rc-code { font-family: monospace; font-size: 28px; font-weight: 800; color: #fbbf24; letter-spacing: 2px; }
+        .rc-discount { font-size: 18px; font-weight: 700; color: #ffffff; background: rgba(251, 191, 36, 0.2); padding: 4px 10px; border-radius: 8px; }
+        .rc-expiry { font-size: 13px; color: #a1a1aa; display: flex; align-items: center; gap: 6px; }
+        .rc-actions { display: flex; gap: 12px; z-index: 1; position: relative; margin-top: 10px; }
+        .rc-btn-copy { flex: 1; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 12px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .rc-btn-copy:hover { background: rgba(255, 255, 255, 0.2); }
+        .rc-btn-use { flex: 1; background: linear-gradient(90deg, #ec4899, #8b5cf6); border: none; color: white; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .rc-btn-use:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3); }
+        @media (min-width: 768px) { .rc-body { flex-direction: row; justify-content: space-between; align-items: center; } .rc-code-container { flex-direction: column; align-items: flex-start; gap: 8px; } .rc-actions { width: 300px; margin-top: 0; } }
       </style>
       
       <div class="refer-earn-container">
@@ -6542,6 +6590,33 @@
             <p>Share the benefits with friends and earn rewards.</p>
           </div>
           
+          <!-- My Referral Reward Coupon Section (Hidden by default) -->
+          <div id="my-reward-coupon-section" style="display: none;">
+            <div class="reward-coupon-card">
+              <div class="rc-header">
+                <div class="rc-title">
+                  <div class="rc-icon"><i class="fa-solid fa-gift"></i></div>
+                  <div>
+                    <h3>🎉 Your Referral Reward</h3>
+                    <p>Use this coupon to get 10% OFF on your first purchase.</p>
+                  </div>
+                </div>
+                <div class="rc-status"><i class="fa-solid fa-circle-check"></i> Active</div>
+              </div>
+              <div class="rc-body">
+                <div class="rc-code-container">
+                  <div class="rc-code" id="rc-code-display">WELCOME10-X82K</div>
+                  <div class="rc-expiry" id="rc-expiry-display"><i class="fa-regular fa-clock"></i> Expires in 15 days</div>
+                </div>
+                <div class="rc-discount">10% OFF</div>
+              </div>
+              <div class="rc-actions">
+                <button class="rc-btn-copy" onclick="copyMyRewardCoupon()"><i class="fa-regular fa-copy"></i> Copy Coupon</button>
+                <a href="#payment/plans" class="rc-btn-use"><i class="fa-solid fa-arrow-right"></i> Use Now</a>
+              </div>
+            </div>
+          </div>
+          
           <!-- Hero Card -->
           <div class="hero-card">
             <div class="hero-card-inner">
@@ -6549,8 +6624,8 @@
                 <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px; font-size: 14px; font-weight: 600; margin-bottom: 16px; border: 1px solid rgba(255,255,255,0.3);">
                   <i class="fa-solid fa-star" style="color: #fde047;"></i> Premium Rewards
                 </div>
-                <h2>Invite Friends & <br/>Earn Rewards</h2>
-                <p>Your friend gets <span class="highlight-badge">10% OFF</span> and you earn <span class="highlight-badge">10% cashback</span> in your wallet after their successful purchase.</p>
+                <h2>Invite Friends & <br/>Earn Reward Coupons</h2>
+                <p>Your friend gets <span class="highlight-badge">10% OFF</span> and you earn a <span class="highlight-badge">10% Discount Coupon</span> after their successful purchase.</p>
                 
                 <div class="link-box">
                   <input type="text" id="referral-link-input" class="link-input" value="https://yourdomain.com/signup?ref=demo123" readonly>
@@ -6624,8 +6699,8 @@
                   <div class="step-number">3</div>
                   <i class="fa-solid fa-tag"></i>
                 </div>
-                <h4>Friend Gets 10% OFF</h4>
-                <p>Discount applied automatically.</p>
+                <h4>Friend Gets a Coupon</h4>
+                <p>They get a 10% OFF coupon upon signup.</p>
               </div>
               <div class="step-item">
                 <div class="step-icon">
@@ -6651,24 +6726,6 @@
                   </tr>
                 </thead>
                 <tbody id="referral-history-body">
-                  <tr>
-                    <td>
-                      <div class="student-cell">
-                        <div class="student-avatar">R</div>
-                        <div class="student-name">Rahul Sharma</div>
-                      </div>
-                    </td>
-                    <td><span class="status-badge status-success">Purchased</span></td>
-                    <td class="amount-cell">+₹199</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="student-cell">
-                        <div class="student-avatar">P</div>
-                        <div class="student-name">Priya Patel</div>
-                      </div>
-                    </td>
-                    <td><span class="status-badge status-pending">Joined</span></td>
                     <td class="amount-cell pending">Pending</td>
                   </tr>
                   <tr>
@@ -6716,6 +6773,18 @@
           }, 2000);
         }
 
+        window.copyMyRewardCoupon = function(code) {
+            navigator.clipboard.writeText(code);
+            var btn = document.querySelector('.rc-btn-copy');
+            if (btn) {
+                var originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(function() {
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            }
+        };
+
         // ═══════════════════════════════════════════════════════════
         // DYNAMIC REFERRAL DATA LOADER
         // ═══════════════════════════════════════════════════════════
@@ -6732,10 +6801,10 @@
           var client = window.supabaseClient;
 
           try {
-            // 1. Fetch user's referral token & wallet balance
+            // 1. Fetch user's referral token, wallet balance, and referred_by
             var { data: userData, error: userErr } = await client
               .from('users')
-              .select('referral_token, wallet_balance')
+              .select('referral_token, wallet_balance, referred_by')
               .eq('id', userId)
               .maybeSingle();
 
@@ -6771,6 +6840,59 @@
             // 5. Update stats cards using IDs (Much more reliable)
             if (document.getElementById('wallet-balance-val')) document.getElementById('wallet-balance-val').textContent = '₹' + walletBalance.toLocaleString('en-IN');
 
+            // 5.5 My Referral Reward Coupon Logic
+            var myRewardCouponSection = document.getElementById('my-reward-coupon-section');
+            var hasRewardCoupon = false;
+            var referEarnMenuLinks = document.querySelectorAll("[onclick*='profile/refer-earn']");
+            
+            // Remove existing badge if present
+            referEarnMenuLinks.forEach(function(link) {
+                var existingBadge = link.querySelector('.reward-badge');
+                if (existingBadge) existingBadge.remove();
+            });
+
+            if (userData && userData.referred_by) {
+                var { data: activeRewardCoupons } = await client
+                    .from('referral_coupons')
+                    .select('*')
+                    .eq('user_id', userId)
+                    .eq('is_used', false)
+                    .order('created_at', { ascending: false });
+                
+                if (activeRewardCoupons && activeRewardCoupons.length > 0) {
+                    var validCoupon = activeRewardCoupons.find(c => !c.expires_at || new Date(c.expires_at) > new Date());
+                    if (validCoupon) {
+                        hasRewardCoupon = true;
+                        document.getElementById('rc-code-display').textContent = validCoupon.code;
+                        
+                        var expiryHtml = validCoupon.expires_at 
+                            ? `<i class="fa-regular fa-clock"></i> Expires ${new Date(validCoupon.expires_at).toLocaleDateString()}` 
+                            : `<i class="fa-solid fa-infinity"></i> No Expiry`;
+                        document.getElementById('rc-expiry-display').innerHTML = expiryHtml;
+                        
+                        document.querySelector('.rc-btn-copy').setAttribute('onclick', `copyMyRewardCoupon('${validCoupon.code}')`);
+                        if (myRewardCouponSection) myRewardCouponSection.style.display = 'block';
+
+                        // Notification Badge
+                        referEarnMenuLinks.forEach(function(link) {
+                            // Only append if it's not already there (we just removed it, so it's safe)
+                            var badge = document.createElement('span');
+                            badge.className = 'reward-badge';
+                            badge.style.cssText = 'background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; margin-left: 8px; font-weight: 700; vertical-align: middle; display: inline-block;';
+                            badge.textContent = '1 Reward';
+                            // To ensure proper layout within div/a tags
+                            link.style.display = 'flex';
+                            link.style.alignItems = 'center';
+                            link.appendChild(badge);
+                        });
+                    }
+                }
+            }
+
+            if (!hasRewardCoupon && myRewardCouponSection) {
+                myRewardCouponSection.style.display = 'none';
+            }
+
             // 6. Fetch referral history (people I referred)
             var { data: referrals, error: refErr } = await client
               .from('referrals')
@@ -6780,6 +6902,7 @@
 
             if (refErr) throw refErr;
 
+            var referralCount = referrals ? referrals.length : 0;
             var referralCount = referrals ? referrals.length : 0;
             var totalCashback = 0;
 
@@ -7338,6 +7461,23 @@
         </label>
       </div>
 
+      <!-- Wallet Section -->
+      <div id="ebWalletCard" style="display: none; background: #fffdf0; border: 1px solid #facc15; border-radius: 12px; padding: 15px; margin: 15px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="text-align: left;">
+            <span style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Wallet Balance</span>
+            <div style="font-size: 18px; font-weight: 700; color: #1e293b;">₹<span id="eb_wallet_balance">0</span></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 13px; font-weight: 600;">Use Wallet</span>
+            <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 24px;">
+              <input type="checkbox" id="ebUseWalletToggle" onchange="window.recalculateEbookTotal()" style="opacity: 0; width: 0; height: 0;">
+              <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px;"></span>
+            </label>
+          </div>
+        </div>
+        <div id="ebWalletMsg" style="font-size: 11px; margin-top: 5px; color: #16a34a; font-weight: 500; display: none;">Wallet balance applied!</div>
+      </div>
       <button type="submit" class="eb-btn">Continue to Payment</button>
     </form>
 
@@ -7547,6 +7687,77 @@
 
       document.getElementById('modalOverlay').style.display = 'block';
       document.getElementById('ebookPurchaseModal').style.display = 'block';
+      window.fetchModalWalletBalance();
+    }
+
+    window.fetchModalWalletBalance = async function() {
+        if (!window.supabaseClient || !window._authUser) return;
+        
+        try {
+            // Fetch Payment Summary (Discount + Wallet)
+            const ctx = window.activeEbookContext;
+            const response = await fetch(`${window.BACKEND_URL}/payment-summary`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: window._authUser.id,
+                    plan_price: ctx.price,
+                    wallet_enabled: true // Always check what's possible
+                })
+            });
+            const summary = await response.json();
+            
+            if (summary.success) {
+                window.ebWalletBalance = summary.wallet_balance;
+                window.ebReferralDiscount = summary.referral_discount;
+                
+                const balEl = document.getElementById('eb_wallet_balance');
+                if (balEl) balEl.innerText = summary.wallet_balance;
+                
+                const card = document.getElementById('ebWalletCard');
+                if (card) card.style.display = 'block';
+
+                // Initial calculation
+                window.recalculateEbookTotal();
+            }
+        } catch (err) {
+            console.error("Ebook summary error:", err);
+        }
+    }
+
+    window.recalculateEbookTotal = function() {
+        const ctx = window.activeEbookContext;
+        if (!ctx) return;
+        
+        const originalPrice = ctx.price;
+        const referralDiscount = window.ebReferralDiscount || 0;
+        const subtotal = originalPrice - referralDiscount;
+
+        const useWallet = document.getElementById('ebUseWalletToggle').checked;
+        let walletUsed = 0;
+        if (useWallet) {
+            walletUsed = Math.min(window.ebWalletBalance || 0, subtotal);
+            document.getElementById('ebWalletRow').style.display = 'flex';
+            document.getElementById('eb_wallet_used').innerText = walletUsed;
+            document.getElementById('ebWalletMsg').style.display = 'block';
+        } else {
+            document.getElementById('ebWalletRow').style.display = 'none';
+            document.getElementById('ebWalletMsg').style.display = 'none';
+        }
+        
+        const final = subtotal - walletUsed;
+        ctx.finalPrice = final;
+        ctx.walletUsed = walletUsed;
+        ctx.referralDiscount = referralDiscount;
+
+        document.getElementById('ebPriceSummary').style.display = 'block';
+        document.getElementById('eb_subtotal').innerText = originalPrice;
+        
+        // Update summary rows if they exist
+        // (Assuming we added them in previous steps)
+        
+        const btn = document.querySelector('#ebookPurchaseModal .eb-btn');
+        if (btn) btn.innerText = "Pay ₹" + ctx.finalPrice;
     }
 
     window.closeEbookPurchaseModal = function () {
@@ -7682,7 +7893,8 @@
           mobile: mobile,
           course: ctx.course,
           quota: ctx.quota,
-          amount_paid: ctx.price,
+          amount_paid: ctx.finalPrice !== undefined ? ctx.finalPrice : ctx.price,
+          wallet_used: ctx.walletUsed || 0,
           ebook_id: ctx.is_cart ? ctx.ebook_id : (ctx.course.toLowerCase() + '_' + ctx.quota.toLowerCase().replace(/ /g, '_')),
           payment_status: 'initiated',
           created_at: new Date(),
@@ -7727,9 +7939,10 @@
         localStorage.setItem('customer_email', email);
 
         // 4. Initiate Razorpay Checkout window
+        var finalAmt = ctx.finalPrice !== undefined ? ctx.finalPrice : ctx.price;
         var options = {
           "key": "rzp_live_ShlgHvLVwqmST2", // Live Key Passed In
-          "amount": ctx.price * 100, // Razorpay amount in paise
+          "amount": Math.round(finalAmt * 100), // Razorpay amount in paise
           "currency": "INR",
           "name": "DC Neet Counselling",
           "description": ctx.title,

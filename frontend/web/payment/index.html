@@ -211,6 +211,47 @@
             margin-top: 4px;
         }
 
+        /* Switch/Toggle styles */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 44px;
+          height: 24px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 24px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 18px;
+          width: 18px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #facc15;
+        }
+        input:checked + .slider:before {
+          transform: translateX(20px);
+        }
+
         /* Mobile Sticky Button */
         @media (max-width: 600px) {
             .payment-container {
@@ -271,6 +312,27 @@
             </div>
         </div>
 
+        <!-- Wallet Card -->
+        <div class="card" id="walletCard" style="display: none; border: 1px solid #FFD700; background: #fffdf0;">
+            <h3><i class="fas fa-wallet"></i> Wallet Balance</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="font-size: 13px; color: #666;">Available Balance:</span>
+                    <div style="font-size: 20px; font-weight: 700; color: #000;">₹<span id="d_wallet_balance">0</span></div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 13px; font-weight: 600;">Use Wallet</span>
+                    <label class="switch">
+                        <input type="checkbox" id="useWalletToggle" onchange="toggleWallet()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div id="walletMessage" style="font-size: 11px; margin-top: 8px; color: #16a34a; font-weight: 500; display: none;">
+                Wallet balance applied!
+            </div>
+        </div>
+
         <div class="card" style="background: #ffffff;">
             <h3><i class="fas fa-tag"></i> Have a Coupon?</h3>
             <div class="coupon-section">
@@ -285,8 +347,13 @@
                     <span class="detail-value">₹<span id="d_original_price">0</span></span>
                 </div>
                 <div class="detail-row" id="discountRow" style="display: none; color: #16a34a;">
-                    <span class="detail-label">Discount Applied</span>
+                    <span class="detail-label">Referral Discount</span>
                     <span class="detail-value">-₹<span id="d_discount">0</span></span>
+                </div>
+                <!-- Wallet Row -->
+                <div class="detail-row" id="walletRow" style="display: none; color: #16a34a; font-weight: 600;">
+                    <span class="detail-label">Wallet Used</span>
+                    <span class="detail-value">-₹<span id="d_wallet_used">0</span></span>
                 </div>
                 <div class="final-price">
                     <span>Total Amount</span>
@@ -306,15 +373,16 @@
     <script src="../js/supabaseClient.js?v=2026.04.19.2"></script>
     
     <script>
-
-
         let paymentData = null;
         let originalPrice = 0;
         let finalPrice = 0;
         let appliedCoupon = null;
         let discountAmount = 0;
+        let walletBalance = 0;
+        let walletUsed = 0;
+        let isWalletEnabled = false;
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const dataStr = sessionStorage.getItem('counselling_payment_data');
             if (!dataStr) {
                 alert("No booking details found. Please submit the form again.");
@@ -337,20 +405,122 @@
                 
                 document.getElementById('d_original_price').textContent = originalPrice;
                 document.getElementById('d_final_price').textContent = finalPrice;
+
+                // Fetch Wallet Balance
+                await fetchWalletBalance();
+                
+                // Calculate Pricing
+                await recalculateTotal();
             } catch (e) {
                 console.error("Data parse error", e);
                 window.location.href = "/";
             }
         });
 
-        const BACKEND_URL = 'https://rlqmdylbzapyepuwncwt.supabase.co/functions/v1/payment';
+        // Use Express backend if running locally or on Render, otherwise fallback to Edge Function
+        const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000/api' 
+            : 'https://dcneetcounselling.onrender.com/api';
+
+        async function fetchWalletBalance() {
+            try {
+                if (!window.supabaseClient) return;
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if (!user) return;
+
+                const { data, error } = await window.supabaseClient
+                    .from('users')
+                    .select('wallet_balance')
+                    .eq('id', user.id)
+                    .single();
+                
+                walletBalance = data && data.wallet_balance ? parseFloat(data.wallet_balance) : 0;
+                document.getElementById('d_wallet_balance').textContent = walletBalance;
+                document.getElementById('walletCard').style.display = 'block';
+
+                if (walletBalance <= 0) {
+                    document.getElementById('useWalletToggle').disabled = true;
+                    document.getElementById('walletMessage').textContent = "No balance available";
+                    document.getElementById('walletMessage').style.display = 'block';
+                    document.getElementById('walletMessage').style.color = '#666';
+                }
+            } catch (err) {
+                console.error("Error fetching wallet balance:", err);
+            }
+        }
+
+        function toggleWallet() {
+            isWalletEnabled = document.getElementById('useWalletToggle').checked;
+            recalculateTotal();
+        }
+
+        async function recalculateTotal(couponCodeOverride) {
+            try {
+                if (!window.supabaseClient) return;
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                const user = session?.user;
+                
+                let currentCoupon = couponCodeOverride || localStorage.getItem('coupon') || null;
+
+                const headers = { 'Content-Type': 'application/json' };
+                if (session && session.access_token) {
+                    headers['Authorization'] = `Bearer ${session.access_token}`;
+                }
+
+                const response = await fetch(`${BACKEND_URL}/payment-summary`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        user_id: user?.id || null,
+                        plan_price: originalPrice,
+                        wallet_enabled: isWalletEnabled,
+                        coupon_code: currentCoupon
+                    })
+                });
+
+                const data = await response.json();
+                console.log('[Pricing] Backend response:', data);
+                if (data.success) {
+                    discountAmount = data.discount || data.referral_discount || 0;
+                    walletUsed = data.wallet_used;
+                    finalPrice = data.final_amount;
+
+                    console.log(`[Pricing] Applied Discount: ${discountAmount}, Wallet: ${walletUsed}, Final: ${finalPrice}`);
+
+                    // Update UI
+                    if (discountAmount > 0) {
+                        document.getElementById('d_discount').textContent = discountAmount;
+                        document.getElementById('discountRow').style.display = 'flex';
+                    } else {
+                        document.getElementById('discountRow').style.display = 'none';
+                    }
+
+                    if (walletUsed > 0) {
+                        document.getElementById('d_wallet_used').textContent = walletUsed;
+                        document.getElementById('walletRow').style.display = 'flex';
+                        document.getElementById('walletMessage').style.display = 'block';
+                    } else {
+                        document.getElementById('walletRow').style.display = 'none';
+                        if (!isWalletEnabled) document.getElementById('walletMessage').style.display = 'none';
+                    }
+
+                    document.getElementById('d_final_price').textContent = finalPrice;
+                }
+            } catch (err) {
+                console.error("Pricing error:", err);
+            }
+        }
 
         async function applyCoupon() {
             const codeInput = document.getElementById('couponInput').value.trim();
             const msgEl = document.getElementById('couponMessage');
             const btn = document.getElementById('applyCouponBtn');
             
-            if (!codeInput) return;
+            if (!codeInput) {
+                resetDiscount();
+                recalculateTotal();
+                return;
+            }
 
             btn.disabled = true;
             btn.textContent = "Applying...";
@@ -359,91 +529,47 @@
 
             try {
                 if (!window.supabaseClient) throw new Error("Database not initialized");
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                const user = session?.user;
+
+                const headers = { 'Content-Type': 'application/json' };
+                if (session && session.access_token) {
+                    headers['Authorization'] = `Bearer ${session.access_token}`;
+                }
+
+                const response = await fetch(`${BACKEND_URL}/payment-summary`, {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        user_id: user?.id || null,
+                        plan_price: originalPrice,
+                        wallet_enabled: isWalletEnabled,
+                        coupon_code: codeInput
+                    })
+                });
+
+                const data = await response.json();
                 
-                const uppercaseCode = codeInput.toUpperCase();
-                const { data: coupon, error } = await window.supabaseClient
-                    .from('coupons')
-                    .select('*')
-                    .eq('coupon_code', uppercaseCode)
-                    .single();
-
-                if (error || !coupon) {
-                    msgEl.textContent = "Invalid or expired coupon.";
+                if (data.success && (data.discount > 0 || data.referral_discount > 0)) {
+                    let discount = data.discount || data.referral_discount;
+                    msgEl.textContent = "Coupon applied! ₹" + discount + " off.";
+                    msgEl.className = "message success";
+                    localStorage.setItem('coupon', codeInput);
+                    
+                    await recalculateTotal(codeInput);
+                } else {
+                    msgEl.textContent = "Invalid, expired, or inapplicable coupon.";
                     msgEl.className = "message error";
                     resetDiscount();
-                    btn.disabled = false;
-                    btn.textContent = "Apply";
-                    return;
+                    await recalculateTotal();
                 }
-
-                if (coupon.is_active === false || String(coupon.is_active).toLowerCase() === 'false' || coupon.is_active === 0) {
-                    msgEl.textContent = "Coupon is inactive.";
-                    msgEl.className = "message error";
-                    resetDiscount();
-                    btn.disabled = false;
-                    btn.textContent = "Apply";
-                    return;
-                }
-
-                const now = new Date();
-                if (coupon.valid_from && now < new Date(coupon.valid_from)) {
-                    msgEl.textContent = "Coupon is not yet valid.";
-                    msgEl.className = "message error";
-                    resetDiscount();
-                    btn.disabled = false;
-                    btn.textContent = "Apply";
-                    return;
-                }
-
-                if (coupon.valid_to && now > new Date(coupon.valid_to)) {
-                    msgEl.textContent = "Coupon has expired.";
-                    msgEl.className = "message error";
-                    resetDiscount();
-                    btn.disabled = false;
-                    btn.textContent = "Apply";
-                    return;
-                }
-
-                if (coupon.usage_limit !== null && coupon.used_count >= coupon.usage_limit) {
-                    msgEl.textContent = "Coupon usage limit reached.";
-                    msgEl.className = "message error";
-                    resetDiscount();
-                    btn.disabled = false;
-                    btn.textContent = "Apply";
-                    return;
-                }
-
-                let parsedAmount = parseFloat(originalPrice);
-                let discount = 0;
-                let calculatedFinalPrice = parsedAmount;
-
-                if (!isNaN(parsedAmount) && parsedAmount >= 0) {
-                    if (coupon.discount_type === 'percentage') {
-                        discount = Math.round(parsedAmount * (parseFloat(coupon.discount_value) / 100));
-                    } else if (coupon.discount_type === 'fixed') {
-                        discount = Math.round(parseFloat(coupon.discount_value));
-                    }
-                    calculatedFinalPrice = parsedAmount - discount;
-                    if (calculatedFinalPrice < 0) calculatedFinalPrice = 0;
-                }
-
-                appliedCoupon = { code: coupon.coupon_code };
-                localStorage.setItem("coupon", coupon.coupon_code);
-
-                discountAmount = discount;
-                finalPrice = calculatedFinalPrice;
-
-                document.getElementById('d_discount').textContent = discountAmount;
-                document.getElementById('discountRow').style.display = 'flex';
-                document.getElementById('d_final_price').textContent = finalPrice;
-
-                msgEl.textContent = "Coupon applied successfully!";
-                msgEl.className = "message success";
 
             } catch (err) {
                 console.error(err);
-                msgEl.textContent = "Error validating coupon. Please try again.";
+                msgEl.textContent = "Error applying coupon.";
                 msgEl.className = "message error";
+                resetDiscount();
+                await recalculateTotal();
             } finally {
                 btn.disabled = false;
                 btn.textContent = "Apply";
@@ -451,84 +577,11 @@
         }
 
         function resetDiscount() {
-            appliedCoupon = null;
-            localStorage.removeItem("coupon");
-            localStorage.removeItem("affiliate_ref");
-            discountAmount = 0;
-            finalPrice = originalPrice;
+            localStorage.removeItem('coupon');
+            document.getElementById('couponInput').value = '';
+            document.getElementById('d_discount').textContent = '0';
             document.getElementById('discountRow').style.display = 'none';
-            document.getElementById('d_final_price').textContent = finalPrice;
         }
-
-        
-        // ═══════════════════════════════════════════════════════════
-        // REFERRAL REWARD PROCESSOR
-        // ═══════════════════════════════════════════════════════════
-        async function processReferralReward(amount) {
-            try {
-                if (!window.supabaseClient) return;
-                const client = window.supabaseClient;
-                const { data: { user } } = await client.auth.getUser();
-                if (!user) return;
-
-                // 1. Check if this user was referred by someone
-                const { data: userData } = await client
-                    .from('users')
-                    .select('referred_by')
-                    .eq('id', user.id)
-                    .single();
-
-                if (!userData || !userData.referred_by) return;
-                const referrerId = userData.referred_by;
-
-                // 2. Check if we already processed cashback for this referral
-                const { data: referral } = await client
-                    .from('referrals')
-                    .select('id, cashback_processed')
-                    .eq('referrer_id', referrerId)
-                    .eq('referred_user_id', user.id)
-                    .maybeSingle();
-
-                if (!referral || referral.cashback_processed) return;
-
-                // 3. Calculate 10% cashback
-                const cashbackAmount = Math.round(amount * 0.10);
-                if (cashbackAmount <= 0) return;
-
-                // 4. Update Referrer's Wallet
-                // Use a RPC or manual update (RPC is safer for concurrency)
-                const { data: referrer } = await client
-                    .from('users')
-                    .select('wallet_balance')
-                    .eq('id', referrerId)
-                    .single();
-                
-                const newBalance = (referrer.wallet_balance || 0) + cashbackAmount;
-                
-                await client.from('users').update({ wallet_balance: newBalance }).eq('id', referrerId);
-
-                // 5. Log Transaction
-                await client.from('wallet_transactions').insert({
-                    user_id: referrerId,
-                    amount: cashbackAmount,
-                    type: 'referral_bonus',
-                    description: 'Cashback for referring ' + (user.email || 'a friend'),
-                    order_id: localStorage.getItem('order_id')
-                });
-
-                // 6. Mark referral as Purchased & Processed
-                await client.from('referrals').update({ 
-                    status: 'purchased', 
-                    cashback_processed: true,
-                    cashback_amount: cashbackAmount 
-                }).eq('id', referral.id);
-
-                console.log('[Referral] Cashback processed successfully:', cashbackAmount);
-            } catch (err) {
-                console.error('[Referral] Error rewarding referrer:', err);
-            }
-        }
-
 
         async function proceedToPayment() {
             const btn = document.getElementById('payBtn');
@@ -537,10 +590,19 @@
             btnText.textContent = "Processing...";
 
             try {
+                const sessionData = window.supabaseClient ? await window.supabaseClient.auth.getSession() : null;
+                const session = sessionData?.data?.session;
+                const user = session?.user;
+                
                 // 1. Create order on backend
+                const headers = { "Content-Type": "application/json" };
+                if (session && session.access_token) {
+                    headers['Authorization'] = `Bearer ${session.access_token}`;
+                }
+
                 const createRes = await fetch(`${BACKEND_URL}/create-order`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: headers,
                     body: JSON.stringify({
                         email: paymentData.email,
                         full_name: paymentData.full_name,
@@ -548,8 +610,8 @@
                         product_name: paymentData.plan_name,
                         amount: originalPrice,
                         coupon: localStorage.getItem("coupon"),
-                        user_id: (window.supabaseClient && (await window.supabaseClient.auth.getUser()).data.user)?.id || null,
-                        // Add counselling specific fields
+                        user_id: user?.id || null,
+                        wallet_enabled: isWalletEnabled,
                         category: paymentData.category,
                         domicile_state: paymentData.domicile_state,
                         neet_score: paymentData.neet_score,
@@ -559,16 +621,13 @@
                 });
 
                 const order = await createRes.json();
-                
-                if (!order.success) {
-                    throw new Error(order.error || "Failed to create order");
-                }
+                if (!order.success) throw new Error(order.error || "Failed to create order");
 
                 localStorage.setItem("order_id", order.order_id);
 
                 // 2. Open Razorpay
                 const options = {
-                    "key": "rzp_live_ShlgHvLVwqmST2",
+                    "key": "rzp_live_ShlgHvLVwqmST2", 
                     "amount": Math.round(order.final_amount * 100),
                     "currency": "INR",
                     "name": "DC Neet Counselling",
@@ -579,9 +638,14 @@
                             const order_id = localStorage.getItem("order_id");
 
                             // Confirm payment with backend
+                            const confirmHeaders = { "Content-Type": "application/json" };
+                            if (session && session.access_token) {
+                                confirmHeaders['Authorization'] = `Bearer ${session.access_token}`;
+                            }
+
                             const confirmRes = await fetch(`${BACKEND_URL}/confirm-payment`, {
                                 method: "POST",
-                                headers: { "Content-Type": "application/json" },
+                                headers: confirmHeaders,
                                 body: JSON.stringify({ 
                                     order_id: order_id,
                                     razorpay_order_id: response.razorpay_order_id,
@@ -591,17 +655,12 @@
                             });
 
                             const data = await confirmRes.json();
-                            
                             if (data.success) {
-                                // Process Referral Reward (10% cashback)
-                                await processReferralReward(order.final_amount);
-                                // Clear session and redirect
                                 sessionStorage.removeItem('counselling_payment_data');
                                 window.location.href = `/thank-you/?product=${encodeURIComponent(paymentData.plan_name)}&amount=${order.final_amount}&order_id=${order_id}&coupon=${localStorage.getItem("coupon") || ''}`;
                             } else {
                                 throw new Error("Backend verification failed");
                             }
-
                         } catch (innerErr) {
                             console.error("Post-payment DB error:", innerErr);
                             alert("Payment succeeded but verification failed. Please contact support.");
@@ -612,11 +671,11 @@
                         "email": paymentData.email,
                         "contact": paymentData.mobile_number
                     },
-                    "theme": { "color": "#000000" } // Accent color
+                    "theme": { "color": "#FFD700" }
                 };
 
                 const rzp = new window.Razorpay(options);
-                rzp.on('payment.failed', async function (response) {
+                rzp.on('payment.failed', function (response) {
                     alert("Payment failed. Please try again.");
                 });
                 rzp.open();
