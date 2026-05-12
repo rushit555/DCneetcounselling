@@ -75,6 +75,8 @@ router.post('/payment-summary', async (req, res) => {
         subtotal = originalPrice - discountAmount;
         if (subtotal < 0) subtotal = 0;
         
+        console.log(`[Summary] Subtotal: ${subtotal}, Discount: ${discountAmount}`);
+
         // Apply wallet balance if enabled
         let walletUsed = 0;
         if (wallet_enabled && user_id) {
@@ -91,7 +93,8 @@ router.post('/payment-summary', async (req, res) => {
             }
         }
 
-        const finalAmount = Math.max(0, subtotal - walletUsed);
+        const finalAmount = Math.round(Math.max(0, subtotal - walletUsed));
+        console.log(`[Summary] Result -> Final: ₹${finalAmount}, WalletUsed: ₹${walletUsed}`);
 
         res.json({
             success: true,

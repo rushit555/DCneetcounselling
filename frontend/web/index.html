@@ -6758,30 +6758,86 @@
       </div>
       
       <script>
+        // Mobile-safe clipboard helper
+        function safeCopyToClipboard(text) {
+            return new Promise(function(resolve, reject) {
+                // Try modern clipboard API first
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(resolve).catch(function() {
+                        fallbackCopy(text, resolve, reject);
+                    });
+                } else {
+                    fallbackCopy(text, resolve, reject);
+                }
+            });
+        }
+
+        function fallbackCopy(text, resolve, reject) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            ta.style.top = '-9999px';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+                resolve();
+            } catch (e) {
+                reject(e);
+            }
+            document.body.removeChild(ta);
+        }
+
         function copyReferralLink() {
           var copyText = document.getElementById("referral-link-input");
           var btn = document.getElementById("copy-referral-btn");
-          copyText.select();
-          copyText.setSelectionRange(0, 99999);
-          navigator.clipboard.writeText(copyText.value);
+          if (!copyText || !copyText.value) return;
           
-          var originalHTML = btn.innerHTML;
-          btn.innerHTML = '<i class="fa-solid fa-check" style="color: #86efac;"></i>';
-          setTimeout(function() {
-            btn.innerHTML = originalHTML;
-          }, 2000);
+          safeCopyToClipboard(copyText.value).then(function() {
+            if (btn) {
+              var originalHTML = btn.innerHTML;
+              btn.innerHTML = '<i class="fa-solid fa-check" style="color: #86efac;"></i>';
+              btn.style.background = 'rgba(34,197,94,0.3)';
+              setTimeout(function() {
+                btn.innerHTML = originalHTML;
+                btn.style.background = '';
+              }, 2000);
+            }
+          }).catch(function() {
+            // Fallback for mobile: show prompt so user can long-press to copy
+            window.prompt('Copy this referral link:', copyText.value);
+          });
         }
 
         window.copyMyRewardCoupon = function(code) {
-            navigator.clipboard.writeText(code);
-            var btn = document.querySelector('.rc-btn-copy');
-            if (btn) {
-                var originalHTML = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-                setTimeout(function() {
-                    btn.innerHTML = originalHTML;
-                }, 2000);
+            // If no code passed, read it from the coupon display element
+            if (!code) {
+                var codeEl = document.getElementById('rc-code-display');
+                code = codeEl ? codeEl.textContent.trim() : '';
             }
+            if (!code) {
+                alert('No coupon code available');
+                return;
+            }
+
+            var btn = document.querySelector('.rc-btn-copy');
+            safeCopyToClipboard(code).then(function() {
+                if (btn) {
+                    var originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                    btn.style.background = 'rgba(34,197,94,0.3)';
+                    setTimeout(function() {
+                        btn.innerHTML = originalHTML;
+                        btn.style.background = '';
+                    }, 2000);
+                }
+            }).catch(function() {
+                // Fallback for very old mobile browsers: show prompt so user can copy
+                window.prompt('Copy this coupon code:', code);
+            });
         };
 
         // ═══════════════════════════════════════════════════════════
