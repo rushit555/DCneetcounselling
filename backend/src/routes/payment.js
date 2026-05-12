@@ -75,12 +75,29 @@ router.post('/payment-summary', async (req, res) => {
         subtotal = originalPrice - discountAmount;
         if (subtotal < 0) subtotal = 0;
         
-        const finalAmount = subtotal;
+        // Apply wallet balance if enabled
+        let walletUsed = 0;
+        if (wallet_enabled && user_id) {
+            const { data: userData } = await supabase
+                .from('users')
+                .select('wallet_balance')
+                .eq('id', user_id)
+                .single();
+            
+            if (userData && parseFloat(userData.wallet_balance) > 0) {
+                const walletBalance = parseFloat(userData.wallet_balance);
+                walletUsed = Math.min(walletBalance, subtotal);
+                console.log(`[Summary] Wallet: balance=₹${walletBalance}, using=₹${walletUsed}`);
+            }
+        }
+
+        const finalAmount = Math.max(0, subtotal - walletUsed);
 
         res.json({
             success: true,
             original_price: originalPrice,
             discount: discountAmount,
+            wallet_used: walletUsed,
             subtotal: subtotal,
             final_amount: finalAmount
         });
@@ -99,6 +116,7 @@ router.post('/create-order', async (req, res) => {
         } = req.body;
 
         if (!amount) return res.status(400).json({ success: false, error: "Amount is required" });
+        console.log(`[CreateOrder] user_id=${user_id}, email=${email}, amount=${amount}, coupon=${coupon}`);
 
         let parsedAmount = parseFloat(amount);
         let subtotal = parsedAmount;
@@ -179,6 +197,24 @@ router.post('/create-order', async (req, res) => {
             }
         }
 
+        // Apply wallet balance if enabled
+        let walletUsed = 0;
+        if (wallet_enabled && user_id) {
+            const { data: walletUser } = await supabase
+                .from('users')
+                .select('wallet_balance')
+                .eq('id', user_id)
+                .single();
+            
+            if (walletUser && parseFloat(walletUser.wallet_balance) > 0) {
+                const walletBalance = parseFloat(walletUser.wallet_balance);
+                walletUsed = Math.min(walletBalance, subtotal);
+                subtotal -= walletUsed;
+                if (subtotal < 0) subtotal = 0;
+                console.log(`[CreateOrder] Wallet applied: ₹${walletUsed}, remaining to pay: ₹${subtotal}`);
+            }
+        }
+
         const finalAmount = subtotal;
 
         const options = {
@@ -244,7 +280,8 @@ router.post('/create-order', async (req, res) => {
             success: true, 
             order_id: newOrder.id, 
             razorpay_order_id: rzpOrder.id,
-            final_amount: finalAmount 
+            final_amount: finalAmount,
+            wallet_used: walletUsed
         });
     } catch (error) {
         console.error("Order Creation Error:", error);
@@ -308,51 +345,173 @@ router.post('/confirm-payment', async (req, res) => {
             payment_status: 'paid',
             razorpay_payment_id: razorpay_payment_id || null
         }).eq('order_id', order_id.toString());
+
+        // 2.5 Deduct wallet balance if wallet was used
+        // wallet_used = original_amount - discount - final_amount (i.e. the gap paid by wallet)
+        const orderAmount = parseFloat(updatedOrder.amount) || 0;
+        const orderDiscount = parseFloat(updatedOrder.discount) || 0;
+        const orderFinal = parseFloat(updatedOrder.final_amount) || 0;
+        const walletUsedAmount = Math.max(0, orderAmount - orderDiscount - orderFinal);
+        
+        if (walletUsedAmount > 0 && updatedOrder.user_id) {
+            console.log(`[ConfirmPayment] Deducting wallet: ₹${walletUsedAmount} from user ${updatedOrder.user_id}`);
+            const { data: currentUser } = await supabase.from('users').select('wallet_balance').eq('id', updatedOrder.user_id).single();
+            if (currentUser) {
+                const currentBal = parseFloat(currentUser.wallet_balance) || 0;
+                const newBal = Math.round(Math.max(0, currentBal - walletUsedAmount) * 100) / 100;
+                await supabase.from('users').update({ wallet_balance: newBal }).eq('id', updatedOrder.user_id);
+                
+                // Log wallet deduction
+                await supabase.from('wallet_transactions').insert({
+                    user_id: updatedOrder.user_id,
+                    amount: -walletUsedAmount,
+                    type: 'payment',
+                    description: `Wallet used for order ${order_id}`,
+                    order_id: order_id.toString()
+                });
+                console.log(`[ConfirmPayment] Wallet deducted: ₹${currentBal} → ₹${newBal}`);
+            }
+        }
  
         // Note: referral discount is effectively marked as used by the order status becoming 'paid'
 
         // 3. Referral Reward Logic (Credit cashback to referrer wallet)
-        if (updatedOrder.user_id) {
-            const { data: userProfile } = await supabase
+        // Resolve user_id: use order's user_id, or fallback to looking up by email
+        let effectiveUserId = updatedOrder.user_id;
+        if (!effectiveUserId && (updatedOrder.email || updatedOrder.user_email)) {
+            const lookupEmail = updatedOrder.email || updatedOrder.user_email;
+            console.log('[Cashback] No user_id on order, looking up by email:', lookupEmail);
+            const { data: userByEmail } = await supabase
                 .from('users')
-                .select('referred_by')
-                .eq('id', updatedOrder.user_id)
-                .single();
+                .select('id')
+                .eq('email', lookupEmail)
+                .maybeSingle();
+            if (userByEmail) {
+                effectiveUserId = userByEmail.id;
+                // Also update the order with the correct user_id for future reference
+                await supabase.from('orders').update({ user_id: effectiveUserId }).eq('id', order_id);
+                console.log('[Cashback] Resolved user_id from email:', effectiveUserId);
+            }
+        }
 
-            if (userProfile && userProfile.referred_by) {
-                const referrerId = userProfile.referred_by;
+        console.log('[Cashback] Starting referral cashback check for user_id:', effectiveUserId);
+        if (effectiveUserId) {
+            try {
+                // Step A: Find referrer via users.referred_by
+                const { data: userProfile, error: userProfileErr } = await supabase
+                    .from('users')
+                    .select('referred_by')
+                    .eq('id', effectiveUserId)
+                    .single();
 
-                const { data: referralRecord } = await supabase
-                    .from('referrals')
-                    .select('id, cashback_given')
-                    .eq('referrer_id', referrerId)
-                    .eq('referred_user_id', updatedOrder.user_id)
-                    .maybeSingle();
+                console.log('[Cashback] User profile:', userProfile, 'Error:', userProfileErr);
 
-                if (referralRecord && !referralRecord.cashback_given) {
-                    // Credit 10% cashback to referrer
-                    const cashbackAmount = parseFloat(updatedOrder.amount) * 0.10;
-                    
-                    const { data: referrerUser } = await supabase.from('users').select('wallet_balance').eq('id', referrerId).single();
-                    const currentBalance = parseFloat(referrerUser.wallet_balance) || 0;
-                    await supabase.from('users').update({ wallet_balance: currentBalance + cashbackAmount }).eq('id', referrerId);
+                let referrerId = userProfile?.referred_by || null;
 
-                    // Log wallet transaction
-                    await supabase.from('wallet_transactions').insert({
-                        user_id: referrerId,
-                        amount: cashbackAmount,
-                        type: 'cashback',
-                        description: `Referral cashback for order ${order_id}`,
-                        order_id: order_id.toString()
-                    });
+                // Step B: If no referred_by, try finding referrer via the referral coupon used in this order
+                if (!referrerId && updatedOrder.coupon_code) {
+                    console.log('[Cashback] No referred_by found, checking referral_coupons for code:', updatedOrder.coupon_code);
+                    const { data: usedCoupon } = await supabase
+                        .from('referral_coupons')
+                        .select('user_id, referral_id')
+                        .eq('code', updatedOrder.coupon_code)
+                        .maybeSingle();
 
-                    // Mark referral as processed
-                    await supabase.from('referrals').update({
-                        cashback_given: true,
-                        cashback_amount: cashbackAmount,
-                        status: 'purchased'
-                    }).eq('id', referralRecord.id);
+                    if (usedCoupon && usedCoupon.referral_id) {
+                        const { data: refRecord } = await supabase
+                            .from('referrals')
+                            .select('referrer_id')
+                            .eq('id', usedCoupon.referral_id)
+                            .maybeSingle();
+                        if (refRecord) {
+                            referrerId = refRecord.referrer_id;
+                            console.log('[Cashback] Found referrer via coupon referral_id:', referrerId);
+                        }
+                    }
                 }
+
+                if (referrerId) {
+                    console.log('[Cashback] Referrer ID found:', referrerId);
+
+                    // Check if cashback already given via referrals table
+                    const { data: referralRecord } = await supabase
+                        .from('referrals')
+                        .select('id, cashback_given')
+                        .eq('referrer_id', referrerId)
+                        .eq('referred_user_id', effectiveUserId)
+                        .maybeSingle();
+
+                    console.log('[Cashback] Referral record:', referralRecord);
+
+                    let referralRecordId = referralRecord?.id || null;
+                    let alreadyGiven = referralRecord?.cashback_given || false;
+
+                    // If no referral record exists, create one
+                    if (!referralRecord) {
+                        console.log('[Cashback] No referral record found, creating one...');
+                        const { data: newRef, error: newRefErr } = await supabase
+                            .from('referrals')
+                            .insert({
+                                referrer_id: referrerId,
+                                referred_user_id: effectiveUserId,
+                                status: 'joined'
+                            })
+                            .select('id')
+                            .single();
+                        if (newRef) {
+                            referralRecordId = newRef.id;
+                            console.log('[Cashback] Created referral record:', referralRecordId);
+                        } else {
+                            console.error('[Cashback] Failed to create referral record:', newRefErr);
+                        }
+                    }
+
+                    if (!alreadyGiven && referralRecordId) {
+                        // Credit 10% cashback to referrer based on ORIGINAL price (before discount)
+                        const cashbackAmount = parseFloat(updatedOrder.amount) * 0.10;
+                        console.log('[Cashback] Crediting cashback:', cashbackAmount, 'to referrer:', referrerId);
+                        
+                        const { data: referrerUser, error: referrerErr } = await supabase.from('users').select('wallet_balance').eq('id', referrerId).single();
+                        console.log('[Cashback] Referrer wallet data:', referrerUser, 'Error:', referrerErr);
+
+                        if (referrerUser) {
+                            const currentBalance = parseFloat(referrerUser.wallet_balance) || 0;
+                            const newBalance = currentBalance + cashbackAmount;
+
+                            const { error: walletUpdateErr } = await supabase.from('users').update({ wallet_balance: newBalance }).eq('id', referrerId);
+                            console.log('[Cashback] Wallet updated:', currentBalance, '->', newBalance, 'Error:', walletUpdateErr);
+
+                            // Log wallet transaction
+                            const { error: txnErr } = await supabase.from('wallet_transactions').insert({
+                                user_id: referrerId,
+                                amount: cashbackAmount,
+                                type: 'cashback',
+                                description: `Referral cashback for order ${order_id}`,
+                                order_id: order_id.toString()
+                            });
+                            console.log('[Cashback] Transaction logged, Error:', txnErr);
+
+                            // Mark referral as processed
+                            const { error: refUpdateErr } = await supabase.from('referrals').update({
+                                cashback_given: true,
+                                cashback_amount: cashbackAmount,
+                                status: 'purchased'
+                            }).eq('id', referralRecordId);
+                            console.log('[Cashback] Referral marked as processed, Error:', refUpdateErr);
+
+                            console.log('[Cashback] ✅ Successfully credited ₹' + cashbackAmount + ' to referrer ' + referrerId);
+                        } else {
+                            console.error('[Cashback] ❌ Could not find referrer user record');
+                        }
+                    } else if (alreadyGiven) {
+                        console.log('[Cashback] ⏭ Cashback already given for this referral');
+                    }
+                } else {
+                    console.log('[Cashback] No referrer found for this user');
+                }
+            } catch (cashbackErr) {
+                // Don't fail the payment confirmation if cashback fails
+                console.error('[Cashback] ❌ Error in cashback logic (payment still confirmed):', cashbackErr);
             }
         }
 

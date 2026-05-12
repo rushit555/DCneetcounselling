@@ -298,14 +298,14 @@ function bootApp() {
                             
                             // Generate a Welcome Coupon for the new user
                             if (referralId) {
-                                const welcomeCode = 'WELCOME10-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                                const welcomeCode = 'WELCOME99-' + Math.random().toString(36).substring(2, 6).toUpperCase();
                                 const expiryDate = new Date();
                                 expiryDate.setDate(expiryDate.getDate() + 15);
                                 
                                 await window.supabaseClient.from('referral_coupons').insert({
                                     code: welcomeCode,
                                     user_id: session.user.id,
-                                    discount_percent: 10,
+                                    discount_percent: 99.99,
                                     referral_id: referralId,
                                     expires_at: expiryDate.toISOString()
                                 });
