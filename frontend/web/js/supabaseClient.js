@@ -10,8 +10,8 @@
  */
 
 (function() {
-    const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
+    const SUPABASE_URL  = window.__SUPABASE_URL || 'https://rlqmdylbzapyepuwncwt.supabase.co';
+    const SUPABASE_ANON = window.__SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
     // ─── Idle Timeout Configuration ─────────────────────────────────────
     // [SECURITY POLICY UPDATE 2026-04-18]: Auto-logout on inactivity is forbidden.

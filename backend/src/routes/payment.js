@@ -15,67 +15,210 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
 );
 
+// Get Payment Summary API (calculates all discounts and final price server-side)
+router.post('/payment-summary', async (req, res) => {
+    try {
+        const { user_id, plan_price, wallet_enabled, coupon_code } = req.body;
+        console.log(`[Summary] Request: user_id=${user_id}, price=${plan_price}, coupon=${coupon_code}`);
+        const originalPrice = parseFloat(plan_price) || 0;
+        
+        let discountAmount = 0;
+        let subtotal = originalPrice;
+
+        // Check for Referral Coupon First
+        let validReferralCoupon = null;
+        if (coupon_code) {
+            const uppercaseCode = coupon_code.trim().toUpperCase();
+            
+            const { data: refCoupon, error: refErr } = await supabase
+                .from('referral_coupons')
+                .select('*')
+                .eq('code', uppercaseCode)
+                .eq('is_used', false)
+                .single();
+            
+            if (refCoupon && !refErr) {
+                const now = new Date();
+                const isExpired = refCoupon.expires_at && new Date(refCoupon.expires_at) < now;
+                
+                if (!isExpired) {
+                    validReferralCoupon = refCoupon;
+                    discountAmount = Math.round(originalPrice * (parseFloat(refCoupon.discount_percent) / 100));
+                }
+            }
+
+            // If not a referral coupon, check regular coupons
+            if (!validReferralCoupon) {
+                const { data: couponData, error: couponError } = await supabase
+                    .from('coupons')
+                    .select('*')
+                    .eq('coupon_code', uppercaseCode)
+                    .single();
+
+                if (couponData && !couponError) {
+                    const now = new Date();
+                    const isValidFrom = !couponData.valid_from || now >= new Date(couponData.valid_from);
+                    const isValidTo = !couponData.valid_to || now <= new Date(couponData.valid_to);
+                    const isLimitValid = couponData.usage_limit === null || couponData.used_count < couponData.usage_limit;
+
+                    if (isValidFrom && isValidTo && isLimitValid) {
+                        if (couponData.discount_type === 'percentage') {
+                            discountAmount = Math.round(originalPrice * (parseFloat(couponData.discount_value) / 100));
+                        } else if (couponData.discount_type === 'fixed') {
+                            discountAmount = Math.round(parseFloat(couponData.discount_value));
+                        }
+                    }
+                }
+            }
+        }
+
+        subtotal = originalPrice - discountAmount;
+        if (subtotal < 0) subtotal = 0;
+        
+        console.log(`[Summary] Subtotal: ${subtotal}, Discount: ${discountAmount}`);
+
+        // Apply wallet balance if enabled
+        let walletUsed = 0;
+        if (wallet_enabled && user_id) {
+            const { data: userData } = await supabase
+                .from('users')
+                .select('wallet_balance')
+                .eq('id', user_id)
+                .single();
+            
+            if (userData && parseFloat(userData.wallet_balance) > 0) {
+                const walletBalance = parseFloat(userData.wallet_balance);
+                walletUsed = Math.min(walletBalance, subtotal);
+                console.log(`[Summary] Wallet: balance=₹${walletBalance}, using=₹${walletUsed}`);
+            }
+        }
+
+        const finalAmount = Math.round(Math.max(0, subtotal - walletUsed));
+        console.log(`[Summary] Result -> Final: ₹${finalAmount}, WalletUsed: ₹${walletUsed}`);
+
+        res.json({
+            success: true,
+            original_price: originalPrice,
+            discount: discountAmount,
+            wallet_used: walletUsed,
+            subtotal: subtotal,
+            final_amount: finalAmount
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // Create Order API
 router.post('/create-order', async (req, res) => {
     try {
         const { 
             email, full_name, mobile, product_name, amount, coupon, user_id,
-            category, domicile_state, neet_score, rank, counselling_type
+            category, domicile_state, neet_score, rank, counselling_type,
+            wallet_enabled
         } = req.body;
 
         if (!amount) return res.status(400).json({ success: false, error: "Amount is required" });
+        console.log(`[CreateOrder] user_id=${user_id}, email=${email}, amount=${amount}, coupon=${coupon}`);
 
         let parsedAmount = parseFloat(amount);
-        let finalAmount = parsedAmount;
+        let subtotal = parsedAmount;
         let discount = 0;
+        
         let affiliate_ref = null;
         let commission = 0;
         let validCoupon = null;
+        let validReferralCoupon = null;
 
+        // 1. Check for Referral Coupon First
         if (coupon) {
             const uppercaseCode = coupon.trim().toUpperCase();
-            const { data: couponData, error: couponError } = await supabase
-                .from('coupons')
+            
+            const { data: refCoupon, error: refErr } = await supabase
+                .from('referral_coupons')
                 .select('*')
-                .eq('coupon_code', uppercaseCode)
+                .eq('code', uppercaseCode)
+                .eq('is_used', false)
                 .single();
-
-            if (couponData && !couponError) {
+            
+            if (refCoupon && !refErr) {
                 const now = new Date();
-                const isValidFrom = !couponData.valid_from || now >= new Date(couponData.valid_from);
-                const isValidTo = !couponData.valid_to || now <= new Date(couponData.valid_to);
-                const isLimitValid = couponData.usage_limit === null || couponData.used_count < couponData.usage_limit;
+                const isExpired = refCoupon.expires_at && new Date(refCoupon.expires_at) < now;
+                
+                if (isExpired) {
+                    return res.status(400).json({ success: false, error: "This referral coupon has expired." });
+                }
 
-                if (isValidFrom && isValidTo && isLimitValid) {
-                    validCoupon = couponData;
-                    affiliate_ref = couponData.affiliate_ref || null;
+                validReferralCoupon = refCoupon;
+                discount = Math.round(parsedAmount * (parseFloat(refCoupon.discount_percent) / 100));
+                subtotal -= discount;
+            }
 
-                    if (couponData.discount_type === 'percentage') {
-                        discount = Math.round(parsedAmount * (parseFloat(couponData.discount_value) / 100));
-                    } else if (couponData.discount_type === 'fixed') {
-                        discount = Math.round(parseFloat(couponData.discount_value));
-                    }
-                    
-                    finalAmount = parsedAmount - discount;
-                    if (finalAmount < 0) finalAmount = 0;
+            // 2. If not a referral coupon, apply Regular Coupon
+            if (!validReferralCoupon) {
+                const { data: couponData, error: couponError } = await supabase
+                    .from('coupons')
+                    .select('*')
+                    .eq('coupon_code', uppercaseCode)
+                    .single();
 
-                    if (affiliate_ref) {
-                        const { data: aff } = await supabase.from('affiliates').select('*').eq('ref_code', affiliate_ref).single();
-                        if (aff) {
-                            if (aff.commission_type === 'percentage') {
-                                commission = Math.round(finalAmount * (parseFloat(aff.commission_value) / 100));
-                            } else {
-                                commission = parseFloat(aff.commission_value);
+                if (couponData && !couponError) {
+                    const now = new Date();
+                    const isValidFrom = !couponData.valid_from || now >= new Date(couponData.valid_from);
+                    const isValidTo = !couponData.valid_to || now <= new Date(couponData.valid_to);
+                    const isLimitValid = couponData.usage_limit === null || couponData.used_count < couponData.usage_limit;
+
+                    if (isValidFrom && isValidTo && isLimitValid) {
+                        validCoupon = couponData;
+                        affiliate_ref = couponData.affiliate_ref || null;
+
+                        if (couponData.discount_type === 'percentage') {
+                            discount = Math.round(parsedAmount * (parseFloat(couponData.discount_value) / 100));
+                        } else if (couponData.discount_type === 'fixed') {
+                            discount = Math.round(parseFloat(couponData.discount_value));
+                        }
+                        
+                        subtotal -= discount;
+                        if (subtotal < 0) subtotal = 0;
+
+                        if (affiliate_ref) {
+                            const { data: aff } = await supabase.from('affiliates').select('*').eq('ref_code', affiliate_ref).single();
+                            if (aff) {
+                                if (aff.commission_type === 'percentage') {
+                                    commission = Math.round(subtotal * (parseFloat(aff.commission_value) / 100));
+                                } else {
+                                    commission = parseFloat(aff.commission_value);
+                                }
                             }
                         }
+                    } else {
+                        return res.status(400).json({ success: false, error: "Invalid or expired coupon" });
                     }
                 } else {
-                    return res.status(400).json({ success: false, error: "Invalid or expired coupon" });
+                    return res.status(400).json({ success: false, error: "Invalid coupon code" });
                 }
-            } else {
-                return res.status(400).json({ success: false, error: "Invalid coupon code" });
             }
         }
+
+        // Apply wallet balance if enabled
+        let walletUsed = 0;
+        if (wallet_enabled && user_id) {
+            const { data: walletUser } = await supabase
+                .from('users')
+                .select('wallet_balance')
+                .eq('id', user_id)
+                .single();
+            
+            if (walletUser && parseFloat(walletUser.wallet_balance) > 0) {
+                const walletBalance = parseFloat(walletUser.wallet_balance);
+                walletUsed = Math.min(walletBalance, subtotal);
+                subtotal -= walletUsed;
+                if (subtotal < 0) subtotal = 0;
+                console.log(`[CreateOrder] Wallet applied: ₹${walletUsed}, remaining to pay: ₹${subtotal}`);
+            }
+        }
+
+        const finalAmount = subtotal;
 
         const options = {
             amount: Math.round(finalAmount * 100),
@@ -85,7 +228,7 @@ router.post('/create-order', async (req, res) => {
 
         const rzpOrder = await razorpay.orders.create(options);
 
-        // 1. Insert into main orders table
+        // 3. Insert into main orders table
         const { data: newOrder, error: orderErr } = await supabase.from('orders').insert({
             user_id: user_id || null,
             user_email: email,
@@ -97,7 +240,7 @@ router.post('/create-order', async (req, res) => {
             amount_paid: finalAmount,
             discount: discount,
             final_amount: finalAmount,
-            coupon_code: validCoupon ? validCoupon.coupon_code : null,
+            coupon_code: validReferralCoupon ? validReferralCoupon.code : (validCoupon ? validCoupon.coupon_code : null),
             affiliate_ref: affiliate_ref,
             commission: commission,
             status: 'pending',
@@ -110,7 +253,7 @@ router.post('/create-order', async (req, res) => {
             return res.status(500).json({ success: false, error: "Failed to save order" });
         }
 
-        // 2. If it's a counselling product, also insert into counselling_bookings
+        // 4. If it's a counselling product, also insert into counselling_bookings
         if (product_name && product_name.toLowerCase().includes('counselling')) {
             await supabase.from('counselling_bookings').insert({
                 user_id: user_id || null,
@@ -125,13 +268,13 @@ router.post('/create-order', async (req, res) => {
                 plan_price: parsedAmount,
                 discounted_price: finalAmount,
                 counselling_type: counselling_type || null,
-                coupon_code: validCoupon ? validCoupon.coupon_code : null,
+                coupon_code: validReferralCoupon ? validReferralCoupon.code : (validCoupon ? validCoupon.coupon_code : null),
                 payment_status: 'pending',
                 order_id: newOrder.id.toString()
             });
         }
 
-        // 3. Update user profile with the provided mobile number if user is logged in
+        // 5. Update user profile with the provided mobile number if user is logged in
         if (user_id && mobile && mobile !== 'N/A') {
             await supabase.from('users').update({ mobile_number: mobile, phone: mobile }).eq('id', user_id);
         }
@@ -140,7 +283,8 @@ router.post('/create-order', async (req, res) => {
             success: true, 
             order_id: newOrder.id, 
             razorpay_order_id: rzpOrder.id,
-            final_amount: finalAmount 
+            final_amount: finalAmount,
+            wallet_used: walletUsed
         });
     } catch (error) {
         console.error("Order Creation Error:", error);
@@ -187,7 +331,7 @@ router.post('/confirm-payment', async (req, res) => {
         const { order_id, razorpay_payment_id } = req.body;
         if (!order_id) return res.status(400).json({ success: false, error: "order_id is required" });
 
-        // Mark order as paid
+        // 1. Mark order as paid
         const { data: updatedOrder, error } = await supabase.from('orders').update({
             status: 'paid',
             payment_status: 'paid',
@@ -199,30 +343,216 @@ router.post('/confirm-payment', async (req, res) => {
             return res.status(500).json({ success: false, error: "Failed to update order status" });
         }
 
-        // Update counselling_bookings if it exists
+        // 2. Update counselling_bookings if it exists
         await supabase.from('counselling_bookings').update({
             payment_status: 'paid',
             razorpay_payment_id: razorpay_payment_id || null
         }).eq('order_id', order_id.toString());
 
-        // Increment coupon usage and log tracking
-        if (updatedOrder && updatedOrder.coupon_code) {
-            const { data: coupon } = await supabase.from('coupons').select('*').eq('coupon_code', updatedOrder.coupon_code).single();
-            if (coupon) {
-                await supabase.from('coupons').update({ used_count: coupon.used_count + 1 }).eq('coupon_code', updatedOrder.coupon_code);
+        // 2.5 Deduct wallet balance if wallet was used
+        // wallet_used = original_amount - discount - final_amount (i.e. the gap paid by wallet)
+        const orderAmount = parseFloat(updatedOrder.amount) || 0;
+        const orderDiscount = parseFloat(updatedOrder.discount) || 0;
+        const orderFinal = parseFloat(updatedOrder.final_amount) || 0;
+        const walletUsedAmount = Math.max(0, orderAmount - orderDiscount - orderFinal);
+        
+        if (walletUsedAmount > 0 && updatedOrder.user_id) {
+            console.log(`[ConfirmPayment] Deducting wallet: ₹${walletUsedAmount} from user ${updatedOrder.user_id}`);
+            const { data: currentUser } = await supabase.from('users').select('wallet_balance').eq('id', updatedOrder.user_id).single();
+            if (currentUser) {
+                const currentBal = parseFloat(currentUser.wallet_balance) || 0;
+                const newBal = Math.round(Math.max(0, currentBal - walletUsedAmount) * 100) / 100;
+                await supabase.from('users').update({ wallet_balance: newBal }).eq('id', updatedOrder.user_id);
                 
-                // Insert into coupon_usage table
-                await supabase.from('coupon_usage').insert([{
-                    coupon_code: coupon.coupon_code,
-                    order_id: updatedOrder.id.toString(),
-                    user_email: updatedOrder.email || updatedOrder.user_email,
-                    user_mobile: updatedOrder.mobile,
-                    plan_name: updatedOrder.product_name || 'Counselling Plan',
-                    original_price: updatedOrder.amount,
-                    discounted_price: updatedOrder.final_amount,
-                    discount_applied: updatedOrder.discount || 0,
-                    payment_status: 'success'
-                }]);
+                // Log wallet deduction
+                await supabase.from('wallet_transactions').insert({
+                    user_id: updatedOrder.user_id,
+                    amount: -walletUsedAmount,
+                    type: 'payment',
+                    description: `Wallet used for order ${order_id}`,
+                    order_id: order_id.toString(),
+                    name: updatedOrder.full_name,
+                    email: updatedOrder.email,
+                    mobilenumber: updatedOrder.mobile
+                });
+                console.log(`[ConfirmPayment] Wallet deducted: ₹${currentBal} → ₹${newBal}`);
+            }
+        }
+ 
+        // Note: referral discount is effectively marked as used by the order status becoming 'paid'
+
+        // 3. Referral Reward Logic (Credit cashback to referrer wallet)
+        // Resolve user_id: use order's user_id, or fallback to looking up by email
+        let effectiveUserId = updatedOrder.user_id;
+        if (!effectiveUserId && (updatedOrder.email || updatedOrder.user_email)) {
+            const lookupEmail = updatedOrder.email || updatedOrder.user_email;
+            console.log('[Cashback] No user_id on order, looking up by email:', lookupEmail);
+            const { data: userByEmail } = await supabase
+                .from('users')
+                .select('id')
+                .eq('email', lookupEmail)
+                .maybeSingle();
+            if (userByEmail) {
+                effectiveUserId = userByEmail.id;
+                // Also update the order with the correct user_id for future reference
+                await supabase.from('orders').update({ user_id: effectiveUserId }).eq('id', order_id);
+                console.log('[Cashback] Resolved user_id from email:', effectiveUserId);
+            }
+        }
+
+        console.log('[Cashback] Starting referral cashback check for user_id:', effectiveUserId);
+        if (effectiveUserId) {
+            try {
+                // Step A: Find referrer via users.referred_by
+                const { data: userProfile, error: userProfileErr } = await supabase
+                    .from('users')
+                    .select('referred_by')
+                    .eq('id', effectiveUserId)
+                    .single();
+
+                console.log('[Cashback] User profile:', userProfile, 'Error:', userProfileErr);
+
+                let referrerId = userProfile?.referred_by || null;
+
+                // Step B: If no referred_by, try finding referrer via the referral coupon used in this order
+                if (!referrerId && updatedOrder.coupon_code) {
+                    console.log('[Cashback] No referred_by found, checking referral_coupons for code:', updatedOrder.coupon_code);
+                    const { data: usedCoupon } = await supabase
+                        .from('referral_coupons')
+                        .select('user_id, referral_id')
+                        .eq('code', updatedOrder.coupon_code)
+                        .maybeSingle();
+
+                    if (usedCoupon && usedCoupon.referral_id) {
+                        const { data: refRecord } = await supabase
+                            .from('referrals')
+                            .select('referrer_id')
+                            .eq('id', usedCoupon.referral_id)
+                            .maybeSingle();
+                        if (refRecord) {
+                            referrerId = refRecord.referrer_id;
+                            console.log('[Cashback] Found referrer via coupon referral_id:', referrerId);
+                        }
+                    }
+                }
+
+                if (referrerId) {
+                    console.log('[Cashback] Referrer ID found:', referrerId);
+
+                    // Check if cashback already given via referrals table
+                    const { data: referralRecord } = await supabase
+                        .from('referrals')
+                        .select('id, cashback_given')
+                        .eq('referrer_id', referrerId)
+                        .eq('referred_user_id', effectiveUserId)
+                        .maybeSingle();
+
+                    console.log('[Cashback] Referral record:', referralRecord);
+
+                    let referralRecordId = referralRecord?.id || null;
+                    let alreadyGiven = referralRecord?.cashback_given || false;
+
+                    // If no referral record exists, create one
+                    if (!referralRecord) {
+                        console.log('[Cashback] No referral record found, creating one...');
+                        const { data: newRef, error: newRefErr } = await supabase
+                            .from('referrals')
+                            .insert({
+                                referrer_id: referrerId,
+                                referred_user_id: effectiveUserId,
+                                status: 'joined'
+                            })
+                            .select('id')
+                            .single();
+                        if (newRef) {
+                            referralRecordId = newRef.id;
+                            console.log('[Cashback] Created referral record:', referralRecordId);
+                        } else {
+                            console.error('[Cashback] Failed to create referral record:', newRefErr);
+                        }
+                    }
+
+                    if (!alreadyGiven && referralRecordId) {
+                        // Credit 10% cashback to referrer based on ORIGINAL price (before discount)
+                        const cashbackAmount = parseFloat(updatedOrder.amount) * 0.10;
+                        console.log('[Cashback] Crediting cashback:', cashbackAmount, 'to referrer:', referrerId);
+                        
+                        const { data: referrerUser, error: referrerErr } = await supabase.from('users').select('wallet_balance, full_name, email, phone').eq('id', referrerId).single();
+                        console.log('[Cashback] Referrer wallet data:', referrerUser, 'Error:', referrerErr);
+
+                        if (referrerUser) {
+                            const currentBalance = parseFloat(referrerUser.wallet_balance) || 0;
+                            const newBalance = currentBalance + cashbackAmount;
+
+                            const { error: walletUpdateErr } = await supabase.from('users').update({ wallet_balance: newBalance }).eq('id', referrerId);
+                            console.log('[Cashback] Wallet updated:', currentBalance, '->', newBalance, 'Error:', walletUpdateErr);
+
+                            // Log wallet transaction
+                            const { error: txnErr } = await supabase.from('wallet_transactions').insert({
+                                user_id: referrerId,
+                                amount: cashbackAmount,
+                                type: 'cashback',
+                                description: `Referral cashback for order ${order_id}`,
+                                order_id: order_id.toString(),
+                                name: referrerUser.full_name,
+                                email: referrerUser.email,
+                                mobilenumber: referrerUser.phone
+                            });
+                            console.log('[Cashback] Transaction logged, Error:', txnErr);
+
+                            // Mark referral as processed
+                            const { error: refUpdateErr } = await supabase.from('referrals').update({
+                                cashback_given: true,
+                                cashback_amount: cashbackAmount,
+                                status: 'purchased'
+                            }).eq('id', referralRecordId);
+                            console.log('[Cashback] Referral marked as processed, Error:', refUpdateErr);
+
+                            console.log('[Cashback] ✅ Successfully credited ₹' + cashbackAmount + ' to referrer ' + referrerId);
+                        } else {
+                            console.error('[Cashback] ❌ Could not find referrer user record');
+                        }
+                    } else if (alreadyGiven) {
+                        console.log('[Cashback] ⏭ Cashback already given for this referral');
+                    }
+                } else {
+                    console.log('[Cashback] No referrer found for this user');
+                }
+            } catch (cashbackErr) {
+                // Don't fail the payment confirmation if cashback fails
+                console.error('[Cashback] ❌ Error in cashback logic (payment still confirmed):', cashbackErr);
+            }
+        }
+
+        // 5. Increment coupon usage
+        if (updatedOrder && updatedOrder.coupon_code) {
+            // Check if it's a referral coupon
+            const { data: refCoupon } = await supabase.from('referral_coupons').select('*').eq('code', updatedOrder.coupon_code).maybeSingle();
+            
+            if (refCoupon) {
+                // Mark referral coupon as used
+                await supabase.from('referral_coupons').update({ 
+                    is_used: true, 
+                    used_at: new Date() 
+                }).eq('id', refCoupon.id);
+            } else {
+                // Regular coupon logic
+                const { data: coupon } = await supabase.from('coupons').select('*').eq('coupon_code', updatedOrder.coupon_code).single();
+                if (coupon) {
+                    await supabase.from('coupons').update({ used_count: coupon.used_count + 1 }).eq('coupon_code', updatedOrder.coupon_code);
+                    
+                    await supabase.from('coupon_usage').insert([{
+                        coupon_code: coupon.coupon_code,
+                        order_id: updatedOrder.id.toString(),
+                        user_email: updatedOrder.email || updatedOrder.user_email,
+                        user_mobile: updatedOrder.mobile,
+                        plan_name: updatedOrder.product_name || 'Counselling Plan',
+                        original_price: updatedOrder.amount,
+                        discounted_price: updatedOrder.final_amount,
+                        discount_applied: updatedOrder.discount || 0,
+                        payment_status: 'success'
+                    }]);
+                }
             }
         }
 

@@ -1,3 +1,20 @@
+// ─── Referral Detection ────────────────────────────────────────────────────────
+(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let refToken = urlParams.get('ref');
+    
+    // Also check hash for SPA links like dc.com/#signup?ref=...
+    if (!refToken && window.location.hash.includes('ref=')) {
+        const hashParams = new URLSearchParams(window.location.hash.split('?')[1]);
+        refToken = hashParams.get('ref');
+    }
+
+    if (refToken) {
+        console.log('[Referral] Token detected:', refToken);
+        localStorage.setItem('pending_referral', refToken);
+    }
+})();
+
 // ─── GoAffPro Dynamic Loader ────────────────────────────────────────────────
 window.loadGoAffPro = function() {
     if (window.goaffpro) return;
@@ -20,8 +37,8 @@ window.loadGoAffPro();
 // ──────────────────────────────────────────────────────────────────────────────
 
 // ─── Supabase Configuration ───────────────────────────────────────────────────
-const SUPABASE_URL  = 'https://rlqmdylbzapyepuwncwt.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
+const SUPABASE_URL  = window.__SUPABASE_URL || 'https://rlqmdylbzapyepuwncwt.supabase.co';
+const SUPABASE_ANON = window.__SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJscW1keWxiemFweWVwdXduY3d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYyNTcwNzYsImV4cCI6MjA5MTgzMzA3Nn0.oNNK1pwLnykQlNfUkw7IdB-ZBkKDoWxszsKDSIjsLeo';
 
 const COUNSELLING_META = {
     'med_basic': { title: 'Medical - Basic Plan', price: 4999, type: 'Medical' },
@@ -164,6 +181,18 @@ window.navigate = function(route) {
             });
         }
     }
+    if (route === 'wallet') {
+        var walletEl = document.getElementById('section-wallet');
+        if (walletEl) {
+            walletEl.style.display = 'block';
+            walletEl.innerHTML = '<div style="padding:120px 20px;text-align:center;"><div class="loading-spinner"></div><br>Loading your wallet...</div>';
+            renderWallet().then(html => {
+                if (html) walletEl.innerHTML = html;
+            }).catch(err => {
+                walletEl.innerHTML = '<div style="padding:120px 20px;text-align:center;color:#ef4444;">Failed to load wallet. Please refresh.</div>';
+            });
+        }
+    }
     if (route === 'dashboard') {
         var dashEl = document.getElementById('section-dashboard');
         if (dashEl) {
@@ -232,6 +261,66 @@ function bootApp() {
                         if (html) dashEl.innerHTML = html;
                     });
                 }
+            }
+
+            // REFERRAL SYSTEM: Auto-link on first login/signup if pending referral exists
+            if (event === 'SIGNED_IN' && session && session.user) {
+                (async function() {
+                    const pendingRef = localStorage.getItem('pending_referral');
+                    let user = null;
+                    
+                    // Retry fetching user up to 3 times (wait for DB trigger)
+                    for (let i = 0; i < 3; i++) {
+                        const { data } = await window.supabaseClient.from('users').select('referred_by, referral_token').eq('id', session.user.id).single();
+                        if (data) { user = data; break; }
+                        await new Promise(r => setTimeout(r, 1000));
+                    }
+                    
+                    if (user && !user.referred_by && pendingRef) {
+                        console.log('[Referral] Linking user to referrer:', pendingRef);
+                        const { data: refUser } = await window.supabaseClient.from('users').select('id').eq('referral_token', pendingRef).maybeSingle();
+                        
+                        if (refUser && refUser.id !== session.user.id) {
+                            await window.supabaseClient.from('users').update({ referred_by: refUser.id }).eq('id', session.user.id);
+                            
+                            // Also create referral record if it doesn't exist
+                            const { data: existingRef } = await window.supabaseClient.from('referrals').select('id').eq('referred_user_id', session.user.id).maybeSingle();
+                            let referralId = existingRef ? existingRef.id : null;
+                            if (!existingRef) {
+                                const { data: newRef } = await window.supabaseClient.from('referrals').insert({
+                                    referrer_id: refUser.id,
+                                    referred_user_id: session.user.id,
+                                    referral_token: pendingRef,
+                                    status: 'joined'
+                                }).select('id').single();
+                                if (newRef) referralId = newRef.id;
+                            }
+                            
+                            // Generate a Welcome Coupon for the new user
+                            if (referralId) {
+                                const welcomeCode = 'WELCOME99-' + Math.random().toString(36).substring(2, 6).toUpperCase();
+                                const expiryDate = new Date();
+                                expiryDate.setDate(expiryDate.getDate() + 15);
+                                
+                                await window.supabaseClient.from('referral_coupons').insert({
+                                    code: welcomeCode,
+                                    user_id: session.user.id,
+                                    discount_percent: 10,
+                                    referral_id: referralId,
+                                    expires_at: expiryDate.toISOString()
+                                });
+                            }
+                            localStorage.removeItem('pending_referral');
+                            console.log('[Referral] Successfully linked.');
+                        }
+                    }
+                    
+                    // Generate token if missing
+                    if (user && !user.referral_token) {
+                        const newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
+                        await window.supabaseClient.from('users').update({ referral_token: newToken }).eq('id', session.user.id);
+                    }
+                })();
             }
         });
 
@@ -475,10 +564,14 @@ async function renderDashboard() {
     var email = user.email || 'No email';
     var mobile = '';
     
+    var walletBal = 0;
     if (user && user.id && window.supabaseClient) {
         try {
-            var { data } = await window.supabaseClient.from('users').select('mobile_number').eq('id', user.id).single();
-            if (data && data.mobile_number) mobile = data.mobile_number;
+            var { data } = await window.supabaseClient.from('users').select('mobile_number, wallet_balance').eq('id', user.id).single();
+            if (data) {
+                if (data.mobile_number) mobile = data.mobile_number;
+                walletBal = data.wallet_balance || 0;
+            }
         } catch(err) {}
     }
     
@@ -531,6 +624,31 @@ async function renderDashboard() {
                     '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"></path><path d="M1 3H23V8H1V3Z"></path><path d="M10 12H14"></path></svg></span>' +
                     '<span class="menu-label">Order History</span>' +
                 '</a>' +
+                '<div class="menu-item" style="flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px; cursor: default;">' +
+                    '<div style="display: flex; align-items: center; gap: 12px; cursor: pointer; width: 100%;" onclick="window.navigate(\'wallet\')">' +
+                        '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span>' +
+                        '<span class="menu-label" style="font-weight: 700;">My Wallet</span>' +
+                    '</div>' +
+                    '<div style="width: 100%; margin-top: 4px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">' +
+                        '<div style="font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Available Balance</div>' +
+                        '<div style="font-size: 24px; font-weight: 800; color: #facc15; margin-top: 2px; display: flex; align-items: baseline; gap: 4px;">' +
+                            '<span style="font-size: 14px; font-weight: 600; opacity: 0.8;">₹</span>' + Number(walletBal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + 
+                        '</div>' +
+                        '<div style="margin-top: 12px; display: flex; gap: 8px; width: 100%;">' +
+                            '<button onclick="event.stopPropagation(); window.navigate(\'profile/refer-earn\')" style="flex: 1; padding: 8px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 10px; font-weight: 700; cursor: pointer;">History</button>' +
+                            '<button onclick="event.stopPropagation(); window.navigate(\'counselling\')" style="flex: 1; padding: 8px; border-radius: 10px; background: #facc15; border: none; color: #000; font-size: 10px; font-weight: 700; cursor: pointer;">Use Now</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="refer-earn-card" style="margin-top: 10px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;" onclick="window.navigate(\'profile/refer-earn\')">' +
+                    '<div style="display: flex; align-items: center; gap: 10px;">' +
+                        '<span style="font-size: 20px;">🎁</span>' +
+                        '<div>' +
+                            '<div style="font-size: 13px; font-weight: 700; color: #fff;">Refer & Earn</div>' +
+                            '<div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px;">Get 10% cashback on every referral.</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
             '</nav>' +
         '</div>' +
         '<div class="dashboard-content glass-panel">' +
@@ -703,8 +821,74 @@ async function renderOrders() {
     return html;
 }
 
-function simulateRazorpay() {
+// ─── Wallet History ─────────────────────────────────────────────────────────
+async function renderWallet() {
+    console.log('[App] Rendering Wallet...');
+    var user = window._authUser;
+    if (!user && window.supabaseClient) {
+        var { data } = await window.supabaseClient.auth.getSession();
+        if (data && data.session) user = data.session.user;
+    }
 
+    if (!user || !user.id) {
+        return '<div style="padding:160px 20px; text-align:center;"><h3>Access Restricted</h3><button class="btn btn-primary" onclick="window.navigate(\'login\')">Sign In</button></div>';
+    }
+
+    var walletBalance = 0;
+    var transactions = [];
+
+    if (window.supabaseClient) {
+        try {
+            const [userRes, transRes] = await Promise.all([
+                window.supabaseClient.from('users').select('wallet_balance').eq('id', user.id).single(),
+                window.supabaseClient.from('wallet_transactions').select('*').eq('user_id', user.id).order('created_at', { ascending: false })
+            ]);
+            if (userRes.data) walletBalance = userRes.data.wallet_balance || 0;
+            if (transRes.data) transactions = transRes.data;
+        } catch (err) {
+            console.error('[App] Failed to fetch wallet data:', err);
+        }
+    }
+
+    var html = '<div class="wallet-page-wrapper" style="padding:120px 20px 60px; max-width: 1000px; margin: 0 auto;">' +
+        '<div class="wallet-container-premium" style="padding:40px; border-radius: 24px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(16px); border: 1px solid rgba(244, 180, 0, 0.6); box-shadow: 0 8px 32px rgba(0,0,0,0.4);">' +
+            '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">' +
+                '<div>' +
+                    '<h2 style="font-size: 32px; font-weight: 800; color: #fff;">My Wallet</h2>' +
+                    '<p style="color:rgba(255,255,255,0.6);">View your balance and transaction history.</p>' +
+                '</div>' +
+                '<button class="btn" style="background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); border-radius: 99px; padding: 10px 20px;" onclick="window.navigate(\'dashboard\')">← Back</button>' +
+            '</div>' +
+            
+            '<div style="background: linear-gradient(135deg, #facc15 0%, #eab308 100%); padding: 30px; border-radius: 20px; margin-bottom: 40px; color: #000;">' +
+                '<div style="font-size: 14px; font-weight: 600; opacity: 0.8; text-transform: uppercase;">Current Balance</div>' +
+                '<div style="font-size: 48px; font-weight: 800; margin-top: 5px;">₹' + walletBalance + '</div>' +
+            '</div>' +
+
+            '<h3 style="color: #fff; margin-bottom: 20px; font-size: 20px;">Transaction History</h3>';
+
+    if (transactions.length === 0) {
+        html += '<div style="text-align:center; padding:40px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 16px; color: rgba(255,255,255,0.5);">No transactions yet.</div>';
+    } else {
+        html += '<div style="display: flex; flex-direction: column; gap: 12px;">';
+        transactions.forEach(function(tx) {
+            var isCredit = tx.amount > 0;
+            var d = new Date(tx.created_at);
+            var dateStr = d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            
+            html += '<div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center;">' +
+                        '<div>' +
+                            '<div style="color: #fff; font-weight: 600;">' + tx.description + '</div>' +
+                            '<div style="color: rgba(255,255,255,0.4); font-size: 12px; margin-top: 4px;">' + dateStr + ' • ' + tx.type.replace('_', ' ').toUpperCase() + '</div>' +
+                        '</div>' +
+                        '<div style="font-size: 18px; font-weight: 700; color: ' + (isCredit ? '#22c55e' : '#ef4444') + ';">' + (isCredit ? '+' : '') + '₹' + Math.abs(tx.amount) + '</div>' +
+                    '</div>';
+        });
+        html += '</div>';
+    }
+
+    html += '</div></div>';
+    return html;
 }
 
 window.openAddMobileModal = function() {
@@ -1013,6 +1197,56 @@ window.handleEmailLogin = async function(e) {
             } else if (res.data && res.data.user && res.data.user.identities && res.data.user.identities.length === 0) {
                 showErr('⚠️ An account with this email already exists. Please switch to Sign In instead.');
             } else { 
+                // ── REFERRAL SYSTEM: Generate token & link referrer ──
+                try {
+                    if (res.data && res.data.user && res.data.user.id) {
+                        // Small delay to let trigger finish
+                        await new Promise(function(r) { setTimeout(r, 1200); });
+                        
+                        var newToken = Math.random().toString(36).substring(2, 11).toLowerCase();
+                        var pendingRef = localStorage.getItem('pending_referral');
+                        var refId = null;
+                        
+                        if (pendingRef) {
+                            var { data: refData } = await window.supabaseClient
+                                .from('users')
+                                .select('id')
+                                .eq('referral_token', pendingRef)
+                                .maybeSingle();
+                            
+                            if (refData && refData.id && refData.id !== res.data.user.id) {
+                                refId = refData.id;
+                            }
+                        }
+                        
+                        var payload = { referral_token: newToken };
+                        if (refId) payload.referred_by = refId;
+                        
+                        await window.supabaseClient.from('users').update(payload).eq('id', res.data.user.id);
+                        
+                        if (refId) {
+                            // Fetch referrer details to store in referral record
+                            var { data: referrerInfo } = await window.supabaseClient
+                                .from('users')
+                                .select('email, full_name, name')
+                                .eq('id', refId)
+                                .single();
+
+                            await window.supabaseClient.from('referrals').insert({
+                                referrer_id: refId,
+                                referred_user_id: res.data.user.id,
+                                referrer_email: referrerInfo?.email || null,
+                                referrer_name: referrerInfo?.full_name || referrerInfo?.name || null,
+                                referred_user_email: email,
+                                referred_user_name: full || null,
+                                referral_token: pendingRef,
+                                status: 'joined'
+                            });
+                            localStorage.removeItem('pending_referral');
+                            console.log('[Referral] Linked to referrer:', refId);
+                        }
+                    }
+                } catch(refErr) { console.error('[Referral] Setup error:', refErr); }
                 if (res.data && res.data.session) {
                     showOk('✅ Account created successfully! Returning to home...');
                     if (window.updateNavForAuth) window.updateNavForAuth(res.data.session);
