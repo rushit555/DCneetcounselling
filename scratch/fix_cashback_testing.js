@@ -83,7 +83,7 @@ async function fix() {
         }
 
         // Credit wallet
-        const { data: referrerUser } = await supabase.from('users').select('wallet_balance').eq('id', referrerId).single();
+        const { data: referrerUser } = await supabase.from('users').select('wallet_balance, full_name, email, phone').eq('id', referrerId).single();
         const currentBalance = parseFloat(referrerUser?.wallet_balance) || 0;
         const newBalance = currentBalance + cashbackAmount;
 
@@ -96,7 +96,10 @@ async function fix() {
             amount: cashbackAmount,
             type: 'cashback',
             description: `Referral cashback for order ${order.id} (retroactive fix)`,
-            order_id: order.id.toString()
+            order_id: order.id.toString(),
+            name: referrerUser?.full_name || 'N/A',
+            email: referrerUser?.email || 'N/A',
+            mobilenumber: referrerUser?.phone || 'N/A'
         });
 
         // Mark referral as processed

@@ -91,7 +91,7 @@ async function fixMissingCashback() {
         // 6. Credit wallet
         const { data: referrerUser } = await supabase
             .from('users')
-            .select('wallet_balance')
+            .select('wallet_balance, full_name, email, phone')
             .eq('id', referrerId)
             .single();
 
@@ -121,7 +121,10 @@ async function fixMissingCashback() {
             amount: cashbackAmount,
             type: 'cashback',
             description: `Referral cashback for order ${order.id} (retroactive fix)`,
-            order_id: order.id.toString()
+            order_id: order.id.toString(),
+            name: referrerUser.full_name,
+            email: referrerUser.email,
+            mobilenumber: referrerUser.phone
         });
 
         // 8. Mark referral as processed

@@ -6597,7 +6597,7 @@
                   <div class="rc-icon"><i class="fa-solid fa-gift"></i></div>
                   <div>
                     <h3>🎉 Your Referral Reward</h3>
-                    <p>Use this coupon to get 99.99% OFF on your first purchase.</p>
+                    <p>Use this coupon to get 10% OFF on your first purchase.</p>
                   </div>
                 </div>
                 <div class="rc-status"><i class="fa-solid fa-circle-check"></i> Active</div>
@@ -6607,7 +6607,7 @@
                   <div class="rc-code" id="rc-code-display">WELCOME99-X82K</div>
                   <div class="rc-expiry" id="rc-expiry-display"><i class="fa-regular fa-clock"></i> Expires in 15 days</div>
                 </div>
-                <div class="rc-discount">99.99% OFF</div>
+                <div class="rc-discount">10% OFF</div>
               </div>
               <div class="rc-actions">
                 <button class="rc-btn-copy" onclick="copyMyRewardCoupon()"><i class="fa-regular fa-copy"></i> Copy Coupon</button>
@@ -6624,7 +6624,7 @@
                   <i class="fa-solid fa-star" style="color: #fde047;"></i> Premium Rewards
                 </div>
                 <h2>Invite Friends & <br/>Earn Reward Coupons</h2>
-                <p>Your friend gets <span class="highlight-badge">99.99% OFF</span> and you earn a <span class="highlight-badge">10% Discount Coupon</span> after their successful purchase.</p>
+                <p>Your friend gets <span class="highlight-badge">10% OFF</span> and you earn a <span class="highlight-badge">10% Cashback</span> after their successful purchase.</p>
                 
                 <div class="link-box">
                   <input type="text" id="referral-link-input" class="link-input" value="https://yourdomain.com/signup?ref=demo123" readonly>
@@ -6634,10 +6634,10 @@
                 </div>
                 
                 <div class="share-buttons">
-                  <a href="https://wa.me/?text=%F0%9F%8E%93%20Get%2099.99%25%20OFF%20on%20NEET%20counselling%20plans%20using%20my%20referral%20link%3A%0Ahttps%3A%2F%2Fyourdomain.com%2Fsignup%3Fref%3Ddemo123" target="_blank" class="share-btn btn-whatsapp">
+                  <a href="https://wa.me/?text=%F0%9F%8E%93%20Get%2010%25%20OFF%20on%20NEET%20counselling%20plans%20using%20my%20referral%20link%3A%0Ahttps%3A%2F%2Fyourdomain.com%2Fsignup%3Fref%3Ddemo123" target="_blank" class="share-btn btn-whatsapp">
                     <i class="fa-brands fa-whatsapp"></i> WhatsApp
                   </a>
-                  <a href="https://t.me/share/url?url=https%3A%2F%2Fyourdomain.com%2Fsignup%3Fref%3Ddemo123&text=%F0%9F%8E%93%20Get%2099.99%25%20OFF%20on%20NEET%20counselling%20plans%20using%20my%20referral%20link!" target="_blank" class="share-btn btn-telegram">
+                  <a href="https://t.me/share/url?url=https%3A%2F%2Fyourdomain.com%2Fsignup%3Fref%3Ddemo123&text=%F0%9F%8E%93%20Get%2010%25%20OFF%20on%20NEET%20counselling%20plans%20using%20my%20referral%20link!" target="_blank" class="share-btn btn-telegram">
                     <i class="fa-brands fa-telegram"></i> Telegram
                   </a>
                 </div>
@@ -6699,7 +6699,7 @@
                   <i class="fa-solid fa-tag"></i>
                 </div>
                 <h4>Friend Gets a Coupon</h4>
-                <p>They get a 99.99% OFF coupon upon signup.</p>
+                <p>They get a 10% OFF coupon upon signup.</p>
               </div>
               <div class="step-item">
                 <div class="step-icon">
@@ -6884,13 +6884,13 @@
 
             // 4. Update share buttons with real link
             var encodedLink = encodeURIComponent(referralLink);
-            var shareMsg = encodeURIComponent('🎓 Get 99.99% OFF on NEET counselling plans using my referral link:\n' + referralLink);
+            var shareMsg = encodeURIComponent('🎓 Get 10% OFF on NEET counselling plans using my referral link:\n' + referralLink);
             
             var waBtn = document.querySelector('.share-btn.btn-whatsapp');
             if (waBtn) waBtn.href = 'https://wa.me/?text=' + shareMsg;
             
             var tgBtn = document.querySelector('.share-btn.btn-telegram');
-            if (tgBtn) tgBtn.href = 'https://t.me/share/url?url=' + encodedLink + '&text=' + encodeURIComponent('🎓 Get 99.99% OFF on NEET counselling plans using my referral link!');
+            if (tgBtn) tgBtn.href = 'https://t.me/share/url?url=' + encodedLink + '&text=' + encodeURIComponent('🎓 Get 10% OFF on NEET counselling plans using my referral link!');
 
             // 5. Update stats cards using IDs (Much more reliable)
             if (document.getElementById('wallet-balance-val')) document.getElementById('wallet-balance-val').textContent = '₹' + walletBalance.toLocaleString('en-IN');

@@ -305,7 +305,7 @@ function bootApp() {
                                 await window.supabaseClient.from('referral_coupons').insert({
                                     code: welcomeCode,
                                     user_id: session.user.id,
-                                    discount_percent: 99.99,
+                                    discount_percent: 10,
                                     referral_id: referralId,
                                     expires_at: expiryDate.toISOString()
                                 });
@@ -564,10 +564,14 @@ async function renderDashboard() {
     var email = user.email || 'No email';
     var mobile = '';
     
+    var walletBal = 0;
     if (user && user.id && window.supabaseClient) {
         try {
-            var { data } = await window.supabaseClient.from('users').select('mobile_number').eq('id', user.id).single();
-            if (data && data.mobile_number) mobile = data.mobile_number;
+            var { data } = await window.supabaseClient.from('users').select('mobile_number, wallet_balance').eq('id', user.id).single();
+            if (data) {
+                if (data.mobile_number) mobile = data.mobile_number;
+                walletBal = data.wallet_balance || 0;
+            }
         } catch(err) {}
     }
     
@@ -620,10 +624,31 @@ async function renderDashboard() {
                     '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8V21H3V8"></path><path d="M1 3H23V8H1V3Z"></path><path d="M10 12H14"></path></svg></span>' +
                     '<span class="menu-label">Order History</span>' +
                 '</a>' +
-                '<a href="#" class="menu-item" onclick="event.preventDefault(); window.navigate(\'wallet\');">' +
-                    '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span>' +
-                    '<span class="menu-label">My Wallet</span>' +
-                '</a>' +
+                '<div class="menu-item" style="flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px; cursor: default;">' +
+                    '<div style="display: flex; align-items: center; gap: 12px; cursor: pointer; width: 100%;" onclick="window.navigate(\'wallet\')">' +
+                        '<span class="menu-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg></span>' +
+                        '<span class="menu-label" style="font-weight: 700;">My Wallet</span>' +
+                    '</div>' +
+                    '<div style="width: 100%; margin-top: 4px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.1);">' +
+                        '<div style="font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Available Balance</div>' +
+                        '<div style="font-size: 24px; font-weight: 800; color: #facc15; margin-top: 2px; display: flex; align-items: baseline; gap: 4px;">' +
+                            '<span style="font-size: 14px; font-weight: 600; opacity: 0.8;">₹</span>' + Number(walletBal).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + 
+                        '</div>' +
+                        '<div style="margin-top: 12px; display: flex; gap: 8px; width: 100%;">' +
+                            '<button onclick="event.stopPropagation(); window.navigate(\'profile/refer-earn\')" style="flex: 1; padding: 8px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #fff; font-size: 10px; font-weight: 700; cursor: pointer;">History</button>' +
+                            '<button onclick="event.stopPropagation(); window.navigate(\'counselling\')" style="flex: 1; padding: 8px; border-radius: 10px; background: #facc15; border: none; color: #000; font-size: 10px; font-weight: 700; cursor: pointer;">Use Now</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="refer-earn-card" style="margin-top: 10px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); cursor: pointer;" onclick="window.navigate(\'profile/refer-earn\')">' +
+                    '<div style="display: flex; align-items: center; gap: 10px;">' +
+                        '<span style="font-size: 20px;">🎁</span>' +
+                        '<div>' +
+                            '<div style="font-size: 13px; font-weight: 700; color: #fff;">Refer & Earn</div>' +
+                            '<div style="font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px;">Get 10% cashback on every referral.</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
             '</nav>' +
         '</div>' +
         '<div class="dashboard-content glass-panel">' +

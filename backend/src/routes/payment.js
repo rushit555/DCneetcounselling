@@ -370,7 +370,10 @@ router.post('/confirm-payment', async (req, res) => {
                     amount: -walletUsedAmount,
                     type: 'payment',
                     description: `Wallet used for order ${order_id}`,
-                    order_id: order_id.toString()
+                    order_id: order_id.toString(),
+                    name: updatedOrder.full_name,
+                    email: updatedOrder.email,
+                    mobilenumber: updatedOrder.mobile
                 });
                 console.log(`[ConfirmPayment] Wallet deducted: ₹${currentBal} → ₹${newBal}`);
             }
@@ -474,7 +477,7 @@ router.post('/confirm-payment', async (req, res) => {
                         const cashbackAmount = parseFloat(updatedOrder.amount) * 0.10;
                         console.log('[Cashback] Crediting cashback:', cashbackAmount, 'to referrer:', referrerId);
                         
-                        const { data: referrerUser, error: referrerErr } = await supabase.from('users').select('wallet_balance').eq('id', referrerId).single();
+                        const { data: referrerUser, error: referrerErr } = await supabase.from('users').select('wallet_balance, full_name, email, phone').eq('id', referrerId).single();
                         console.log('[Cashback] Referrer wallet data:', referrerUser, 'Error:', referrerErr);
 
                         if (referrerUser) {
@@ -490,7 +493,10 @@ router.post('/confirm-payment', async (req, res) => {
                                 amount: cashbackAmount,
                                 type: 'cashback',
                                 description: `Referral cashback for order ${order_id}`,
-                                order_id: order_id.toString()
+                                order_id: order_id.toString(),
+                                name: referrerUser.full_name,
+                                email: referrerUser.email,
+                                mobilenumber: referrerUser.phone
                             });
                             console.log('[Cashback] Transaction logged, Error:', txnErr);
 
